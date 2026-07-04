@@ -1,0 +1,15 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Stock {
+  id     String @id @default(cuid())
+  ticker String @unique
+  name   String
+  status String @default("watchlist") // will matter in Phase 3
+}
