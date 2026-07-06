@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { AddStockForm } from "@/components/AddStockForm";
 import { StockRow } from "@/components/StockRow";
+import { RefreshButton } from "@/components/refresh-button";
 import {
   Table,
   TableBody,
@@ -18,12 +19,17 @@ export default async function Home() {
     <main className="max-w-2xl mx-auto mt-16 px-4">
       <h1 className="text-2xl font-bold mb-6">Watchlist</h1>
       <AddStockForm />
+      <div className="mb-4">
+        <RefreshButton />
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Ticker</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Price</TableHead>
+            <TableHead>As of</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>

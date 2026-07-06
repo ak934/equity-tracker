@@ -74,7 +74,9 @@ export const StockScalarFieldEnum = {
   id: 'id',
   ticker: 'ticker',
   name: 'name',
-  status: 'status'
+  status: 'status',
+  lastPrice: 'lastPrice',
+  lastPriceAt: 'lastPriceAt'
 } as const
 
 export type StockScalarFieldEnum = (typeof StockScalarFieldEnum)[keyof typeof StockScalarFieldEnum]
@@ -94,4 +96,12 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
