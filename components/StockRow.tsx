@@ -7,6 +7,8 @@ type Stock = {
     ticker: string;
     name: string;
     status: string;
+    lastPrice: number | null;
+    lastPriceAt: Date | null;
 };
 
 export function StockRow({ stock }: { stock: Stock}) {
@@ -24,6 +26,12 @@ export function StockRow({ stock }: { stock: Stock}) {
                         {stock.status === "watchlist" ? "Watchlist" : "Portfolio"}
                     </Button>
                 </form>
+            </TableCell>
+            <TableCell>
+                {stock.lastPrice != null ? `$${stock.lastPrice.toFixed(2)}` : "—"}
+            </TableCell>
+            <TableCell>
+                {stock.lastPriceAt ? stock.lastPriceAt.toLocaleDateString() : "—"}
             </TableCell>
             <TableCell>
                 <form action = {deleteStock}>

@@ -12,4 +12,6 @@ model Stock {
   ticker String @unique
   name   String
   status String @default("watchlist") // will matter in Phase 3
+  lastPrice Float?
+  lastPriceAt DateTime?
 }

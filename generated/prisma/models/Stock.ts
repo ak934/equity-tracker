@@ -20,8 +20,18 @@ export type StockModel = runtime.Types.Result.DefaultSelection<Prisma.$StockPayl
 
 export type AggregateStock = {
   _count: StockCountAggregateOutputType | null
+  _avg: StockAvgAggregateOutputType | null
+  _sum: StockSumAggregateOutputType | null
   _min: StockMinAggregateOutputType | null
   _max: StockMaxAggregateOutputType | null
+}
+
+export type StockAvgAggregateOutputType = {
+  lastPrice: number | null
+}
+
+export type StockSumAggregateOutputType = {
+  lastPrice: number | null
 }
 
 export type StockMinAggregateOutputType = {
@@ -29,6 +39,8 @@ export type StockMinAggregateOutputType = {
   ticker: string | null
   name: string | null
   status: string | null
+  lastPrice: number | null
+  lastPriceAt: Date | null
 }
 
 export type StockMaxAggregateOutputType = {
@@ -36,6 +48,8 @@ export type StockMaxAggregateOutputType = {
   ticker: string | null
   name: string | null
   status: string | null
+  lastPrice: number | null
+  lastPriceAt: Date | null
 }
 
 export type StockCountAggregateOutputType = {
@@ -43,15 +57,27 @@ export type StockCountAggregateOutputType = {
   ticker: number
   name: number
   status: number
+  lastPrice: number
+  lastPriceAt: number
   _all: number
 }
 
+
+export type StockAvgAggregateInputType = {
+  lastPrice?: true
+}
+
+export type StockSumAggregateInputType = {
+  lastPrice?: true
+}
 
 export type StockMinAggregateInputType = {
   id?: true
   ticker?: true
   name?: true
   status?: true
+  lastPrice?: true
+  lastPriceAt?: true
 }
 
 export type StockMaxAggregateInputType = {
@@ -59,6 +85,8 @@ export type StockMaxAggregateInputType = {
   ticker?: true
   name?: true
   status?: true
+  lastPrice?: true
+  lastPriceAt?: true
 }
 
 export type StockCountAggregateInputType = {
@@ -66,6 +94,8 @@ export type StockCountAggregateInputType = {
   ticker?: true
   name?: true
   status?: true
+  lastPrice?: true
+  lastPriceAt?: true
   _all?: true
 }
 
@@ -107,6 +137,18 @@ export type StockAggregateArgs<ExtArgs extends runtime.Types.Extensions.Internal
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: StockAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: StockSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: StockMinAggregateInputType
@@ -137,6 +179,8 @@ export type StockGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   _count?: StockCountAggregateInputType | true
+  _avg?: StockAvgAggregateInputType
+  _sum?: StockSumAggregateInputType
   _min?: StockMinAggregateInputType
   _max?: StockMaxAggregateInputType
 }
@@ -146,7 +190,11 @@ export type StockGroupByOutputType = {
   ticker: string
   name: string
   status: string
+  lastPrice: number | null
+  lastPriceAt: Date | null
   _count: StockCountAggregateOutputType | null
+  _avg: StockAvgAggregateOutputType | null
+  _sum: StockSumAggregateOutputType | null
   _min: StockMinAggregateOutputType | null
   _max: StockMaxAggregateOutputType | null
 }
@@ -174,6 +222,8 @@ export type StockWhereInput = {
   ticker?: Prisma.StringFilter<"Stock"> | string
   name?: Prisma.StringFilter<"Stock"> | string
   status?: Prisma.StringFilter<"Stock"> | string
+  lastPrice?: Prisma.FloatNullableFilter<"Stock"> | number | null
+  lastPriceAt?: Prisma.DateTimeNullableFilter<"Stock"> | Date | string | null
 }
 
 export type StockOrderByWithRelationInput = {
@@ -181,6 +231,8 @@ export type StockOrderByWithRelationInput = {
   ticker?: Prisma.SortOrder
   name?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  lastPrice?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastPriceAt?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type StockWhereUniqueInput = Prisma.AtLeast<{
@@ -191,6 +243,8 @@ export type StockWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.StockWhereInput | Prisma.StockWhereInput[]
   name?: Prisma.StringFilter<"Stock"> | string
   status?: Prisma.StringFilter<"Stock"> | string
+  lastPrice?: Prisma.FloatNullableFilter<"Stock"> | number | null
+  lastPriceAt?: Prisma.DateTimeNullableFilter<"Stock"> | Date | string | null
 }, "id" | "ticker">
 
 export type StockOrderByWithAggregationInput = {
@@ -198,9 +252,13 @@ export type StockOrderByWithAggregationInput = {
   ticker?: Prisma.SortOrder
   name?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  lastPrice?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastPriceAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.StockCountOrderByAggregateInput
+  _avg?: Prisma.StockAvgOrderByAggregateInput
   _max?: Prisma.StockMaxOrderByAggregateInput
   _min?: Prisma.StockMinOrderByAggregateInput
+  _sum?: Prisma.StockSumOrderByAggregateInput
 }
 
 export type StockScalarWhereWithAggregatesInput = {
@@ -211,6 +269,8 @@ export type StockScalarWhereWithAggregatesInput = {
   ticker?: Prisma.StringWithAggregatesFilter<"Stock"> | string
   name?: Prisma.StringWithAggregatesFilter<"Stock"> | string
   status?: Prisma.StringWithAggregatesFilter<"Stock"> | string
+  lastPrice?: Prisma.FloatNullableWithAggregatesFilter<"Stock"> | number | null
+  lastPriceAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Stock"> | Date | string | null
 }
 
 export type StockCreateInput = {
@@ -218,6 +278,8 @@ export type StockCreateInput = {
   ticker: string
   name: string
   status?: string
+  lastPrice?: number | null
+  lastPriceAt?: Date | string | null
 }
 
 export type StockUncheckedCreateInput = {
@@ -225,6 +287,8 @@ export type StockUncheckedCreateInput = {
   ticker: string
   name: string
   status?: string
+  lastPrice?: number | null
+  lastPriceAt?: Date | string | null
 }
 
 export type StockUpdateInput = {
@@ -232,6 +296,8 @@ export type StockUpdateInput = {
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  lastPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  lastPriceAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type StockUncheckedUpdateInput = {
@@ -239,6 +305,8 @@ export type StockUncheckedUpdateInput = {
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  lastPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  lastPriceAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type StockCreateManyInput = {
@@ -246,6 +314,8 @@ export type StockCreateManyInput = {
   ticker: string
   name: string
   status?: string
+  lastPrice?: number | null
+  lastPriceAt?: Date | string | null
 }
 
 export type StockUpdateManyMutationInput = {
@@ -253,6 +323,8 @@ export type StockUpdateManyMutationInput = {
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  lastPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  lastPriceAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type StockUncheckedUpdateManyInput = {
@@ -260,6 +332,8 @@ export type StockUncheckedUpdateManyInput = {
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  lastPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  lastPriceAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type StockCountOrderByAggregateInput = {
@@ -267,6 +341,12 @@ export type StockCountOrderByAggregateInput = {
   ticker?: Prisma.SortOrder
   name?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  lastPrice?: Prisma.SortOrder
+  lastPriceAt?: Prisma.SortOrder
+}
+
+export type StockAvgOrderByAggregateInput = {
+  lastPrice?: Prisma.SortOrder
 }
 
 export type StockMaxOrderByAggregateInput = {
@@ -274,6 +354,8 @@ export type StockMaxOrderByAggregateInput = {
   ticker?: Prisma.SortOrder
   name?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  lastPrice?: Prisma.SortOrder
+  lastPriceAt?: Prisma.SortOrder
 }
 
 export type StockMinOrderByAggregateInput = {
@@ -281,10 +363,28 @@ export type StockMinOrderByAggregateInput = {
   ticker?: Prisma.SortOrder
   name?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  lastPrice?: Prisma.SortOrder
+  lastPriceAt?: Prisma.SortOrder
+}
+
+export type StockSumOrderByAggregateInput = {
+  lastPrice?: Prisma.SortOrder
 }
 
 export type StringFieldUpdateOperationsInput = {
   set?: string
+}
+
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
 }
 
 
@@ -294,6 +394,8 @@ export type StockSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   ticker?: boolean
   name?: boolean
   status?: boolean
+  lastPrice?: boolean
+  lastPriceAt?: boolean
 }, ExtArgs["result"]["stock"]>
 
 export type StockSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -301,6 +403,8 @@ export type StockSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   ticker?: boolean
   name?: boolean
   status?: boolean
+  lastPrice?: boolean
+  lastPriceAt?: boolean
 }, ExtArgs["result"]["stock"]>
 
 export type StockSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -308,6 +412,8 @@ export type StockSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   ticker?: boolean
   name?: boolean
   status?: boolean
+  lastPrice?: boolean
+  lastPriceAt?: boolean
 }, ExtArgs["result"]["stock"]>
 
 export type StockSelectScalar = {
@@ -315,9 +421,11 @@ export type StockSelectScalar = {
   ticker?: boolean
   name?: boolean
   status?: boolean
+  lastPrice?: boolean
+  lastPriceAt?: boolean
 }
 
-export type StockOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ticker" | "name" | "status", ExtArgs["result"]["stock"]>
+export type StockOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ticker" | "name" | "status" | "lastPrice" | "lastPriceAt", ExtArgs["result"]["stock"]>
 
 export type $StockPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Stock"
@@ -327,6 +435,8 @@ export type $StockPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     ticker: string
     name: string
     status: string
+    lastPrice: number | null
+    lastPriceAt: Date | null
   }, ExtArgs["result"]["stock"]>
   composites: {}
 }
@@ -754,6 +864,8 @@ export interface StockFieldRefs {
   readonly ticker: Prisma.FieldRef<"Stock", 'String'>
   readonly name: Prisma.FieldRef<"Stock", 'String'>
   readonly status: Prisma.FieldRef<"Stock", 'String'>
+  readonly lastPrice: Prisma.FieldRef<"Stock", 'Float'>
+  readonly lastPriceAt: Prisma.FieldRef<"Stock", 'DateTime'>
 }
     
 
