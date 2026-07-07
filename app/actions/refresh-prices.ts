@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 
 export async function refreshPrices() {
     const stocks = await prisma.stock.findMany();
+    const failed: string[] = [];
     for (const stock of stocks){
         try {
             const { price, asOf } = await getPrice(stock.ticker);
@@ -15,8 +16,10 @@ export async function refreshPrices() {
             });
         } catch (err) {
             console.error(`Failed to refresh ${stock.ticker}:`, err);
+            failed.push(stock.ticker);
         }
     }
     revalidatePath("/");
+    return { failed };
 }
 
