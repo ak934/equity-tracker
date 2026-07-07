@@ -28,6 +28,7 @@ export default async function Home() {
             <TableHead>Ticker</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Buy Zone</TableHead>
             <TableHead>Price</TableHead>
             <TableHead>As of</TableHead>
             <TableHead>Actions</TableHead>

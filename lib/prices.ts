@@ -18,6 +18,10 @@ function getRecentTradingDate(): Date {
   return d;
 }
 
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function fetchOpenClose(ticker: string, date: Date) {
   const apiKey = process.env.MASSIVE_API_KEY;
   const url = `https://api.massive.com/v1/open-close/${ticker}/${toDateParam(date)}?adjusted=true&apiKey=${apiKey}`;

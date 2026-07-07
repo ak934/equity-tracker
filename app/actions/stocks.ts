@@ -13,17 +13,17 @@ export async function addStock(formData: FormData) {
   }
 
   let lastPrice: number | null = null;
-  let lastPriceAt: Date | null = null;
+  let priceAsOf: Date | null = null;
   try {
     const price = await getPrice(ticker);
     lastPrice = price.price;
-    lastPriceAt = price.asOf;
+    priceAsOf = price.asOf;
   } catch (err) {
     console.error(`Failed to fetch initial price for ${ticker}:`, err);
   }
 
   await prisma.stock.create({
-    data: { ticker, name, lastPrice, lastPriceAt },
+    data: { ticker, name, status: "watchlist", lastPrice, priceAsOf },
   });
 
   revalidatePath("/");
