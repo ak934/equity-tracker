@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { getPrice } from "@/lib/prices";
 import { revalidatePath } from "next/cache";
 
 export async function addStock(formData: FormData) {
@@ -11,8 +12,18 @@ export async function addStock(formData: FormData) {
     throw new Error("Ticker and name are required");
   }
 
+  let lastPrice: number | null = null;
+  let lastPriceAt: Date | null = null;
+  try {
+    const price = await getPrice(ticker);
+    lastPrice = price.price;
+    lastPriceAt = price.asOf;
+  } catch (err) {
+    console.error(`Failed to fetch initial price for ${ticker}:`, err);
+  }
+
   await prisma.stock.create({
-    data: { ticker, name },
+    data: { ticker, name, lastPrice, lastPriceAt },
   });
 
   revalidatePath("/");
