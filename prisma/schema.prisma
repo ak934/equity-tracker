@@ -11,7 +11,10 @@ model Stock {
   id     String @id @default(cuid())
   ticker String @unique
   name   String
-  status String @default("watchlist") // will matter in Phase 3
+  status String // "Watchlist" | "Portfolio"
   lastPrice Float?
-  lastPriceAt DateTime?
+  priceAsOf DateTime?
+  buyZoneLow Float?
+  buyZoneHigh Float?
+  createdAt DateTime @default(now())
 }

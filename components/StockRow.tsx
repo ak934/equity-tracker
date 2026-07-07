@@ -1,6 +1,7 @@
 import { TableCell, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { deleteStock, updateStockStatus } from "@/app/actions/stocks";
+import { getBuyZoneStatus, type BuyZoneStatus } from "@/lib/buy-zone";
 
 type Stock = {
     id: string;
@@ -8,14 +9,29 @@ type Stock = {
     name: string;
     status: string;
     lastPrice: number | null;
-    lastPriceAt: Date | null;
+    priceAsOf: Date | null;
+    buyZoneLow: number | null;
+    buyZoneHigh: number | null;
 };
 
-export function StockRow({ stock }: { stock: Stock}) {
+const rowStyles: Record<BuyZoneStatus, string> = {
+    in: "bg-green-50",
+    above: "",
+    below: "bg-amber-50",
+    unknown: "",
+};
+
+export function StockRow({ stock }: { stock: Stock }) {
     const nextStatus = stock.status == "watchlist" ? "portfolio" : "watchlist";
 
+    const zoneStatus = getBuyZoneStatus({
+        price: stock.lastPrice,
+        low: stock.buyZoneLow,
+        high: stock.buyZoneHigh,
+    });
+
     return (
-        <TableRow>
+        <TableRow className={rowStyles[zoneStatus]}>
             <TableCell className="font-medium">{stock.ticker}</TableCell>
             <TableCell>{stock.name}</TableCell>
             <TableCell>
@@ -27,14 +43,15 @@ export function StockRow({ stock }: { stock: Stock}) {
                     </Button>
                 </form>
             </TableCell>
+            <TableCell className="capitalize">{zoneStatus}</TableCell>
             <TableCell>
                 {stock.lastPrice != null ? `$${stock.lastPrice.toFixed(2)}` : "—"}
             </TableCell>
             <TableCell>
-                {stock.lastPriceAt ? stock.lastPriceAt.toLocaleDateString() : "—"}
+                {stock.priceAsOf ? stock.priceAsOf.toLocaleDateString() : "—"}
             </TableCell>
             <TableCell>
-                <form action = {deleteStock}>
+                <form action={deleteStock}>
                     <input type="hidden" name="id" value={stock.id} />
                     <Button type="submit" variant="destructive" size="sm">
                         Delete

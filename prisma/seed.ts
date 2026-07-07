@@ -7,11 +7,11 @@ const prisma = new PrismaClient({ adapter })
 
 async function main(){
     const stocks = [
-    { ticker: "AAPL", name: "Apple Inc."},
-    { ticker: "MSFT", name: "Microsoft Corporation"},
-    { ticker: "GOOGL", name: "Alphabet Inc."},
-    { ticker: "TSLA", name: "Tesla Inc."},
-    { ticker: "NFLX", name: "Netflix Inc."},
+    { ticker: "AAPL", name: "Apple Inc.", status: "watchlist"},
+    { ticker: "MSFT", name: "Microsoft Corporation", status: "watchlist"},
+    { ticker: "GOOGL", name: "Alphabet Inc.", status: "watchlist"},
+    { ticker: "TSLA", name: "Tesla Inc.", status: "watchlist"},
+    { ticker: "NFLX", name: "Netflix Inc.", status: "watchlist"},
     ]
 
     for (const stock of stocks){

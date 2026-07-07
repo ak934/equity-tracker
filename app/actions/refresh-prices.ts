@@ -12,7 +12,7 @@ export async function refreshPrices() {
             const { price, asOf } = await getPrice(stock.ticker);
             await prisma.stock.update({
                 where: { id: stock.id },
-                data: { lastPrice: price, lastPriceAt: asOf }
+                data: { lastPrice: price, priceAsOf: asOf }
             });
         } catch (err) {
             console.error(`Failed to refresh ${stock.ticker}:`, err);

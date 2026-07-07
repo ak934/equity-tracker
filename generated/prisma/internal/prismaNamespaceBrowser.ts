@@ -76,7 +76,10 @@ export const StockScalarFieldEnum = {
   name: 'name',
   status: 'status',
   lastPrice: 'lastPrice',
-  lastPriceAt: 'lastPriceAt'
+  priceAsOf: 'priceAsOf',
+  buyZoneLow: 'buyZoneLow',
+  buyZoneHigh: 'buyZoneHigh',
+  createdAt: 'createdAt'
 } as const
 
 export type StockScalarFieldEnum = (typeof StockScalarFieldEnum)[keyof typeof StockScalarFieldEnum]
