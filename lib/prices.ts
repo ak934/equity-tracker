@@ -4,11 +4,11 @@ export type PriceResult = {
   asOf: Date;
 };
 
-function toDateParam(d: Date): string {
+export function toDateParam(d: Date): string {
   return d.toISOString().split("T")[0]; // YYYY-MM-DD
 }
 
-function getRecentTradingDate(): Date {
+export function getRecentTradingDate(): Date {
   // free tier is end-of-day data, so we start from yesterday, not today
   const d = new Date();
   d.setDate(d.getDate() - 1);
