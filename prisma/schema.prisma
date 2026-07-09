@@ -18,3 +18,15 @@ model Stock {
   buyZoneHigh Float?
   createdAt DateTime @default(now())
 }
+
+model Analysis {
+  id             String @id @default(cuid())
+  ticker         String
+  date           DateTime @default(now())
+  qualityScore   Int
+  valuationScore Int
+  action         String
+  fullText       String 
+
+  @@index([ticker])
+}

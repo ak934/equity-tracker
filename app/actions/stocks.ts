@@ -56,3 +56,23 @@ export async function updateStockStatus(formData: FormData) {
 
   revalidatePath("/");
 }
+
+import { generateAnalysis } from "@/lib/analysis";
+
+export async function runAnalysis(ticker: string) {
+  const stock = await prisma.stock.findUnique({ where: { ticker } });
+
+  const result = await generateAnalysis(ticker, stock?.lastPrice ?? null);
+
+  await prisma.analysis.create({
+    data: {
+      ticker,
+      qualityScore: result.qualityScore,
+      valuationScore: result.valuationScore,
+      action: result.action,
+      fullText: result.fullText,
+    },
+  });
+
+  revalidatePath(`/stocks/${ticker}`);
+}
