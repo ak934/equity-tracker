@@ -25,7 +25,7 @@ async function fetchOpenClose(ticker: string, date: Date) {
 }
 
 export async function getPrice(ticker: string): Promise<PriceResult> {
-  let date = getRecentTradingDate();
+  const date = getRecentTradingDate();
 
   // step back further on market holidays (e.g. July 4th), which the
   // weekday check above doesn't account for

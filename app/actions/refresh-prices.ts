@@ -3,8 +3,10 @@
 import { prisma } from "@/lib/prisma";
 import { getPrice, getRecentTradingDate, toDateParam } from "@/lib/prices";
 import { revalidatePath } from "next/cache";
+import { auth } from "@clerk/nextjs/server";
 
 export async function refreshPrices() {
+    await auth.protect();
     const stocks = await prisma.stock.findMany();
     const targetDate = toDateParam(getRecentTradingDate());
     const failed: string[] = [];
