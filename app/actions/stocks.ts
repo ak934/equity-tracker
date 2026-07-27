@@ -3,8 +3,10 @@
 import { prisma } from "@/lib/prisma";
 import { getPrice } from "@/lib/prices";
 import { revalidatePath } from "next/cache";
+import { auth } from "@clerk/nextjs/server";
 
 export async function addStock(formData: FormData) {
+  await auth.protect();
   const ticker = String(formData.get("ticker") ?? "").trim().toUpperCase();
   const name = String(formData.get("name") ?? "").trim();
 
@@ -30,6 +32,7 @@ export async function addStock(formData: FormData) {
 }
 
 export async function deleteStock(formData: FormData) {
+  await auth.protect();
   const id = String(formData.get("id") ?? "");
 
   if (!id) {
@@ -42,6 +45,7 @@ export async function deleteStock(formData: FormData) {
 }
 
 export async function updateStockStatus(formData: FormData) {
+  await auth.protect();
   const id = String(formData.get("id") ?? "");
   const status = String(formData.get("status") ?? "").trim();
 
@@ -60,6 +64,7 @@ export async function updateStockStatus(formData: FormData) {
 import { generateAnalysis } from "@/lib/analysis";
 
 export async function runAnalysis(ticker: string) {
+  await auth.protect();
   const stock = await prisma.stock.findUnique({ where: { ticker } });
 
   const result = await generateAnalysis(ticker, stock?.lastPrice ?? null);

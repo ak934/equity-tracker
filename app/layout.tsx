@@ -1,5 +1,8 @@
+import {ClerkProvider, SignInButton, SignUpButton, Show, UserButton} from "@clerk/nextjs";
+import { shadcn } from "@clerk/ui/themes";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,7 +30,26 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <ClerkProvider appearance={{ theme: shadcn }}>
+          <header className="flex justify-between items-center gap-3 px-4 py-3 border-b">
+            <nav className="flex items-center gap-4 text-sm font-medium">
+              <Link href="/">Equity Tracker</Link>
+              <Link href="/watchlist">Watchlist</Link>
+            </nav>
+            <div className="flex items-center gap-3">
+              <Show when="signed-out">
+                <SignInButton />
+                <SignUpButton />
+              </Show>
+              <Show when="signed-in">
+                <UserButton />
+              </Show>
+            </div>
+          </header>
+          {children}
+        </ClerkProvider>
+      </body>
     </html>
   );
 }
