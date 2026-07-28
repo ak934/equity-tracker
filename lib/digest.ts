@@ -12,6 +12,18 @@ export interface AnalysisStockInput {
   latestAnalysisDate?: Date | null;
 }
 
+export interface DigestBuyZoneEntry {
+  ticker: string;
+  name: string;
+  price: number | null | undefined;
+}
+
+export interface DigestStaleAnalysis {
+  ticker: string;
+  name: string;
+  latestAnalysisDate?: Date | null;
+}
+
 export function findNewBuyZoneEntries<T extends BuyZoneStockInput>(
   stocksBefore: T[],
   stocksAfter: T[]
@@ -54,4 +66,48 @@ export function findStaleAnalyses<T extends AnalysisStockInput>(
     const ageInDays = (now - stock.latestAnalysisDate.getTime()) / MS_PER_DAY;
     return ageInDays >= daysThreshold;
   });
+}
+
+export function buildDigestEmailHtml(
+  newEntries: DigestBuyZoneEntry[],
+  staleAnalyses: DigestStaleAnalysis[]
+): string {
+  const newEntriesSection = newEntries.length
+    ? `
+      <h2>New Buy Zone Entries</h2>
+      <ul>
+        ${newEntries
+          .map(
+            (s) =>
+              `<li>${s.ticker} (${s.name}) — $${s.price ?? "?"}</li>`
+          )
+          .join("\n")}
+      </ul>
+    `
+    : "";
+
+  const staleAnalysesSection = staleAnalyses.length
+    ? `
+      <h2>Stale Analyses</h2>
+      <ul>
+        ${staleAnalyses
+          .map(
+            (s) =>
+              `<li>${s.ticker} (${s.name}) — last analyzed ${
+                s.latestAnalysisDate
+                  ? s.latestAnalysisDate.toISOString().split("T")[0]
+                  : "never"
+              }</li>`
+          )
+          .join("\n")}
+      </ul>
+    `
+    : "";
+
+  return `
+    <div>
+      ${newEntriesSection}
+      ${staleAnalysesSection}
+    </div>
+  `;
 }
