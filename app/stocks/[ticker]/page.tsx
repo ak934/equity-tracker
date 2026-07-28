@@ -1,6 +1,14 @@
 import { auth } from "@clerk/nextjs/server";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { prisma } from "@/lib/prisma";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
+
+const actionBadgeStyles: Record<string, string> = {
+  buy: "bg-green-100 text-green-800",
+  hold: "bg-amber-100 text-amber-800",
+  avoid: "bg-red-100 text-red-800",
+};
 
 export default async function StockPage({
   params,
@@ -19,43 +27,67 @@ export default async function StockPage({
   const [latest, ...history] = analyses;
 
   return (
-    <div className="p-6">
+    <div className="max-w-3xl mx-auto p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{ticker}</h1>
         <RunAnalysisButton ticker={ticker} />
       </div>
 
       {latest ? (
-        <div className="mt-4 rounded border p-4">
-          <p className="text-sm text-neutral-500">
-            {latest.date.toLocaleDateString()}
-          </p>
-          <p>Action: {latest.action}</p>
-          <p>
-            Quality: {latest.qualityScore}/10 · Valuation:{" "}
-            {latest.valuationScore}/10
-          </p>
-          <p className="mt-2 whitespace-pre-wrap">{latest.fullText}</p>
+        <div className="mt-6 rounded-lg border">
+          <div className="flex flex-wrap items-center gap-3 border-b bg-neutral-50 px-5 py-3">
+            <span
+              className={`inline-block rounded px-2.5 py-1 text-sm font-medium capitalize ${
+                actionBadgeStyles[latest.action] ?? "bg-neutral-100 text-neutral-600"
+              }`}
+            >
+              {latest.action}
+            </span>
+            <span className="text-sm text-neutral-500">
+              Analyzed {latest.date.toLocaleDateString()}
+            </span>
+            <div className="ml-auto flex gap-4 text-sm">
+              <span>
+                Quality <span className="font-semibold">{latest.qualityScore}/10</span>
+              </span>
+              <span>
+                Valuation <span className="font-semibold">{latest.valuationScore}/10</span>
+              </span>
+            </div>
+          </div>
+          <div className="prose prose-neutral prose-sm sm:prose-base max-w-none px-5 py-5">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{latest.fullText}</ReactMarkdown>
+          </div>
         </div>
       ) : (
         <p className="mt-4 text-neutral-500">No analysis yet.</p>
       )}
 
       {history.length > 0 && (
-        <details className="mt-4">
-          <summary className="cursor-pointer text-sm text-neutral-500">
+        <details className="mt-6">
+          <summary className="cursor-pointer text-sm font-medium text-neutral-500">
             History ({history.length})
           </summary>
-          {history.map((a) => (
-            <div key={a.id} className="mt-2 rounded border p-3 text-sm">
-              <p className="text-neutral-500">
-                {a.date.toLocaleDateString()}
-              </p>
-              <p>
-                {a.action} · Q{a.qualityScore} · V{a.valuationScore}
-              </p>
-            </div>
-          ))}
+          <div className="mt-3 space-y-2">
+            {history.map((a) => (
+              <div
+                key={a.id}
+                className="flex flex-wrap items-center gap-3 rounded border px-4 py-2.5 text-sm"
+              >
+                <span
+                  className={`inline-block rounded px-2 py-0.5 text-xs font-medium capitalize ${
+                    actionBadgeStyles[a.action] ?? "bg-neutral-100 text-neutral-600"
+                  }`}
+                >
+                  {a.action}
+                </span>
+                <span className="text-neutral-500">{a.date.toLocaleDateString()}</span>
+                <span className="ml-auto text-neutral-500">
+                  Q{a.qualityScore} · V{a.valuationScore}
+                </span>
+              </div>
+            ))}
+          </div>
         </details>
       )}
     </div>
