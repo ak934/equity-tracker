@@ -17,6 +17,27 @@ export async function GET(request: Request) {
 
   const stocksBefore = await prisma.stock.findMany();
 
+  const aaplBefore = stocksBefore.find((s) => s.ticker === "AAPL");
+  const debug = {
+    stocksBeforeCount: stocksBefore.length,
+    aaplBefore: aaplBefore
+      ? {
+          id: aaplBefore.id,
+          ticker: aaplBefore.ticker,
+          lastPrice: aaplBefore.lastPrice,
+          priceAsOf: aaplBefore.priceAsOf,
+          buyZoneLow: aaplBefore.buyZoneLow,
+          buyZoneHigh: aaplBefore.buyZoneHigh,
+        }
+      : null,
+    databaseHost: process.env.DATABASE_URL
+      ? new URL(process.env.DATABASE_URL).host
+      : null,
+    databaseUsername: process.env.DATABASE_URL
+      ? new URL(process.env.DATABASE_URL).username
+      : null,
+  };
+
   const { updated, failed } = await refreshAllPrices();
 
   const stocksAfter = await prisma.stock.findMany();
@@ -76,5 +97,6 @@ export async function GET(request: Request) {
     newEntries: newEntries.length,
     staleAnalyses: staleAnalyses.length,
     emailSent,
+    debug,
   });
 }
