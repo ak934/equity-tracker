@@ -1,10 +1,9 @@
-import { getBuyZoneStatus } from "./buy-zone";
+import { hasHitTargetPrice } from "./target-price";
 
-export interface BuyZoneStockInput {
+export interface TargetPriceStockInput {
   ticker: string;
   price: number | null | undefined;
-  buyZoneLow: number | null | undefined;
-  buyZoneHigh: number | null | undefined;
+  targetPrice: number | null | undefined;
 }
 
 export interface AnalysisStockInput {
@@ -12,10 +11,11 @@ export interface AnalysisStockInput {
   latestAnalysisDate?: Date | null;
 }
 
-export interface DigestBuyZoneEntry {
+export interface DigestTargetPriceHit {
   ticker: string;
   name: string;
   price: number | null | undefined;
+  targetPrice: number | null | undefined;
 }
 
 export interface DigestStaleAnalysis {
@@ -24,7 +24,7 @@ export interface DigestStaleAnalysis {
   latestAnalysisDate?: Date | null;
 }
 
-export function findNewBuyZoneEntries<T extends BuyZoneStockInput>(
+export function findNewTargetPriceHits<T extends TargetPriceStockInput>(
   stocksBefore: T[],
   stocksAfter: T[]
 ): T[] {
@@ -35,18 +35,16 @@ export function findNewBuyZoneEntries<T extends BuyZoneStockInput>(
     // no prior snapshot to compare against, so we can't call this "new"
     if (!before) return false;
 
-    const beforeStatus = getBuyZoneStatus({
+    const beforeHit = hasHitTargetPrice({
       price: before.price,
-      low: before.buyZoneLow,
-      high: before.buyZoneHigh,
+      targetPrice: before.targetPrice,
     });
-    const afterStatus = getBuyZoneStatus({
+    const afterHit = hasHitTargetPrice({
       price: after.price,
-      low: after.buyZoneLow,
-      high: after.buyZoneHigh,
+      targetPrice: after.targetPrice,
     });
 
-    return beforeStatus !== "in" && afterStatus === "in";
+    return !beforeHit && afterHit;
   });
 }
 
@@ -69,17 +67,17 @@ export function findStaleAnalyses<T extends AnalysisStockInput>(
 }
 
 export function buildDigestEmailHtml(
-  newEntries: DigestBuyZoneEntry[],
+  newEntries: DigestTargetPriceHit[],
   staleAnalyses: DigestStaleAnalysis[]
 ): string {
   const newEntriesSection = newEntries.length
     ? `
-      <h2>New Buy Zone Entries</h2>
+      <h2>Target Price Hit</h2>
       <ul>
         ${newEntries
           .map(
             (s) =>
-              `<li>${s.ticker} (${s.name}) — $${s.price ?? "?"}</li>`
+              `<li>${s.ticker} (${s.name}) — $${s.price ?? "?"} (target $${s.targetPrice ?? "?"})</li>`
           )
           .join("\n")}
       </ul>

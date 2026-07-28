@@ -2,7 +2,8 @@ import Link from "next/link";
 import { TableCell, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { deleteStock, updateStockStatus } from "@/app/actions/stocks";
-import { getBuyZoneStatus, type BuyZoneStatus } from "@/lib/buy-zone";
+import { hasHitTargetPrice } from "@/lib/target-price";
+import { TargetPriceInput } from "@/components/TargetPriceInput";
 
 type Stock = {
     id: string;
@@ -11,15 +12,7 @@ type Stock = {
     status: string;
     lastPrice: number | null;
     priceAsOf: Date | null;
-    buyZoneLow: number | null;
-    buyZoneHigh: number | null;
-};
-
-const rowStyles: Record<BuyZoneStatus, string> = {
-    in: "bg-green-50",
-    above: "",
-    below: "bg-amber-50",
-    unknown: "",
+    targetPrice: number | null;
 };
 
 const actionBadgeStyles: Record<string, string> = {
@@ -35,14 +28,13 @@ export function StockRow({
     stock: Stock;
     latestAction: string | null;
 }) {
-    const zoneStatus = getBuyZoneStatus({
+    const targetHit = hasHitTargetPrice({
         price: stock.lastPrice,
-        low: stock.buyZoneLow,
-        high: stock.buyZoneHigh,
+        targetPrice: stock.targetPrice,
     });
 
     return (
-        <TableRow className={rowStyles[zoneStatus]}>
+        <TableRow className={targetHit ? "bg-green-50" : ""}>
             <TableCell className="font-medium">
                 <Link href={`/stocks/${stock.ticker}`} className="hover:underline">
                     {stock.ticker}
@@ -62,7 +54,9 @@ export function StockRow({
                     <span className="text-xs text-neutral-400">No analysis</span>
                 )}
             </TableCell>
-            <TableCell className="capitalize">{zoneStatus}</TableCell>
+            <TableCell>
+                <TargetPriceInput stockId={stock.id} targetPrice={stock.targetPrice} />
+            </TableCell>
             <TableCell>
                 {stock.lastPrice != null ? `$${stock.lastPrice.toFixed(2)}` : "—"}
             </TableCell>

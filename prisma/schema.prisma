@@ -14,8 +14,7 @@ model Stock {
   status String // "Watchlist" | "Portfolio"
   lastPrice Float?
   priceAsOf DateTime?
-  buyZoneLow Float?
-  buyZoneHigh Float?
+  targetPrice Float?
   createdAt DateTime @default(now())
 }
 

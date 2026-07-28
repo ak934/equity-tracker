@@ -2,7 +2,7 @@ import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
 import { refreshAllPrices } from "@/lib/prices";
 import {
-  findNewBuyZoneEntries,
+  findNewTargetPriceHits,
   findStaleAnalyses,
   buildDigestEmailHtml,
 } from "@/lib/digest";
@@ -30,20 +30,18 @@ export async function GET(request: Request) {
     latestAnalyses.map((a) => [a.ticker, a.date])
   );
 
-  const newEntries = findNewBuyZoneEntries(
+  const newEntries = findNewTargetPriceHits(
     stocksBefore.map((s) => ({
       ticker: s.ticker,
       name: s.name,
       price: s.lastPrice,
-      buyZoneLow: s.buyZoneLow,
-      buyZoneHigh: s.buyZoneHigh,
+      targetPrice: s.targetPrice,
     })),
     stocksAfter.map((s) => ({
       ticker: s.ticker,
       name: s.name,
       price: s.lastPrice,
-      buyZoneLow: s.buyZoneLow,
-      buyZoneHigh: s.buyZoneHigh,
+      targetPrice: s.targetPrice,
     }))
   );
 

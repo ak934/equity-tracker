@@ -14,8 +14,7 @@ type Stock = {
   status: string;
   lastPrice: number | null;
   priceAsOf: Date | null;
-  buyZoneLow: number | null;
-  buyZoneHigh: number | null;
+  targetPrice: number | null;
 };
 
 export function StockTable({
@@ -32,7 +31,7 @@ export function StockTable({
           <TableHead>Ticker</TableHead>
           <TableHead>Name</TableHead>
           <TableHead>Status</TableHead>
-          <TableHead>Buy Zone</TableHead>
+          <TableHead>Target Price</TableHead>
           <TableHead>Price</TableHead>
           <TableHead>As of</TableHead>
           <TableHead>Actions</TableHead>

@@ -28,14 +28,12 @@ export type AggregateStock = {
 
 export type StockAvgAggregateOutputType = {
   lastPrice: number | null
-  buyZoneLow: number | null
-  buyZoneHigh: number | null
+  targetPrice: number | null
 }
 
 export type StockSumAggregateOutputType = {
   lastPrice: number | null
-  buyZoneLow: number | null
-  buyZoneHigh: number | null
+  targetPrice: number | null
 }
 
 export type StockMinAggregateOutputType = {
@@ -45,8 +43,7 @@ export type StockMinAggregateOutputType = {
   status: string | null
   lastPrice: number | null
   priceAsOf: Date | null
-  buyZoneLow: number | null
-  buyZoneHigh: number | null
+  targetPrice: number | null
   createdAt: Date | null
 }
 
@@ -57,8 +54,7 @@ export type StockMaxAggregateOutputType = {
   status: string | null
   lastPrice: number | null
   priceAsOf: Date | null
-  buyZoneLow: number | null
-  buyZoneHigh: number | null
+  targetPrice: number | null
   createdAt: Date | null
 }
 
@@ -69,8 +65,7 @@ export type StockCountAggregateOutputType = {
   status: number
   lastPrice: number
   priceAsOf: number
-  buyZoneLow: number
-  buyZoneHigh: number
+  targetPrice: number
   createdAt: number
   _all: number
 }
@@ -78,14 +73,12 @@ export type StockCountAggregateOutputType = {
 
 export type StockAvgAggregateInputType = {
   lastPrice?: true
-  buyZoneLow?: true
-  buyZoneHigh?: true
+  targetPrice?: true
 }
 
 export type StockSumAggregateInputType = {
   lastPrice?: true
-  buyZoneLow?: true
-  buyZoneHigh?: true
+  targetPrice?: true
 }
 
 export type StockMinAggregateInputType = {
@@ -95,8 +88,7 @@ export type StockMinAggregateInputType = {
   status?: true
   lastPrice?: true
   priceAsOf?: true
-  buyZoneLow?: true
-  buyZoneHigh?: true
+  targetPrice?: true
   createdAt?: true
 }
 
@@ -107,8 +99,7 @@ export type StockMaxAggregateInputType = {
   status?: true
   lastPrice?: true
   priceAsOf?: true
-  buyZoneLow?: true
-  buyZoneHigh?: true
+  targetPrice?: true
   createdAt?: true
 }
 
@@ -119,8 +110,7 @@ export type StockCountAggregateInputType = {
   status?: true
   lastPrice?: true
   priceAsOf?: true
-  buyZoneLow?: true
-  buyZoneHigh?: true
+  targetPrice?: true
   createdAt?: true
   _all?: true
 }
@@ -218,8 +208,7 @@ export type StockGroupByOutputType = {
   status: string
   lastPrice: number | null
   priceAsOf: Date | null
-  buyZoneLow: number | null
-  buyZoneHigh: number | null
+  targetPrice: number | null
   createdAt: Date
   _count: StockCountAggregateOutputType | null
   _avg: StockAvgAggregateOutputType | null
@@ -253,8 +242,7 @@ export type StockWhereInput = {
   status?: Prisma.StringFilter<"Stock"> | string
   lastPrice?: Prisma.FloatNullableFilter<"Stock"> | number | null
   priceAsOf?: Prisma.DateTimeNullableFilter<"Stock"> | Date | string | null
-  buyZoneLow?: Prisma.FloatNullableFilter<"Stock"> | number | null
-  buyZoneHigh?: Prisma.FloatNullableFilter<"Stock"> | number | null
+  targetPrice?: Prisma.FloatNullableFilter<"Stock"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Stock"> | Date | string
 }
 
@@ -265,8 +253,7 @@ export type StockOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   lastPrice?: Prisma.SortOrderInput | Prisma.SortOrder
   priceAsOf?: Prisma.SortOrderInput | Prisma.SortOrder
-  buyZoneLow?: Prisma.SortOrderInput | Prisma.SortOrder
-  buyZoneHigh?: Prisma.SortOrderInput | Prisma.SortOrder
+  targetPrice?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -280,8 +267,7 @@ export type StockWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.StringFilter<"Stock"> | string
   lastPrice?: Prisma.FloatNullableFilter<"Stock"> | number | null
   priceAsOf?: Prisma.DateTimeNullableFilter<"Stock"> | Date | string | null
-  buyZoneLow?: Prisma.FloatNullableFilter<"Stock"> | number | null
-  buyZoneHigh?: Prisma.FloatNullableFilter<"Stock"> | number | null
+  targetPrice?: Prisma.FloatNullableFilter<"Stock"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Stock"> | Date | string
 }, "id" | "ticker">
 
@@ -292,8 +278,7 @@ export type StockOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   lastPrice?: Prisma.SortOrderInput | Prisma.SortOrder
   priceAsOf?: Prisma.SortOrderInput | Prisma.SortOrder
-  buyZoneLow?: Prisma.SortOrderInput | Prisma.SortOrder
-  buyZoneHigh?: Prisma.SortOrderInput | Prisma.SortOrder
+  targetPrice?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.StockCountOrderByAggregateInput
   _avg?: Prisma.StockAvgOrderByAggregateInput
@@ -312,8 +297,7 @@ export type StockScalarWhereWithAggregatesInput = {
   status?: Prisma.StringWithAggregatesFilter<"Stock"> | string
   lastPrice?: Prisma.FloatNullableWithAggregatesFilter<"Stock"> | number | null
   priceAsOf?: Prisma.DateTimeNullableWithAggregatesFilter<"Stock"> | Date | string | null
-  buyZoneLow?: Prisma.FloatNullableWithAggregatesFilter<"Stock"> | number | null
-  buyZoneHigh?: Prisma.FloatNullableWithAggregatesFilter<"Stock"> | number | null
+  targetPrice?: Prisma.FloatNullableWithAggregatesFilter<"Stock"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Stock"> | Date | string
 }
 
@@ -324,8 +308,7 @@ export type StockCreateInput = {
   status: string
   lastPrice?: number | null
   priceAsOf?: Date | string | null
-  buyZoneLow?: number | null
-  buyZoneHigh?: number | null
+  targetPrice?: number | null
   createdAt?: Date | string
 }
 
@@ -336,8 +319,7 @@ export type StockUncheckedCreateInput = {
   status: string
   lastPrice?: number | null
   priceAsOf?: Date | string | null
-  buyZoneLow?: number | null
-  buyZoneHigh?: number | null
+  targetPrice?: number | null
   createdAt?: Date | string
 }
 
@@ -348,8 +330,7 @@ export type StockUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   lastPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   priceAsOf?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  buyZoneLow?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  buyZoneHigh?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  targetPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -360,8 +341,7 @@ export type StockUncheckedUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   lastPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   priceAsOf?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  buyZoneLow?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  buyZoneHigh?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  targetPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -372,8 +352,7 @@ export type StockCreateManyInput = {
   status: string
   lastPrice?: number | null
   priceAsOf?: Date | string | null
-  buyZoneLow?: number | null
-  buyZoneHigh?: number | null
+  targetPrice?: number | null
   createdAt?: Date | string
 }
 
@@ -384,8 +363,7 @@ export type StockUpdateManyMutationInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   lastPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   priceAsOf?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  buyZoneLow?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  buyZoneHigh?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  targetPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -396,8 +374,7 @@ export type StockUncheckedUpdateManyInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   lastPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   priceAsOf?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  buyZoneLow?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  buyZoneHigh?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  targetPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -408,15 +385,13 @@ export type StockCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   lastPrice?: Prisma.SortOrder
   priceAsOf?: Prisma.SortOrder
-  buyZoneLow?: Prisma.SortOrder
-  buyZoneHigh?: Prisma.SortOrder
+  targetPrice?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type StockAvgOrderByAggregateInput = {
   lastPrice?: Prisma.SortOrder
-  buyZoneLow?: Prisma.SortOrder
-  buyZoneHigh?: Prisma.SortOrder
+  targetPrice?: Prisma.SortOrder
 }
 
 export type StockMaxOrderByAggregateInput = {
@@ -426,8 +401,7 @@ export type StockMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   lastPrice?: Prisma.SortOrder
   priceAsOf?: Prisma.SortOrder
-  buyZoneLow?: Prisma.SortOrder
-  buyZoneHigh?: Prisma.SortOrder
+  targetPrice?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -438,15 +412,13 @@ export type StockMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   lastPrice?: Prisma.SortOrder
   priceAsOf?: Prisma.SortOrder
-  buyZoneLow?: Prisma.SortOrder
-  buyZoneHigh?: Prisma.SortOrder
+  targetPrice?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type StockSumOrderByAggregateInput = {
   lastPrice?: Prisma.SortOrder
-  buyZoneLow?: Prisma.SortOrder
-  buyZoneHigh?: Prisma.SortOrder
+  targetPrice?: Prisma.SortOrder
 }
 
 export type StringFieldUpdateOperationsInput = {
@@ -478,8 +450,7 @@ export type StockSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   status?: boolean
   lastPrice?: boolean
   priceAsOf?: boolean
-  buyZoneLow?: boolean
-  buyZoneHigh?: boolean
+  targetPrice?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["stock"]>
 
@@ -490,8 +461,7 @@ export type StockSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   status?: boolean
   lastPrice?: boolean
   priceAsOf?: boolean
-  buyZoneLow?: boolean
-  buyZoneHigh?: boolean
+  targetPrice?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["stock"]>
 
@@ -502,8 +472,7 @@ export type StockSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   status?: boolean
   lastPrice?: boolean
   priceAsOf?: boolean
-  buyZoneLow?: boolean
-  buyZoneHigh?: boolean
+  targetPrice?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["stock"]>
 
@@ -514,12 +483,11 @@ export type StockSelectScalar = {
   status?: boolean
   lastPrice?: boolean
   priceAsOf?: boolean
-  buyZoneLow?: boolean
-  buyZoneHigh?: boolean
+  targetPrice?: boolean
   createdAt?: boolean
 }
 
-export type StockOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ticker" | "name" | "status" | "lastPrice" | "priceAsOf" | "buyZoneLow" | "buyZoneHigh" | "createdAt", ExtArgs["result"]["stock"]>
+export type StockOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ticker" | "name" | "status" | "lastPrice" | "priceAsOf" | "targetPrice" | "createdAt", ExtArgs["result"]["stock"]>
 
 export type $StockPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Stock"
@@ -531,8 +499,7 @@ export type $StockPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     status: string
     lastPrice: number | null
     priceAsOf: Date | null
-    buyZoneLow: number | null
-    buyZoneHigh: number | null
+    targetPrice: number | null
     createdAt: Date
   }, ExtArgs["result"]["stock"]>
   composites: {}
@@ -963,8 +930,7 @@ export interface StockFieldRefs {
   readonly status: Prisma.FieldRef<"Stock", 'String'>
   readonly lastPrice: Prisma.FieldRef<"Stock", 'Float'>
   readonly priceAsOf: Prisma.FieldRef<"Stock", 'DateTime'>
-  readonly buyZoneLow: Prisma.FieldRef<"Stock", 'Float'>
-  readonly buyZoneHigh: Prisma.FieldRef<"Stock", 'Float'>
+  readonly targetPrice: Prisma.FieldRef<"Stock", 'Float'>
   readonly createdAt: Prisma.FieldRef<"Stock", 'DateTime'>
 }
     

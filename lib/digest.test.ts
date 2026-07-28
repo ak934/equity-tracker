@@ -1,58 +1,58 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import {
-  findNewBuyZoneEntries,
+  findNewTargetPriceHits,
   findStaleAnalyses,
-  type BuyZoneStockInput,
+  type TargetPriceStockInput,
   type AnalysisStockInput,
 } from "./digest";
 
-describe("findNewBuyZoneEntries", () => {
-  it("excludes a stock that stays out of zone", () => {
-    const before: BuyZoneStockInput[] = [
-      { ticker: "AAA", price: 90, buyZoneLow: 100, buyZoneHigh: 120 },
+describe("findNewTargetPriceHits", () => {
+  it("excludes a stock that stays above its target", () => {
+    const before: TargetPriceStockInput[] = [
+      { ticker: "AAA", price: 130, targetPrice: 120 },
     ];
-    const after: BuyZoneStockInput[] = [
-      { ticker: "AAA", price: 95, buyZoneLow: 100, buyZoneHigh: 120 },
+    const after: TargetPriceStockInput[] = [
+      { ticker: "AAA", price: 125, targetPrice: 120 },
     ];
-    expect(findNewBuyZoneEntries(before, after)).toEqual([]);
+    expect(findNewTargetPriceHits(before, after)).toEqual([]);
   });
 
-  it("includes a stock that enters the zone", () => {
-    const before: BuyZoneStockInput[] = [
-      { ticker: "BBB", price: 90, buyZoneLow: 100, buyZoneHigh: 120 },
+  it("includes a stock that drops to its target", () => {
+    const before: TargetPriceStockInput[] = [
+      { ticker: "BBB", price: 130, targetPrice: 120 },
     ];
-    const after: BuyZoneStockInput[] = [
-      { ticker: "BBB", price: 110, buyZoneLow: 100, buyZoneHigh: 120 },
+    const after: TargetPriceStockInput[] = [
+      { ticker: "BBB", price: 115, targetPrice: 120 },
     ];
-    expect(findNewBuyZoneEntries(before, after)).toEqual(after);
+    expect(findNewTargetPriceHits(before, after)).toEqual(after);
   });
 
-  it("excludes a stock that was already in zone before (not new)", () => {
-    const before: BuyZoneStockInput[] = [
-      { ticker: "CCC", price: 110, buyZoneLow: 100, buyZoneHigh: 120 },
+  it("excludes a stock that was already at/below its target before (not new)", () => {
+    const before: TargetPriceStockInput[] = [
+      { ticker: "CCC", price: 110, targetPrice: 120 },
     ];
-    const after: BuyZoneStockInput[] = [
-      { ticker: "CCC", price: 115, buyZoneLow: 100, buyZoneHigh: 120 },
+    const after: TargetPriceStockInput[] = [
+      { ticker: "CCC", price: 105, targetPrice: 120 },
     ];
-    expect(findNewBuyZoneEntries(before, after)).toEqual([]);
+    expect(findNewTargetPriceHits(before, after)).toEqual([]);
   });
 
   it("handles a stock missing from the before array without crashing", () => {
-    const before: BuyZoneStockInput[] = [];
-    const after: BuyZoneStockInput[] = [
-      { ticker: "DDD", price: 110, buyZoneLow: 100, buyZoneHigh: 120 },
+    const before: TargetPriceStockInput[] = [];
+    const after: TargetPriceStockInput[] = [
+      { ticker: "DDD", price: 110, targetPrice: 120 },
     ];
-    expect(() => findNewBuyZoneEntries(before, after)).not.toThrow();
-    expect(findNewBuyZoneEntries(before, after)).toEqual([]);
+    expect(() => findNewTargetPriceHits(before, after)).not.toThrow();
+    expect(findNewTargetPriceHits(before, after)).toEqual([]);
   });
 
   it("handles a stock missing from the after array without crashing", () => {
-    const before: BuyZoneStockInput[] = [
-      { ticker: "EEE", price: 90, buyZoneLow: 100, buyZoneHigh: 120 },
+    const before: TargetPriceStockInput[] = [
+      { ticker: "EEE", price: 130, targetPrice: 120 },
     ];
-    const after: BuyZoneStockInput[] = [];
-    expect(() => findNewBuyZoneEntries(before, after)).not.toThrow();
-    expect(findNewBuyZoneEntries(before, after)).toEqual([]);
+    const after: TargetPriceStockInput[] = [];
+    expect(() => findNewTargetPriceHits(before, after)).not.toThrow();
+    expect(findNewTargetPriceHits(before, after)).toEqual([]);
   });
 });
 
