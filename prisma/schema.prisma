@@ -15,6 +15,7 @@ model Stock {
   lastPrice Float?
   priceAsOf DateTime?
   targetPrice Float?
+  hiddenFromDashboard Boolean @default(false)
   createdAt DateTime @default(now())
 }
 

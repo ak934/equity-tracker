@@ -78,7 +78,7 @@ export function StockRow({
                 <form action={deleteStock} className="inline">
                     <input type="hidden" name="id" value={stock.id} />
                     <Button type="submit" variant="destructive" size="sm">
-                        Delete
+                        {stock.status === "watchlist" ? "Remove from Dashboard" : "Delete"}
                     </Button>
                 </form>
             </TableCell>

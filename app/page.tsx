@@ -8,6 +8,7 @@ export default async function Home() {
   await auth.protect();
 
   const stocks = await prisma.stock.findMany({
+    where: { hiddenFromDashboard: false },
     orderBy: { ticker: "asc" },
   });
 

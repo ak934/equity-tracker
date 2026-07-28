@@ -41,7 +41,18 @@ export async function deleteStock(formData: FormData) {
     throw new Error("Stock id is required");
   }
 
-  await prisma.stock.delete({ where: { id } });
+  const stock = await prisma.stock.findUnique({ where: { id } });
+
+  // stocks on the watchlist stay visible there even after being
+  // "deleted" from the dashboard, so hide instead of hard-deleting
+  if (stock?.status === "watchlist") {
+    await prisma.stock.update({
+      where: { id },
+      data: { hiddenFromDashboard: true },
+    });
+  } else {
+    await prisma.stock.delete({ where: { id } });
+  }
 
   revalidatePath("/");
 }
@@ -57,7 +68,9 @@ export async function updateStockStatus(formData: FormData) {
 
   await prisma.stock.update({
     where: { id },
-    data: { status },
+    // leaving the watchlist restores dashboard visibility, since a stock
+    // hidden from the dashboard would otherwise become unreachable
+    data: { status, hiddenFromDashboard: status === "watchlist" ? undefined : false },
   });
 
   revalidatePath("/");
