@@ -39,6 +39,10 @@ export function AddStockForm() {
                 min="0"
                 className="flex-1"
             />
+            <label className="flex items-center gap-1.5 text-sm whitespace-nowrap">
+                <input type="checkbox" name="addToWatchlist" className="size-4" />
+                Add to watchlist
+            </label>
             <Button type="submit">Add</Button>
         </form>
     );

@@ -11,6 +11,7 @@ export async function addStock(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   const targetPriceRaw = String(formData.get("targetPrice") ?? "").trim();
   const targetPrice = targetPriceRaw ? Number(targetPriceRaw) : null;
+  const status = formData.get("addToWatchlist") ? "watchlist" : "portfolio";
 
   if (!ticker || !name) {
     throw new Error("Ticker and name are required");
@@ -27,10 +28,11 @@ export async function addStock(formData: FormData) {
   }
 
   await prisma.stock.create({
-    data: { ticker, name, status: "watchlist", lastPrice, priceAsOf, targetPrice },
+    data: { ticker, name, status, lastPrice, priceAsOf, targetPrice },
   });
 
   revalidatePath("/");
+  revalidatePath("/watchlist");
 }
 
 export async function deleteStock(formData: FormData) {
