@@ -59,6 +59,7 @@ export async function updateStockStatus(formData: FormData) {
   });
 
   revalidatePath("/");
+  revalidatePath("/watchlist");
 }
 
 import { generateAnalysis } from "@/lib/analysis";

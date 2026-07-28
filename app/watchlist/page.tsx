@@ -9,6 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { updateStockStatus } from "@/app/actions/stocks";
 
 export default async function WatchlistPage() {
   await auth.protect();
@@ -31,6 +33,7 @@ export default async function WatchlistPage() {
               <TableHead>Name</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>As of</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -47,6 +50,15 @@ export default async function WatchlistPage() {
                 </TableCell>
                 <TableCell>
                   {stock.priceAsOf ? stock.priceAsOf.toLocaleDateString() : "—"}
+                </TableCell>
+                <TableCell>
+                  <form action={updateStockStatus}>
+                    <input type="hidden" name="id" value={stock.id} />
+                    <input type="hidden" name="status" value="portfolio" />
+                    <Button type="submit" variant="secondary" size="sm">
+                      Remove from Watchlist
+                    </Button>
+                  </form>
                 </TableCell>
               </TableRow>
             ))}
