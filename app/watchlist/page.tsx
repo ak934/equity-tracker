@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { updateStockStatus } from "@/app/actions/stocks";
+import { TargetPriceInput } from "@/components/TargetPriceInput";
+import { hasHitTargetPrice } from "@/lib/target-price";
 
 export default async function WatchlistPage() {
   await auth.protect();
@@ -31,37 +33,48 @@ export default async function WatchlistPage() {
             <TableRow>
               <TableHead>Ticker</TableHead>
               <TableHead>Name</TableHead>
+              <TableHead>Target Price</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>As of</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {stocks.map((stock) => (
-              <TableRow key={stock.id}>
-                <TableCell className="font-medium">
-                  <Link href={`/stocks/${stock.ticker}`} className="hover:underline">
-                    {stock.ticker}
-                  </Link>
-                </TableCell>
-                <TableCell>{stock.name}</TableCell>
-                <TableCell>
-                  {stock.lastPrice != null ? `$${stock.lastPrice.toFixed(2)}` : "—"}
-                </TableCell>
-                <TableCell>
-                  {stock.priceAsOf ? stock.priceAsOf.toLocaleDateString() : "—"}
-                </TableCell>
-                <TableCell>
-                  <form action={updateStockStatus}>
-                    <input type="hidden" name="id" value={stock.id} />
-                    <input type="hidden" name="status" value="portfolio" />
-                    <Button type="submit" variant="secondary" size="sm">
-                      Remove from Watchlist
-                    </Button>
-                  </form>
-                </TableCell>
-              </TableRow>
-            ))}
+            {stocks.map((stock) => {
+              const targetHit = hasHitTargetPrice({
+                price: stock.lastPrice,
+                targetPrice: stock.targetPrice,
+              });
+
+              return (
+                <TableRow key={stock.id} className={targetHit ? "bg-green-50" : ""}>
+                  <TableCell className="font-medium">
+                    <Link href={`/stocks/${stock.ticker}`} className="hover:underline">
+                      {stock.ticker}
+                    </Link>
+                  </TableCell>
+                  <TableCell>{stock.name}</TableCell>
+                  <TableCell>
+                    <TargetPriceInput stockId={stock.id} targetPrice={stock.targetPrice} />
+                  </TableCell>
+                  <TableCell>
+                    {stock.lastPrice != null ? `$${stock.lastPrice.toFixed(2)}` : "—"}
+                  </TableCell>
+                  <TableCell>
+                    {stock.priceAsOf ? stock.priceAsOf.toLocaleDateString() : "—"}
+                  </TableCell>
+                  <TableCell>
+                    <form action={updateStockStatus}>
+                      <input type="hidden" name="id" value={stock.id} />
+                      <input type="hidden" name="status" value="portfolio" />
+                      <Button type="submit" variant="secondary" size="sm">
+                        Remove from Watchlist
+                      </Button>
+                    </form>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       )}
