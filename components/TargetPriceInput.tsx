@@ -13,6 +13,7 @@ export function TargetPriceInput({
   targetPrice: number | null;
 }) {
   const [value, setValue] = useState(targetPrice != null ? String(targetPrice) : "");
+  const [isEditing, setIsEditing] = useState(targetPrice == null);
   const [isPending, startTransition] = useTransition();
 
   const save = () => {
@@ -21,8 +22,26 @@ export function TargetPriceInput({
       formData.set("id", stockId);
       formData.set("targetPrice", value);
       await updateTargetPrice(formData);
+      setIsEditing(false);
     });
   };
+
+  if (!isEditing) {
+    const displayValue = value.trim() ? Number(value) : null;
+    return (
+      <div className="flex items-center gap-2">
+        <span>{displayValue != null && !Number.isNaN(displayValue) ? `$${displayValue.toFixed(2)}` : "—"}</span>
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          onClick={() => setIsEditing(true)}
+        >
+          Edit
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center gap-1">
