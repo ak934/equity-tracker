@@ -21,6 +21,17 @@ export default async function Home() {
     latestAnalyses.map((a) => [a.ticker, a.action])
   );
 
+  if (stocks.length === 0) {
+    return (
+      <main className="max-w-2xl mx-auto mt-16 px-4 text-center">
+        <h1 className="text-2xl font-bold mb-6">
+          What stocks do you want to look at today?
+        </h1>
+        <AddStockForm />
+      </main>
+    );
+  }
+
   return (
     <main className="max-w-2xl mx-auto mt-16 px-4">
       <h1 className="text-2xl font-bold mb-6">All Stocks</h1>

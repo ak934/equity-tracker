@@ -31,14 +31,6 @@ export function AddStockForm() {
                 required
                 className="flex-1"
             />
-            <Input
-                type='number'
-                name="targetPrice"
-                placeholder="Target price"
-                step="0.01"
-                min="0"
-                className="flex-1"
-            />
             <Button type="submit">Add</Button>
         </form>
     );
