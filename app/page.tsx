@@ -1,9 +1,12 @@
+import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { AddStockForm } from "@/components/AddStockForm";
 import { RefreshButton } from "@/components/refresh-button";
 import { StockTable } from "@/components/StockTable";
 
 export default async function Home() {
+  await auth.protect();
+
   const stocks = await prisma.stock.findMany({
     orderBy: { ticker: "asc" },
   });

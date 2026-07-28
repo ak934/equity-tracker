@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import {
   Table,
@@ -10,6 +11,8 @@ import {
 } from "@/components/ui/table";
 
 export default async function WatchlistPage() {
+  await auth.protect();
+
   const stocks = await prisma.stock.findMany({
     where: { status: "watchlist" },
     orderBy: { ticker: "asc" },

@@ -1,3 +1,4 @@
+import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
 
@@ -6,6 +7,8 @@ export default async function StockPage({
 }: {
   params: Promise<{ ticker: string }>;
 }) {
+  await auth.protect();
+
   const { ticker } = await params;
 
   const analyses = await prisma.analysis.findMany({
