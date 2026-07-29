@@ -70,22 +70,24 @@ export default async function StockPage({
           </summary>
           <div className="mt-3 space-y-2">
             {history.map((a) => (
-              <div
-                key={a.id}
-                className="flex flex-wrap items-center gap-3 rounded border px-4 py-2.5 text-sm"
-              >
-                <span
-                  className={`inline-block rounded px-2 py-0.5 text-xs font-medium capitalize ${
-                    actionBadgeStyles[a.action] ?? "bg-neutral-100 text-neutral-600"
-                  }`}
-                >
-                  {a.action}
-                </span>
-                <span className="text-neutral-500">{a.date.toLocaleDateString()}</span>
-                <span className="ml-auto text-neutral-500">
-                  Q{a.qualityScore} · V{a.valuationScore}
-                </span>
-              </div>
+              <details key={a.id} className="rounded border text-sm">
+                <summary className="flex flex-wrap items-center gap-3 cursor-pointer px-4 py-2.5">
+                  <span
+                    className={`inline-block rounded px-2 py-0.5 text-xs font-medium capitalize ${
+                      actionBadgeStyles[a.action] ?? "bg-neutral-100 text-neutral-600"
+                    }`}
+                  >
+                    {a.action}
+                  </span>
+                  <span className="text-neutral-500">{a.date.toLocaleDateString()}</span>
+                  <span className="ml-auto text-neutral-500">
+                    Q{a.qualityScore} · V{a.valuationScore}
+                  </span>
+                </summary>
+                <div className="prose prose-neutral prose-sm max-w-none border-t px-4 py-4">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{a.fullText}</ReactMarkdown>
+                </div>
+              </details>
             ))}
           </div>
         </details>
