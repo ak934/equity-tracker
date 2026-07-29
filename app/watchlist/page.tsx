@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { updateStockStatus } from "@/app/actions/stocks";
 import { TargetPriceInput } from "@/components/TargetPriceInput";
 import { hasHitTargetPrice } from "@/lib/target-price";
+import { RefreshButton } from "@/components/refresh-button";
 
 export default async function WatchlistPage() {
   await auth.protect();
@@ -25,6 +26,11 @@ export default async function WatchlistPage() {
   return (
     <main className="max-w-2xl mx-auto mt-16 px-4">
       <h1 className="text-2xl font-bold mb-6">Watchlist</h1>
+      {stocks.length > 0 && (
+        <div className="mb-4">
+          <RefreshButton />
+        </div>
+      )}
       {stocks.length === 0 ? (
         <p className="text-neutral-500">No stocks in your watchlist yet.</p>
       ) : (

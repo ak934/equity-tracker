@@ -8,6 +8,7 @@ export async function refreshPrices() {
     await auth.protect();
     const { failed } = await refreshAllPrices();
     revalidatePath("/");
+    revalidatePath("/watchlist");
     return { failed };
 }
 
