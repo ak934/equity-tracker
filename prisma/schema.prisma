@@ -16,6 +16,7 @@ model Stock {
   priceAsOf DateTime?
   targetPrice Float?
   hiddenFromDashboard Boolean @default(false)
+  needsReanalysis Boolean @default(false)
   createdAt DateTime @default(now())
 }
 
