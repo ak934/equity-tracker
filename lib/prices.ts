@@ -16,12 +16,27 @@ export function toDateParam(d: Date): string {
   return d.toISOString().split("T")[0]; // YYYY-MM-DD
 }
 
+function getEasternDateParts(date: Date) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const map = Object.fromEntries(parts.map((p) => [p.type, p.value]));
+  return { year: Number(map.year), month: Number(map.month), day: Number(map.day) };
+}
+
 export function getRecentTradingDate(): Date {
-  // free tier is end-of-day data, so we start from yesterday, not today
-  const d = new Date();
-  d.setDate(d.getDate() - 1);
+  // free tier is end-of-day data, so we start from yesterday, not today.
+  // NYSE trading days are defined in US/Eastern, so anchor to that calendar
+  // date (as a UTC-midnight Date) instead of the server's local timezone —
+  // otherwise this drifts by a day depending on where/when the app runs.
+  const { year, month, day } = getEasternDateParts(new Date());
+  const d = new Date(Date.UTC(year, month - 1, day));
+  d.setUTCDate(d.getUTCDate() - 1);
   while (d.getUTCDay() === 0 || d.getUTCDay() === 6) {
-    d.setDate(d.getDate() - 1); // skip Sat/Sun
+    d.setUTCDate(d.getUTCDate() - 1); // skip Sat/Sun
   }
   return d;
 }
@@ -41,9 +56,9 @@ export async function getPrice(ticker: string): Promise<PriceResult> {
     const res = await fetchOpenClose(ticker, date);
 
     if (res.status === 404) {
-      date.setDate(date.getDate() - 1);
+      date.setUTCDate(date.getUTCDate() - 1);
       while (date.getUTCDay() === 0 || date.getUTCDay() === 6) {
-        date.setDate(date.getDate() - 1);
+        date.setUTCDate(date.getUTCDate() - 1);
       }
       continue;
     }
