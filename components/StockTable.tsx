@@ -17,21 +17,13 @@ type Stock = {
   targetPrice: number | null;
 };
 
-export function StockTable({
-  stocks,
-  latestActionByTicker,
-}: {
-  stocks: Stock[];
-  latestActionByTicker: Map<string, string>;
-}) {
+export function StockTable({ stocks }: { stocks: Stock[] }) {
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Ticker</TableHead>
           <TableHead>Name</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Target Price</TableHead>
           <TableHead>Price</TableHead>
           <TableHead>As of</TableHead>
           <TableHead>Actions</TableHead>
@@ -39,11 +31,7 @@ export function StockTable({
       </TableHeader>
       <TableBody>
         {stocks.map((stock) => (
-          <StockRow
-            key={stock.id}
-            stock={stock}
-            latestAction={latestActionByTicker.get(stock.ticker) ?? null}
-          />
+          <StockRow key={stock.id} stock={stock} />
         ))}
       </TableBody>
     </Table>

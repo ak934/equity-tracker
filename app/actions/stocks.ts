@@ -144,4 +144,6 @@ export async function runAnalysis(ticker: string) {
   });
 
   revalidatePath(`/stocks/${ticker}`);
+  revalidatePath("/");
+  revalidatePath("/watchlist");
 }

@@ -26,9 +26,27 @@ export class TickerSearchError extends Error {
   }
 }
 
+const DISPLAY_LIMIT = 8;
+
+// fetched from the API in the API's own relevance order, which tends to bury
+// the actual company under leveraged/derivative ETFs that merely reference
+// it by name (e.g. searching "TSLA" surfaces "GraniteShares Autocallable
+// TSLA ETF" ahead of Tesla itself) — so a bigger batch is pulled and
+// re-ranked locally before trimming down to what's shown.
+const FETCH_LIMIT = 25;
+
+function rank(r: { ticker: string; type?: string }, normalizedQuery: string): number {
+  const isExactTicker = r.ticker.toUpperCase() === normalizedQuery;
+  const isCommonStock = r.type === "CS";
+  if (isExactTicker && isCommonStock) return 0;
+  if (isExactTicker) return 1;
+  if (isCommonStock) return 2;
+  return 3;
+}
+
 export async function searchTickers(query: string): Promise<TickerSearchResult[]> {
   const apiKey = process.env.MASSIVE_API_KEY;
-  const url = `https://api.massive.com/v3/reference/tickers?search=${encodeURIComponent(query)}&active=true&limit=8&apiKey=${apiKey}`;
+  const url = `https://api.massive.com/v3/reference/tickers?search=${encodeURIComponent(query)}&active=true&limit=${FETCH_LIMIT}&apiKey=${apiKey}`;
   const res = await fetch(url);
 
   if (!res.ok) {
@@ -36,9 +54,14 @@ export async function searchTickers(query: string): Promise<TickerSearchResult[]
   }
 
   const data = await res.json();
-  const results: Array<{ ticker: string; name: string }> = data?.results ?? [];
+  const results: Array<{ ticker: string; name?: string; type?: string }> = data?.results ?? [];
+  const normalizedQuery = query.trim().toUpperCase();
 
-  return results.map((r) => ({ ticker: r.ticker, name: r.name }));
+  return results
+    .filter((r): r is { ticker: string; name: string; type?: string } => Boolean(r.name))
+    .sort((a, b) => rank(a, normalizedQuery) - rank(b, normalizedQuery))
+    .slice(0, DISPLAY_LIMIT)
+    .map((r) => ({ ticker: r.ticker, name: r.name }));
 }
 
 export function toDateParam(d: Date): string {

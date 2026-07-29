@@ -12,15 +12,6 @@ export default async function Home() {
     orderBy: { ticker: "asc" },
   });
 
-  const latestAnalyses = await prisma.analysis.findMany({
-    where: { ticker: { in: stocks.map((s) => s.ticker) } },
-    orderBy: [{ ticker: "asc" }, { date: "desc" }],
-    distinct: ["ticker"],
-  });
-  const latestActionByTicker = new Map(
-    latestAnalyses.map((a) => [a.ticker, a.action])
-  );
-
   if (stocks.length === 0) {
     return (
       <main className="max-w-2xl mx-auto mt-16 px-4 text-center">
@@ -39,7 +30,7 @@ export default async function Home() {
       <div className="mb-4">
         <RefreshButton />
       </div>
-      <StockTable stocks={stocks} latestActionByTicker={latestActionByTicker} />
+      <StockTable stocks={stocks} />
     </main>
   );
 }

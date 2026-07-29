@@ -3,7 +3,6 @@ import { TableCell, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { deleteStock, updateStockStatus } from "@/app/actions/stocks";
 import { hasHitTargetPrice } from "@/lib/target-price";
-import { TargetPriceInput } from "@/components/TargetPriceInput";
 
 type Stock = {
     id: string;
@@ -15,18 +14,10 @@ type Stock = {
     targetPrice: number | null;
 };
 
-const actionBadgeStyles: Record<string, string> = {
-    buy: "bg-green-100 text-green-800",
-    hold: "bg-amber-100 text-amber-800",
-    avoid: "bg-red-100 text-red-800",
-};
-
 export function StockRow({
     stock,
-    latestAction,
 }: {
     stock: Stock;
-    latestAction: string | null;
 }) {
     const targetHit = hasHitTargetPrice({
         price: stock.lastPrice,
@@ -41,22 +32,6 @@ export function StockRow({
                 </Link>
             </TableCell>
             <TableCell>{stock.name}</TableCell>
-            <TableCell>
-                {latestAction ? (
-                    <span
-                        className={`inline-block rounded px-2 py-0.5 text-xs font-medium capitalize ${
-                            actionBadgeStyles[latestAction] ?? "bg-neutral-100 text-neutral-600"
-                        }`}
-                    >
-                        {latestAction}
-                    </span>
-                ) : (
-                    <span className="text-xs text-neutral-400">No analysis</span>
-                )}
-            </TableCell>
-            <TableCell>
-                <TargetPriceInput stockId={stock.id} targetPrice={stock.targetPrice} />
-            </TableCell>
             <TableCell>
                 {stock.lastPrice != null ? `$${stock.lastPrice.toFixed(2)}` : "—"}
             </TableCell>

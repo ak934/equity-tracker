@@ -14,6 +14,13 @@ import { updateStockStatus } from "@/app/actions/stocks";
 import { TargetPriceInput } from "@/components/TargetPriceInput";
 import { hasHitTargetPrice } from "@/lib/target-price";
 import { RefreshButton } from "@/components/refresh-button";
+import { RunAnalysisButton } from "@/components/run-analysis-button";
+
+const actionBadgeStyles: Record<string, string> = {
+  buy: "bg-green-100 text-green-800",
+  hold: "bg-amber-100 text-amber-800",
+  avoid: "bg-red-100 text-red-800",
+};
 
 export default async function WatchlistPage() {
   await auth.protect();
@@ -22,6 +29,15 @@ export default async function WatchlistPage() {
     where: { status: "watchlist" },
     orderBy: { ticker: "asc" },
   });
+
+  const latestAnalyses = await prisma.analysis.findMany({
+    where: { ticker: { in: stocks.map((s) => s.ticker) } },
+    orderBy: [{ ticker: "asc" }, { date: "desc" }],
+    distinct: ["ticker"],
+  });
+  const latestActionByTicker = new Map(
+    latestAnalyses.map((a) => [a.ticker, a.action])
+  );
 
   return (
     <main className="max-w-2xl mx-auto mt-16 px-4">
@@ -39,6 +55,7 @@ export default async function WatchlistPage() {
             <TableRow>
               <TableHead>Ticker</TableHead>
               <TableHead>Name</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead>Target Price</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>As of</TableHead>
@@ -51,6 +68,7 @@ export default async function WatchlistPage() {
                 price: stock.lastPrice,
                 targetPrice: stock.targetPrice,
               });
+              const latestAction = latestActionByTicker.get(stock.ticker) ?? null;
 
               return (
                 <TableRow key={stock.id} className={targetHit ? "bg-green-50" : ""}>
@@ -60,6 +78,19 @@ export default async function WatchlistPage() {
                     </Link>
                   </TableCell>
                   <TableCell>{stock.name}</TableCell>
+                  <TableCell>
+                    {latestAction ? (
+                      <span
+                        className={`inline-block rounded px-2 py-0.5 text-xs font-medium capitalize ${
+                          actionBadgeStyles[latestAction] ?? "bg-neutral-100 text-neutral-600"
+                        }`}
+                      >
+                        {latestAction}
+                      </span>
+                    ) : (
+                      <RunAnalysisButton ticker={stock.ticker} />
+                    )}
+                  </TableCell>
                   <TableCell>
                     <TargetPriceInput stockId={stock.id} targetPrice={stock.targetPrice} />
                   </TableCell>
