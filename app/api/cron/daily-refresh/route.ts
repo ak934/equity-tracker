@@ -54,6 +54,34 @@ export async function GET(request: Request) {
     STALE_ANALYSIS_DAYS_THRESHOLD
   );
 
+  // sync needsReanalysis on every stock to match today's staleness check,
+  // so it self-corrects once a fresh analysis is run (not just a one-way flip).
+  // manually-flagged stocks are left alone here even if not yet stale by date,
+  // since a manual flag shouldn't get silently cleared by the next cron run.
+  const staleTickers = staleAnalyses.map((s) => s.ticker);
+  const manuallyFlaggedTickers = stocksAfter
+    .filter((s) => s.reanalysisReason === "manual")
+    .map((s) => s.ticker);
+  const freshTickers = stocksAfter
+    .map((s) => s.ticker)
+    .filter(
+      (ticker) => !staleTickers.includes(ticker) && !manuallyFlaggedTickers.includes(ticker)
+    );
+
+  if (staleTickers.length > 0) {
+    await prisma.stock.updateMany({
+      where: { ticker: { in: staleTickers } },
+      data: { needsReanalysis: true, reanalysisReason: "stale" },
+    });
+  }
+
+  if (freshTickers.length > 0) {
+    await prisma.stock.updateMany({
+      where: { ticker: { in: freshTickers } },
+      data: { needsReanalysis: false, reanalysisReason: null },
+    });
+  }
+
   let emailSent = false;
 
   if (newEntries.length > 0 || staleAnalyses.length > 0) {

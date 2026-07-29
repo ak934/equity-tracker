@@ -17,6 +17,7 @@ model Stock {
   targetPrice Float?
   hiddenFromDashboard Boolean @default(false)
   needsReanalysis Boolean @default(false)
+  reanalysisReason String? // "manual" | "stale"
   createdAt DateTime @default(now())
 }
 

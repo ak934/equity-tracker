@@ -614,6 +614,8 @@ export const StockScalarFieldEnum = {
   priceAsOf: 'priceAsOf',
   targetPrice: 'targetPrice',
   hiddenFromDashboard: 'hiddenFromDashboard',
+  needsReanalysis: 'needsReanalysis',
+  reanalysisReason: 'reanalysisReason',
   createdAt: 'createdAt'
 } as const
 

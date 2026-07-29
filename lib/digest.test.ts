@@ -89,4 +89,20 @@ describe("findStaleAnalyses", () => {
     ];
     expect(findStaleAnalyses(stocks, 60)).toEqual([]);
   });
+
+  it("excludes a stock analyzed 59 days ago (just under the threshold)", () => {
+    const justUnder = new Date(Date.now() - 59 * 24 * 60 * 60 * 1000);
+    const stocks: AnalysisStockInput[] = [
+      { ticker: "DDD", latestAnalysisDate: justUnder },
+    ];
+    expect(findStaleAnalyses(stocks, 60)).toEqual([]);
+  });
+
+  it("includes a stock analyzed 61 days ago (just over the threshold)", () => {
+    const justOver = new Date(Date.now() - 61 * 24 * 60 * 60 * 1000);
+    const stocks: AnalysisStockInput[] = [
+      { ticker: "EEE", latestAnalysisDate: justOver },
+    ];
+    expect(findStaleAnalyses(stocks, 60)).toEqual(stocks);
+  });
 });

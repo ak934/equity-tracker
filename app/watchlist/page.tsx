@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { updateStockStatus } from "@/app/actions/stocks";
+import { updateStockStatus, flagForReanalysis } from "@/app/actions/stocks";
 import { TargetPriceInput } from "@/components/TargetPriceInput";
 import { hasHitTargetPrice } from "@/lib/target-price";
 import { RefreshButton } from "@/components/refresh-button";
@@ -79,17 +79,30 @@ export default async function WatchlistPage() {
                   </TableCell>
                   <TableCell>{stock.name}</TableCell>
                   <TableCell>
-                    {latestAction ? (
-                      <span
-                        className={`inline-block rounded px-2 py-0.5 text-xs font-medium capitalize ${
-                          actionBadgeStyles[latestAction] ?? "bg-neutral-100 text-neutral-600"
-                        }`}
-                      >
-                        {latestAction}
-                      </span>
-                    ) : (
-                      <RunAnalysisButton ticker={stock.ticker} />
-                    )}
+                    <div className="flex flex-col items-start gap-1">
+                      {latestAction ? (
+                        <span
+                          className={`inline-block rounded px-2 py-0.5 text-xs font-medium capitalize ${
+                            actionBadgeStyles[latestAction] ?? "bg-neutral-100 text-neutral-600"
+                          }`}
+                        >
+                          {latestAction}
+                        </span>
+                      ) : (
+                        <RunAnalysisButton ticker={stock.ticker} />
+                      )}
+                      {latestAction &&
+                        (stock.needsReanalysis ? (
+                          <span className="text-xs text-amber-600">Flagged for reanalysis</span>
+                        ) : (
+                          <form action={flagForReanalysis}>
+                            <input type="hidden" name="id" value={stock.id} />
+                            <Button type="submit" variant="outline" size="sm">
+                              Flag for Reanalysis
+                            </Button>
+                          </form>
+                        ))}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <TargetPriceInput stockId={stock.id} targetPrice={stock.targetPrice} />

@@ -102,6 +102,23 @@ export async function updateStockStatus(formData: FormData) {
   revalidatePath("/watchlist");
 }
 
+export async function flagForReanalysis(formData: FormData) {
+  await auth.protect();
+  const id = String(formData.get("id") ?? "");
+
+  if (!id) {
+    throw new Error("Stock id is required");
+  }
+
+  await prisma.stock.update({
+    where: { id },
+    data: { needsReanalysis: true, reanalysisReason: "manual" },
+  });
+
+  revalidatePath("/");
+  revalidatePath("/watchlist");
+}
+
 export async function updateTargetPrice(formData: FormData) {
   await auth.protect();
   const id = String(formData.get("id") ?? "");
@@ -141,6 +158,13 @@ export async function runAnalysis(ticker: string) {
       action: result.action,
       fullText: result.fullText,
     },
+  });
+
+  // a fresh analysis just ran, so whatever flagged this stock (manual or
+  // stale) is resolved
+  await prisma.stock.updateMany({
+    where: { ticker },
+    data: { needsReanalysis: false, reanalysisReason: null },
   });
 
   revalidatePath(`/stocks/${ticker}`);
