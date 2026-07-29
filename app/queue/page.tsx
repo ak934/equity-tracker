@@ -11,11 +11,6 @@ import {
 } from "@/components/ui/table";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
 
-const reasonLabels: Record<string, string> = {
-  manual: "Manual",
-  stale: "Stale",
-};
-
 export default async function QueuePage() {
   await auth.protect();
 
@@ -44,9 +39,8 @@ export default async function QueuePage() {
             <TableRow>
               <TableHead>Ticker</TableHead>
               <TableHead>Name</TableHead>
-              <TableHead>Reason</TableHead>
               <TableHead>Last Analysis</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -61,11 +55,6 @@ export default async function QueuePage() {
                     </Link>
                   </TableCell>
                   <TableCell>{stock.name}</TableCell>
-                  <TableCell>
-                    {stock.reanalysisReason
-                      ? (reasonLabels[stock.reanalysisReason] ?? stock.reanalysisReason)
-                      : "—"}
-                  </TableCell>
                   <TableCell>
                     {latestAnalysisDate ? latestAnalysisDate.toLocaleDateString() : "Never"}
                   </TableCell>
