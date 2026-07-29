@@ -66,6 +66,44 @@ export function findStaleAnalyses<T extends AnalysisStockInput>(
   });
 }
 
+export interface ReanalysisFlagStockInput {
+  ticker: string;
+  needsReanalysis: boolean;
+  reanalysisReason?: string | null;
+}
+
+export interface ReanalysisFlagUpdates {
+  newlyStale: string[];
+  toClear: string[];
+}
+
+// Decides which tickers the daily stale-check should flag/clear.
+// A stock already flagged for ANY reason (manual or stale) is left alone
+// entirely by the stale branch, so an existing "manual" reason is never
+// overwritten with "stale" just because the analysis also aged out.
+export function computeReanalysisFlagUpdates(
+  stocks: ReanalysisFlagStockInput[],
+  staleTickers: string[]
+): ReanalysisFlagUpdates {
+  const staleSet = new Set(staleTickers);
+  const newlyStale: string[] = [];
+  const toClear: string[] = [];
+
+  for (const stock of stocks) {
+    if (staleSet.has(stock.ticker)) {
+      if (!stock.needsReanalysis) {
+        newlyStale.push(stock.ticker);
+      }
+    } else if (stock.reanalysisReason !== "manual") {
+      // a manual flag isn't date-based, so not being stale doesn't resolve
+      // it — only a fresh analysis run should clear that one
+      toClear.push(stock.ticker);
+    }
+  }
+
+  return { newlyStale, toClear };
+}
+
 export function buildDigestEmailHtml(
   newEntries: DigestTargetPriceHit[],
   staleAnalyses: DigestStaleAnalysis[]

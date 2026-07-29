@@ -36,6 +36,7 @@ export default function RootLayout({
             <nav className="flex items-center gap-4 text-sm font-medium">
               <Link href="/">Search</Link>
               <Link href="/watchlist">Watchlist</Link>
+              <Link href="/queue">Queue</Link>
             </nav>
             <div className="flex items-center gap-3">
               <Show when="signed-out">

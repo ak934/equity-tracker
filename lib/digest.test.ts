@@ -2,8 +2,10 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import {
   findNewTargetPriceHits,
   findStaleAnalyses,
+  computeReanalysisFlagUpdates,
   type TargetPriceStockInput,
   type AnalysisStockInput,
+  type ReanalysisFlagStockInput,
 } from "./digest";
 
 describe("findNewTargetPriceHits", () => {
@@ -104,5 +106,50 @@ describe("findStaleAnalyses", () => {
       { ticker: "EEE", latestAnalysisDate: justOver },
     ];
     expect(findStaleAnalyses(stocks, 60)).toEqual(stocks);
+  });
+});
+
+describe("computeReanalysisFlagUpdates", () => {
+  it("flags a stale stock that isn't already flagged", () => {
+    const stocks: ReanalysisFlagStockInput[] = [
+      { ticker: "AAA", needsReanalysis: false, reanalysisReason: null },
+    ];
+    expect(computeReanalysisFlagUpdates(stocks, ["AAA"])).toEqual({
+      newlyStale: ["AAA"],
+      toClear: [],
+    });
+  });
+
+  it("clears a stock that is no longer stale and wasn't manually flagged", () => {
+    const stocks: ReanalysisFlagStockInput[] = [
+      { ticker: "BBB", needsReanalysis: true, reanalysisReason: "stale" },
+    ];
+    expect(computeReanalysisFlagUpdates(stocks, [])).toEqual({
+      newlyStale: [],
+      toClear: ["BBB"],
+    });
+  });
+
+  it("leaves a manually-flagged stock alone when it is not stale", () => {
+    const stocks: ReanalysisFlagStockInput[] = [
+      { ticker: "CCC", needsReanalysis: true, reanalysisReason: "manual" },
+    ];
+    expect(computeReanalysisFlagUpdates(stocks, [])).toEqual({
+      newlyStale: [],
+      toClear: [],
+    });
+  });
+
+  it("does not overwrite reanalysisReason from 'manual' to 'stale' when a manually-flagged stock also becomes stale", () => {
+    // regression test: a stock that is already flagged (for any reason) must
+    // be skipped entirely by the stale branch, so an existing "manual"
+    // reason is never clobbered just because the analysis also aged out
+    const stocks: ReanalysisFlagStockInput[] = [
+      { ticker: "AMZN", needsReanalysis: true, reanalysisReason: "manual" },
+    ];
+    expect(computeReanalysisFlagUpdates(stocks, ["AMZN"])).toEqual({
+      newlyStale: [],
+      toClear: [],
+    });
   });
 });

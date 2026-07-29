@@ -4,6 +4,7 @@ import { refreshAllPrices } from "@/lib/prices";
 import {
   findNewTargetPriceHits,
   findStaleAnalyses,
+  computeReanalysisFlagUpdates,
   buildDigestEmailHtml,
 } from "@/lib/digest";
 
@@ -55,29 +56,26 @@ export async function GET(request: Request) {
   );
 
   // sync needsReanalysis on every stock to match today's staleness check,
-  // so it self-corrects once a fresh analysis is run (not just a one-way flip).
-  // manually-flagged stocks are left alone here even if not yet stale by date,
-  // since a manual flag shouldn't get silently cleared by the next cron run.
-  const staleTickers = staleAnalyses.map((s) => s.ticker);
-  const manuallyFlaggedTickers = stocksAfter
-    .filter((s) => s.reanalysisReason === "manual")
-    .map((s) => s.ticker);
-  const freshTickers = stocksAfter
-    .map((s) => s.ticker)
-    .filter(
-      (ticker) => !staleTickers.includes(ticker) && !manuallyFlaggedTickers.includes(ticker)
-    );
+  // so it self-corrects once a fresh analysis is run (not just a one-way flip)
+  const { newlyStale, toClear } = computeReanalysisFlagUpdates(
+    stocksAfter.map((s) => ({
+      ticker: s.ticker,
+      needsReanalysis: s.needsReanalysis,
+      reanalysisReason: s.reanalysisReason,
+    })),
+    staleAnalyses.map((s) => s.ticker)
+  );
 
-  if (staleTickers.length > 0) {
+  if (newlyStale.length > 0) {
     await prisma.stock.updateMany({
-      where: { ticker: { in: staleTickers } },
+      where: { ticker: { in: newlyStale } },
       data: { needsReanalysis: true, reanalysisReason: "stale" },
     });
   }
 
-  if (freshTickers.length > 0) {
+  if (toClear.length > 0) {
     await prisma.stock.updateMany({
-      where: { ticker: { in: freshTickers } },
+      where: { ticker: { in: toClear } },
       data: { needsReanalysis: false, reanalysisReason: null },
     });
   }
