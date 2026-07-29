@@ -34,7 +34,7 @@ export default function RootLayout({
         <ClerkProvider appearance={{ theme: shadcn }}>
           <header className="flex justify-between items-center gap-3 px-4 py-3 border-b">
             <nav className="flex items-center gap-4 text-sm font-medium">
-              <Link href="/">Equity Tracker</Link>
+              <Link href="/">Search</Link>
               <Link href="/watchlist">Watchlist</Link>
             </nav>
             <div className="flex items-center gap-3">
