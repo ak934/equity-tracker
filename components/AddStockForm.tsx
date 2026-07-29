@@ -1,12 +1,14 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { addStock } from '@/app/actions/stocks';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button'
+import { TickerSearchInput, type TickerResult } from '@/components/TickerSearchInput';
 
 export function AddStockForm() {
     const formRef = useRef<HTMLFormElement>(null)
+    const [selected, setSelected] = useState<TickerResult | null>(null);
+    const [resetKey, setResetKey] = useState(0);
 
     return (
         <form
@@ -14,24 +16,13 @@ export function AddStockForm() {
             action={async (formData) => {
                 await addStock(formData)
                 formRef.current?.reset();
+                setSelected(null);
+                setResetKey((k) => k + 1);
             }}
             className='flex gap-2 mb-4'
         >
-            <Input
-                type='text'
-                name="ticker"
-                placeholder="Ticker"
-                required
-                className="flex-1"
-            />
-            <Input
-                type='text'
-                name="name"
-                placeholder="Company name"
-                required
-                className="flex-1"
-            />
-            <Button type="submit">Add</Button>
+            <TickerSearchInput key={resetKey} onSelectionChange={setSelected} />
+            <Button type="submit" disabled={!selected}>Add</Button>
         </form>
     );
 }

@@ -1,9 +1,34 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { getPrice } from "@/lib/prices";
+import { getPrice, searchTickers, TickerSearchError, type TickerSearchResult } from "@/lib/prices";
 import { revalidatePath } from "next/cache";
 import { auth } from "@clerk/nextjs/server";
+
+export type TickerSearchResponse = {
+  results: TickerSearchResult[];
+  rateLimited: boolean;
+};
+
+export async function searchStockTickers(query: string): Promise<TickerSearchResponse> {
+  await auth.protect();
+  const trimmed = query.trim();
+
+  if (!trimmed) {
+    return { results: [], rateLimited: false };
+  }
+
+  try {
+    const results = await searchTickers(trimmed);
+    return { results, rateLimited: false };
+  } catch (err) {
+    const rateLimited = err instanceof TickerSearchError && err.status === 429;
+    if (!rateLimited) {
+      console.error(`Ticker search failed for "${trimmed}":`, err);
+    }
+    return { results: [], rateLimited };
+  }
+}
 
 export async function addStock(formData: FormData) {
   await auth.protect();

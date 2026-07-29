@@ -12,6 +12,35 @@ export type RefreshAllPricesResult = {
   failed: string[];
 };
 
+export type TickerSearchResult = {
+  ticker: string;
+  name: string;
+};
+
+export class TickerSearchError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.status = status;
+  }
+}
+
+export async function searchTickers(query: string): Promise<TickerSearchResult[]> {
+  const apiKey = process.env.MASSIVE_API_KEY;
+  const url = `https://api.massive.com/v3/reference/tickers?search=${encodeURIComponent(query)}&active=true&limit=8&apiKey=${apiKey}`;
+  const res = await fetch(url);
+
+  if (!res.ok) {
+    throw new TickerSearchError(`Massive API error searching tickers: ${res.status}`, res.status);
+  }
+
+  const data = await res.json();
+  const results: Array<{ ticker: string; name: string }> = data?.results ?? [];
+
+  return results.map((r) => ({ ticker: r.ticker, name: r.name }));
+}
+
 export function toDateParam(d: Date): string {
   return d.toISOString().split("T")[0]; // YYYY-MM-DD
 }
