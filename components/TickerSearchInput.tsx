@@ -12,6 +12,13 @@ export type TickerResult = {
 const MIN_QUERY_LENGTH = 2;
 const RATE_LIMIT_COOLDOWN_MS = 15_000;
 
+const CORP_SUFFIX_RE =
+  /,?\s+(incorporated|inc\.?|corporation|corp\.?|company|co\.?|limited|ltd\.?|l\.l\.c\.?|llc\.?|plc\.?|l\.p\.?|lp\.?)$/i;
+
+function displayName(name: string): string {
+  return name.replace(CORP_SUFFIX_RE, "").trim().toUpperCase();
+}
+
 export function TickerSearchInput({
   onSelectionChange,
 }: {
@@ -82,18 +89,19 @@ export function TickerSearchInput({
 
   function pick(result: TickerResult) {
     setSelected(result);
-    setQuery(`${result.ticker} — ${result.name}`);
     setResults([]);
     setOpen(false);
     onSelectionChange?.(result);
   }
 
+  function clearSelection() {
+    setSelected(null);
+    setQuery("");
+    onSelectionChange?.(null);
+  }
+
   function handleChange(value: string) {
     setQuery(value);
-    if (selected) {
-      setSelected(null);
-      onSelectionChange?.(null);
-    }
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -114,16 +122,27 @@ export function TickerSearchInput({
 
   return (
     <div ref={containerRef} className="relative flex-1">
-      <Input
-        type="text"
-        placeholder="Enter symbol or company name"
-        value={query}
-        onChange={(e) => handleChange(e.target.value)}
-        onKeyDown={handleKeyDown}
-        onFocus={() => results.length > 0 && setOpen(true)}
-        required
-        autoComplete="off"
-      />
+      {selected ? (
+        <button
+          type="button"
+          onClick={clearSelection}
+          className="flex h-8 w-full items-center justify-between gap-3 rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm"
+        >
+          <span className="font-medium">{selected.ticker}</span>
+          <span className="text-neutral-500">{displayName(selected.name)}</span>
+        </button>
+      ) : (
+        <Input
+          type="text"
+          placeholder="Enter symbol or company name"
+          value={query}
+          onChange={(e) => handleChange(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onFocus={() => results.length > 0 && setOpen(true)}
+          required
+          autoComplete="off"
+        />
+      )}
       <input type="hidden" name="ticker" value={selected?.ticker ?? ""} />
       <input type="hidden" name="name" value={selected?.name ?? ""} />
       {rateLimited && (
@@ -131,12 +150,12 @@ export function TickerSearchInput({
           Search is rate-limited — try again in a few seconds.
         </p>
       )}
-      {open && results.length > 0 && (
+      {open && !selected && results.length > 0 && (
         <ul className="absolute z-10 mt-1 w-full max-h-60 overflow-auto rounded-lg border bg-background shadow-md">
           {results.map((r, i) => (
             <li
               key={r.ticker}
-              className={`cursor-pointer px-2.5 py-1.5 text-sm ${
+              className={`flex items-center justify-between gap-3 cursor-pointer px-2.5 py-1.5 text-sm ${
                 i === highlighted ? "bg-neutral-100" : ""
               }`}
               onMouseDown={(e) => {
@@ -145,8 +164,8 @@ export function TickerSearchInput({
               }}
               onMouseEnter={() => setHighlighted(i)}
             >
-              <span className="font-medium">{r.ticker}</span>{" "}
-              <span className="text-neutral-500">{r.name}</span>
+              <span className="font-medium">{r.ticker}</span>
+              <span className="text-neutral-500">{displayName(r.name)}</span>
             </li>
           ))}
         </ul>
