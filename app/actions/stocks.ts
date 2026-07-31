@@ -51,8 +51,10 @@ export async function addStock(formData: FormData) {
     console.error(`Failed to fetch initial price for ${ticker}:`, err);
   }
 
-  await prisma.stock.create({
-    data: { ticker, name, status: "portfolio", lastPrice, priceAsOf, targetPrice },
+  await prisma.stock.upsert({
+    where: { ticker },
+    create: { ticker, name, status: "portfolio", lastPrice, priceAsOf, targetPrice },
+    update: { name, status: "portfolio", hiddenFromDashboard: false, lastPrice, priceAsOf, targetPrice },
   });
 
   revalidatePath("/");
