@@ -59,7 +59,10 @@ export default async function QueuePage() {
                     {latestAnalysisDate ? latestAnalysisDate.toLocaleDateString() : "Never"}
                   </TableCell>
                   <TableCell>
-                    <RunAnalysisButton ticker={stock.ticker} />
+                    <RunAnalysisButton
+                      ticker={stock.ticker}
+                      navigateAfter={`/stocks/${stock.ticker}`}
+                    />
                   </TableCell>
                 </TableRow>
               );
