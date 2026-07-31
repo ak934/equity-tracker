@@ -7,6 +7,7 @@ import {
   computeReanalysisFlagUpdates,
   buildDigestEmailHtml,
 } from "@/lib/digest";
+import { sendTargetPriceHitEmail } from "@/lib/notifications";
 
 const STALE_ANALYSIS_DAYS_THRESHOLD = 60;
 
@@ -80,17 +81,19 @@ export async function GET(request: Request) {
     });
   }
 
-  let emailSent = false;
+  await sendTargetPriceHitEmail(newEntries);
 
-  if (newEntries.length > 0 || staleAnalyses.length > 0) {
+  let digestSent = false;
+
+  if (staleAnalyses.length > 0) {
     const resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({
       from: "Equity Tracker <onboarding@resend.dev>",
       to: process.env.DIGEST_EMAIL_TO!,
       subject: "Equity Tracker Daily Digest",
-      html: buildDigestEmailHtml(newEntries, staleAnalyses),
+      html: buildDigestEmailHtml([], staleAnalyses),
     });
-    emailSent = true;
+    digestSent = true;
   }
 
   return Response.json({
@@ -99,6 +102,7 @@ export async function GET(request: Request) {
     failed: failed.length,
     newEntries: newEntries.length,
     staleAnalyses: staleAnalyses.length,
-    emailSent,
+    targetPriceEmailSent: newEntries.length > 0,
+    digestSent,
   });
 }
