@@ -1,7 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
+import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { prisma } from "@/lib/prisma";
+import { Button } from "@/components/ui/button";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
 
 const actionBadgeStyles: Record<string, string> = {
@@ -30,7 +32,13 @@ export default async function StockPage({
     <div className="max-w-3xl mx-auto p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{ticker}</h1>
-        <RunAnalysisButton ticker={ticker} />
+        {latest ? (
+          <Button asChild variant="outline">
+            <Link href="/queue">Go back to Queue</Link>
+          </Button>
+        ) : (
+          <RunAnalysisButton ticker={ticker} />
+        )}
       </div>
 
       {latest ? (
