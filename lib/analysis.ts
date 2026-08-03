@@ -25,7 +25,7 @@ function buildPrompt(ticker: string, price: number | null) {
   }
 
 ## Step 1 — Research primary sources first
-Before forming an opinion, search for and read (in order): the latest 10-K (revenue breakdown, margins, risk factors, MD&A), the latest investor presentation, the latest earnings call transcript (management tone, how they handle tough questions), and the latest proxy/DEF 14A (insider ownership, share pledging, related-party deals — don't score management without it). Then fill gaps with web searches for current price, market cap, revenue/earnings trend (3-5yr), profit margins, debt levels, industry growth CAGR (compare the company's growth to its industry, not just its own prior year), and recent news. Don't rely on memory for numbers — they change. Briefly note in Part A which sources you could and couldn't find.
+Before forming an opinion, search for and read (in order): the latest 10-K (revenue breakdown, margins, risk factors, MD&A), the latest earnings call transcript (management tone, how they handle tough questions), and the latest proxy/DEF 14A (insider ownership, share pledging, related-party deals — don't score management without it). Then fill gaps with web searches for current price, market cap, revenue/earnings trend (3-5yr), profit margins, debt levels, industry growth CAGR (compare the company's growth to its industry, not just its own prior year), and recent news. Don't rely on memory for numbers — they change. Briefly note in Part A which sources you could and couldn't find.
 
 ## Step 2 — Evaluate the 5 criteria, each scored ✅ / ⚠️ / ❌
 1. Understandability — can you explain how it makes money in a sentence?
