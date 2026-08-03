@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useAnalysisPolling } from "@/lib/use-analysis-polling";
 
 export function RunAnalysisButton({
   ticker,
@@ -25,11 +26,7 @@ export function RunAnalysisButton({
   // while a run is in flight — including one kicked off before this
   // component mounted, e.g. after navigating back to this page — poll for
   // completion so the button doesn't look stuck on "Analyzing..." forever
-  useEffect(() => {
-    if (!isAnalyzing) return;
-    const interval = setInterval(() => router.refresh(), 4000);
-    return () => clearInterval(interval);
-  }, [isAnalyzing, router]);
+  useAnalysisPolling(isAnalyzing);
 
   return (
     <button
