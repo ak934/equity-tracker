@@ -16,8 +16,22 @@ export async function POST(request: Request) {
     return new Response("ticker is required", { status: 400 });
   }
 
+  const stock = await prisma.stock.findUnique({ where: { ticker } });
+  if (stock?.analysisRunning) {
+    return new Response("An analysis is already running for this ticker", { status: 409 });
+  }
+
+  // marked durably in the DB, not just in the browser's component state, so
+  // that leaving the page (or closing the tab) doesn't lose track of the run
+  // still in flight server-side — the UI can pick this back up on any later
+  // page load instead of looking like the analysis silently stopped
+  await prisma.stock.updateMany({ where: { ticker }, data: { analysisRunning: true } });
+  revalidatePath(`/stocks/${ticker}`);
+  revalidatePath("/");
+  revalidatePath("/watchlist");
+  revalidatePath("/queue");
+
   try {
-    const stock = await prisma.stock.findUnique({ where: { ticker } });
     const result = await generateAnalysis(ticker, stock?.lastPrice ?? null);
 
     await prisma.analysis.create({
@@ -34,15 +48,22 @@ export async function POST(request: Request) {
     // stale) is resolved
     await prisma.stock.updateMany({
       where: { ticker },
-      data: { needsReanalysis: false, reanalysisReason: null },
+      data: { needsReanalysis: false, reanalysisReason: null, analysisRunning: false },
     });
 
     revalidatePath(`/stocks/${ticker}`);
     revalidatePath("/");
     revalidatePath("/watchlist");
+    revalidatePath("/queue");
 
     return Response.json({ ok: true });
   } catch (err) {
+    await prisma.stock.updateMany({ where: { ticker }, data: { analysisRunning: false } });
+    revalidatePath(`/stocks/${ticker}`);
+    revalidatePath("/");
+    revalidatePath("/watchlist");
+    revalidatePath("/queue");
+
     const message = err instanceof Error ? err.message : "Analysis failed";
     return new Response(message, { status: 500 });
   }

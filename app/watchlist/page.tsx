@@ -92,7 +92,10 @@ export default async function WatchlistPage() {
                           {latestAnalysis.action}
                         </span>
                       ) : (
-                        <RunAnalysisButton ticker={stock.ticker} />
+                        <RunAnalysisButton
+                          ticker={stock.ticker}
+                          initialAnalyzing={stock.analysisRunning}
+                        />
                       )}
                       {latestAnalysis &&
                         (stock.needsReanalysis ? (

@@ -62,6 +62,7 @@ export default async function QueuePage() {
                     <RunAnalysisButton
                       ticker={stock.ticker}
                       navigateAfter={`/stocks/${stock.ticker}`}
+                      initialAnalyzing={stock.analysisRunning}
                     />
                   </TableCell>
                 </TableRow>

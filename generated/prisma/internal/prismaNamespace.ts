@@ -616,6 +616,7 @@ export const StockScalarFieldEnum = {
   hiddenFromDashboard: 'hiddenFromDashboard',
   needsReanalysis: 'needsReanalysis',
   reanalysisReason: 'reanalysisReason',
+  analysisRunning: 'analysisRunning',
   createdAt: 'createdAt'
 } as const
 

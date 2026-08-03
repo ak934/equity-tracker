@@ -5,6 +5,7 @@ import remarkGfm from "remark-gfm";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
+import { AnalyzingIndicator } from "@/components/analyzing-indicator";
 
 const actionBadgeStyles: Record<string, string> = {
   buy: "bg-green-100 text-green-800",
@@ -21,10 +22,10 @@ export default async function StockPage({
 
   const { ticker } = await params;
 
-  const analyses = await prisma.analysis.findMany({
-    where: { ticker },
-    orderBy: { date: "desc" },
-  });
+  const [stock, analyses] = await Promise.all([
+    prisma.stock.findUnique({ where: { ticker } }),
+    prisma.analysis.findMany({ where: { ticker }, orderBy: { date: "desc" } }),
+  ]);
 
   const [latest, ...history] = analyses;
 
@@ -33,11 +34,15 @@ export default async function StockPage({
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{ticker}</h1>
         {latest ? (
-          <Button asChild variant="outline">
-            <Link href="/queue">Go back to Queue</Link>
-          </Button>
+          stock?.analysisRunning ? (
+            <AnalyzingIndicator />
+          ) : (
+            <Button asChild variant="outline">
+              <Link href="/queue">Go back to Queue</Link>
+            </Button>
+          )
         ) : (
-          <RunAnalysisButton ticker={ticker} />
+          <RunAnalysisButton ticker={ticker} initialAnalyzing={stock?.analysisRunning ?? false} />
         )}
       </div>
 

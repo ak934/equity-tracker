@@ -18,6 +18,7 @@ model Stock {
   hiddenFromDashboard Boolean @default(false)
   needsReanalysis Boolean @default(false)
   reanalysisReason String? // "manual" | "stale"
+  analysisRunning Boolean @default(false)
   createdAt DateTime @default(now())
 }
 
