@@ -26,7 +26,7 @@ export function RunAnalysisButton({
   // while a run is in flight — including one kicked off before this
   // component mounted, e.g. after navigating back to this page — poll for
   // completion so the button doesn't look stuck on "Analyzing..." forever
-  useAnalysisPolling(isAnalyzing);
+  useAnalysisPolling(ticker, isAnalyzing);
 
   return (
     <button

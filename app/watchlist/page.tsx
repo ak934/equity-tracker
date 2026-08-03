@@ -15,6 +15,7 @@ import { TargetPriceInput } from "@/components/TargetPriceInput";
 import { hasHitTargetPrice } from "@/lib/target-price";
 import { RefreshButton } from "@/components/refresh-button";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
+import { AnalyzingIndicator } from "@/components/analyzing-indicator";
 import { isAnalysisRunning } from "@/lib/analysis-status";
 
 const actionBadgeStyles: Record<string, string> = {
@@ -100,7 +101,11 @@ export default async function WatchlistPage() {
                       )}
                       {latestAnalysis &&
                         (stock.needsReanalysis ? (
-                          <span className="text-xs text-amber-600">Flagged for reanalysis</span>
+                          isAnalysisRunning(stock) ? (
+                            <AnalyzingIndicator ticker={stock.ticker} />
+                          ) : (
+                            <span className="text-xs text-amber-600">Flagged for reanalysis</span>
+                          )
                         ) : (
                           <form action={flagForReanalysis}>
                             <input type="hidden" name="id" value={stock.id} />

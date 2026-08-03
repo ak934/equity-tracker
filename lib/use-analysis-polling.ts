@@ -1,32 +1,50 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
-// Next.js reuses the client-side router cache on browser back/forward
-// navigation by design (to avoid layout shift), even for pages that are
-// otherwise never cached — so returning to a page like /queue can show a
-// stale "Analyzing..." snapshot from before a run finished. This refreshes
-// immediately (not just on the next interval tick) whenever a run is active,
-// and again the moment the tab regains focus, so a stale view self-corrects
-// in roughly one round-trip instead of waiting out the poll interval.
-export function useAnalysisPolling(active: boolean) {
+// Next.js reuses the browser's back/forward cache by design — not something
+// staleTimes can turn off — so a page like /queue can show a snapshot from
+// before a run finished, and router.refresh() goes through that same cached
+// machinery. This instead hits a tiny dedicated status endpoint with a plain
+// fetch(), which isn't part of that cache, as the source of truth for
+// whether a run is really still going. router.refresh() is only called once
+// that check confirms the run just finished, to pull in the updated page
+// (e.g. the ticker leaving the Queue list).
+export function useAnalysisPolling(ticker: string, active: boolean) {
   const router = useRouter();
+  const activeRef = useRef(active);
+  activeRef.current = active;
 
   useEffect(() => {
     if (!active) return;
 
-    router.refresh();
-    const interval = setInterval(() => router.refresh(), 2500);
+    let cancelled = false;
 
+    const check = async () => {
+      try {
+        const res = await fetch(`/api/analysis/status?ticker=${encodeURIComponent(ticker)}`);
+        const { running } = await res.json();
+        if (!cancelled && !running && activeRef.current) {
+          activeRef.current = false;
+          router.refresh();
+        }
+      } catch {
+        // network hiccup — the next tick will retry
+      }
+    };
+
+    check();
+    const interval = setInterval(check, 1000);
     const onVisible = () => {
-      if (document.visibilityState === "visible") router.refresh();
+      if (document.visibilityState === "visible") check();
     };
     document.addEventListener("visibilitychange", onVisible);
 
     return () => {
+      cancelled = true;
       clearInterval(interval);
       document.removeEventListener("visibilitychange", onVisible);
     };
-  }, [active, router]);
+  }, [ticker, active, router]);
 }

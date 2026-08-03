@@ -37,7 +37,7 @@ export default async function StockPage({
         <h1 className="text-xl font-semibold">{ticker}</h1>
         {latest ? (
           analyzing ? (
-            <AnalyzingIndicator />
+            <AnalyzingIndicator ticker={ticker} />
           ) : (
             <Button asChild variant="outline">
               <Link href="/queue">Go back to Queue</Link>
