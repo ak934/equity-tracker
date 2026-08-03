@@ -15,6 +15,7 @@ import { TargetPriceInput } from "@/components/TargetPriceInput";
 import { hasHitTargetPrice } from "@/lib/target-price";
 import { RefreshButton } from "@/components/refresh-button";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
+import { isAnalysisRunning } from "@/lib/analysis-status";
 
 const actionBadgeStyles: Record<string, string> = {
   buy: "bg-green-100 text-green-800",
@@ -94,7 +95,7 @@ export default async function WatchlistPage() {
                       ) : (
                         <RunAnalysisButton
                           ticker={stock.ticker}
-                          initialAnalyzing={stock.analysisRunning}
+                          initialAnalyzing={isAnalysisRunning(stock)}
                         />
                       )}
                       {latestAnalysis &&

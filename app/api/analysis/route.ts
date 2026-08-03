@@ -2,6 +2,14 @@ import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { generateAnalysis } from "@/lib/analysis";
+import { isAnalysisRunning } from "@/lib/analysis-status";
+
+function revalidateAll(ticker: string) {
+  revalidatePath(`/stocks/${ticker}`);
+  revalidatePath("/");
+  revalidatePath("/watchlist");
+  revalidatePath("/queue");
+}
 
 // Plain Route Handler instead of a Server Action: Next.js dispatches Server
 // Actions one at a time per client, so a slow one (this calls out to Claude
@@ -17,21 +25,25 @@ export async function POST(request: Request) {
   }
 
   const stock = await prisma.stock.findUnique({ where: { ticker } });
-  if (stock?.analysisRunning) {
+  if (stock && isAnalysisRunning(stock)) {
     return new Response("An analysis is already running for this ticker", { status: 409 });
   }
 
   // marked durably in the DB, not just in the browser's component state, so
   // that leaving the page (or closing the tab) doesn't lose track of the run
   // still in flight server-side — the UI can pick this back up on any later
-  // page load instead of looking like the analysis silently stopped
-  await prisma.stock.updateMany({ where: { ticker }, data: { analysisRunning: true } });
-  revalidatePath(`/stocks/${ticker}`);
-  revalidatePath("/");
-  revalidatePath("/watchlist");
-  revalidatePath("/queue");
+  // page load instead of looking like the analysis silently stopped.
+  // analysisStartedAt lets isAnalysisRunning recognize a flag left behind by
+  // a process that died mid-run (dev server restart, deploy, crash) as
+  // stale, since nothing else could ever clear it in that case.
+  await prisma.stock.updateMany({
+    where: { ticker },
+    data: { analysisRunning: true, analysisStartedAt: new Date() },
+  });
 
   try {
+    revalidateAll(ticker);
+
     const result = await generateAnalysis(ticker, stock?.lastPrice ?? null);
 
     await prisma.analysis.create({
@@ -48,21 +60,23 @@ export async function POST(request: Request) {
     // stale) is resolved
     await prisma.stock.updateMany({
       where: { ticker },
-      data: { needsReanalysis: false, reanalysisReason: null, analysisRunning: false },
+      data: {
+        needsReanalysis: false,
+        reanalysisReason: null,
+        analysisRunning: false,
+        analysisStartedAt: null,
+      },
     });
 
-    revalidatePath(`/stocks/${ticker}`);
-    revalidatePath("/");
-    revalidatePath("/watchlist");
-    revalidatePath("/queue");
+    revalidateAll(ticker);
 
     return Response.json({ ok: true });
   } catch (err) {
-    await prisma.stock.updateMany({ where: { ticker }, data: { analysisRunning: false } });
-    revalidatePath(`/stocks/${ticker}`);
-    revalidatePath("/");
-    revalidatePath("/watchlist");
-    revalidatePath("/queue");
+    await prisma.stock.updateMany({
+      where: { ticker },
+      data: { analysisRunning: false, analysisStartedAt: null },
+    });
+    revalidateAll(ticker);
 
     const message = err instanceof Error ? err.message : "Analysis failed";
     return new Response(message, { status: 500 });

@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
+import { isAnalysisRunning } from "@/lib/analysis-status";
 
 export default async function QueuePage() {
   await auth.protect();
@@ -62,7 +63,7 @@ export default async function QueuePage() {
                     <RunAnalysisButton
                       ticker={stock.ticker}
                       navigateAfter={`/stocks/${stock.ticker}`}
-                      initialAnalyzing={stock.analysisRunning}
+                      initialAnalyzing={isAnalysisRunning(stock)}
                     />
                   </TableCell>
                 </TableRow>

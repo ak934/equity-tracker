@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
 import { AnalyzingIndicator } from "@/components/analyzing-indicator";
+import { isAnalysisRunning } from "@/lib/analysis-status";
 
 const actionBadgeStyles: Record<string, string> = {
   buy: "bg-green-100 text-green-800",
@@ -28,13 +29,14 @@ export default async function StockPage({
   ]);
 
   const [latest, ...history] = analyses;
+  const analyzing = stock ? isAnalysisRunning(stock) : false;
 
   return (
     <div className="max-w-3xl mx-auto p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{ticker}</h1>
         {latest ? (
-          stock?.analysisRunning ? (
+          analyzing ? (
             <AnalyzingIndicator />
           ) : (
             <Button asChild variant="outline">
@@ -42,7 +44,7 @@ export default async function StockPage({
             </Button>
           )
         ) : (
-          <RunAnalysisButton ticker={ticker} initialAnalyzing={stock?.analysisRunning ?? false} />
+          <RunAnalysisButton ticker={ticker} initialAnalyzing={analyzing} />
         )}
       </div>
 

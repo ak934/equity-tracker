@@ -19,6 +19,7 @@ model Stock {
   needsReanalysis Boolean @default(false)
   reanalysisReason String? // "manual" | "stale"
   analysisRunning Boolean @default(false)
+  analysisStartedAt DateTime?
   createdAt DateTime @default(now())
 }
 
