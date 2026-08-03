@@ -143,33 +143,3 @@ export async function updateTargetPrice(formData: FormData) {
   revalidatePath("/");
   revalidatePath("/watchlist");
 }
-
-import { generateAnalysis } from "@/lib/analysis";
-
-export async function runAnalysis(ticker: string) {
-  await auth.protect();
-  const stock = await prisma.stock.findUnique({ where: { ticker } });
-
-  const result = await generateAnalysis(ticker, stock?.lastPrice ?? null);
-
-  await prisma.analysis.create({
-    data: {
-      ticker,
-      qualityScore: result.qualityScore,
-      valuationScore: result.valuationScore,
-      action: result.action,
-      fullText: result.fullText,
-    },
-  });
-
-  // a fresh analysis just ran, so whatever flagged this stock (manual or
-  // stale) is resolved
-  await prisma.stock.updateMany({
-    where: { ticker },
-    data: { needsReanalysis: false, reanalysisReason: null },
-  });
-
-  revalidatePath(`/stocks/${ticker}`);
-  revalidatePath("/");
-  revalidatePath("/watchlist");
-}
