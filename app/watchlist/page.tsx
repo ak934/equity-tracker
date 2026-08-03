@@ -35,12 +35,12 @@ export default async function WatchlistPage() {
     orderBy: [{ ticker: "asc" }, { date: "desc" }],
     distinct: ["ticker"],
   });
-  const latestActionByTicker = new Map(
-    latestAnalyses.map((a) => [a.ticker, a.action])
+  const latestAnalysisByTicker = new Map(
+    latestAnalyses.map((a) => [a.ticker, a])
   );
 
   return (
-    <main className="max-w-2xl mx-auto mt-16 px-4">
+    <main className="max-w-5xl mx-auto mt-16 px-4">
       <h1 className="text-2xl font-bold mb-6">Watchlist</h1>
       {stocks.length > 0 && (
         <div className="mb-4">
@@ -59,6 +59,9 @@ export default async function WatchlistPage() {
               <TableHead>Target Price</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>As of</TableHead>
+              <TableHead>Last Analyzed</TableHead>
+              <TableHead>Q-Score</TableHead>
+              <TableHead>V-Score</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -68,7 +71,7 @@ export default async function WatchlistPage() {
                 price: stock.lastPrice,
                 targetPrice: stock.targetPrice,
               });
-              const latestAction = latestActionByTicker.get(stock.ticker) ?? null;
+              const latestAnalysis = latestAnalysisByTicker.get(stock.ticker) ?? null;
 
               return (
                 <TableRow key={stock.id} className={targetHit ? "bg-green-50" : ""}>
@@ -80,18 +83,18 @@ export default async function WatchlistPage() {
                   <TableCell>{stock.name}</TableCell>
                   <TableCell>
                     <div className="flex flex-col items-start gap-1">
-                      {latestAction ? (
+                      {latestAnalysis ? (
                         <span
                           className={`inline-block rounded px-2 py-0.5 text-xs font-medium capitalize ${
-                            actionBadgeStyles[latestAction] ?? "bg-neutral-100 text-neutral-600"
+                            actionBadgeStyles[latestAnalysis.action] ?? "bg-neutral-100 text-neutral-600"
                           }`}
                         >
-                          {latestAction}
+                          {latestAnalysis.action}
                         </span>
                       ) : (
                         <RunAnalysisButton ticker={stock.ticker} />
                       )}
-                      {latestAction &&
+                      {latestAnalysis &&
                         (stock.needsReanalysis ? (
                           <span className="text-xs text-amber-600">Flagged for reanalysis</span>
                         ) : (
@@ -112,6 +115,24 @@ export default async function WatchlistPage() {
                   </TableCell>
                   <TableCell>
                     {stock.priceAsOf ? stock.priceAsOf.toLocaleDateString() : "—"}
+                  </TableCell>
+                  <TableCell>
+                    {latestAnalysis ? (
+                      <Link
+                        href={`/stocks/${stock.ticker}`}
+                        className="text-sm hover:underline"
+                      >
+                        {latestAnalysis.date.toLocaleDateString()}
+                      </Link>
+                    ) : (
+                      "—"
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {latestAnalysis ? `${latestAnalysis.qualityScore}/100` : "—"}
+                  </TableCell>
+                  <TableCell>
+                    {latestAnalysis ? `${latestAnalysis.valuationScore}/100` : "—"}
                   </TableCell>
                   <TableCell>
                     <form action={updateStockStatus}>
