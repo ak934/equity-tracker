@@ -56,10 +56,10 @@ export default async function StockPage({
             </span>
             <div className="ml-auto flex gap-4 text-sm">
               <span>
-                Quality <span className="font-semibold">{latest.qualityScore}/10</span>
+                Quality <span className="font-semibold">{latest.qualityScore}/100</span>
               </span>
               <span>
-                Valuation <span className="font-semibold">{latest.valuationScore}/10</span>
+                Valuation <span className="font-semibold">{latest.valuationScore}/100</span>
               </span>
             </div>
           </div>
