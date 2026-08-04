@@ -3,6 +3,7 @@ import { shadcn } from "@clerk/ui/themes";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import { AnalysisNotifications } from "@/components/analysis-notifications";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -49,6 +50,9 @@ export default function RootLayout({
             </div>
           </header>
           {children}
+          <Show when="signed-in">
+            <AnalysisNotifications />
+          </Show>
         </ClerkProvider>
       </body>
     </html>

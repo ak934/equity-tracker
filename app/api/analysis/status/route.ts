@@ -16,5 +16,11 @@ export async function GET(request: Request) {
   }
 
   const stock = await prisma.stock.findUnique({ where: { ticker } });
-  return Response.json({ running: stock ? isAnalysisRunning(stock) : false });
+  return Response.json({
+    running: stock ? isAnalysisRunning(stock) : false,
+    // lets a caller that watched this ticker stop running tell success
+    // (needsReanalysis cleared once a fresh Analysis row is created) apart
+    // from failure (the run errored out and left the flag set)
+    needsReanalysis: stock?.needsReanalysis ?? false,
+  });
 }
