@@ -1,21 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   useAnalysisNotifications,
   type AnalysisOutcome,
 } from "@/lib/use-analysis-notifications";
-
-const AUTO_DISMISS_MS = 8000;
 
 type Toast = AnalysisOutcome & { id: number };
 
 let nextId = 1;
 
 // Mounted once in the root layout so a run finishing shows up here
-// regardless of which page the user has navigated to.
+// regardless of which page the user has navigated to. Deliberately does
+// NOT auto-dismiss — a run started from the Queue can take a minute or
+// more, so by the time it finishes the user is usually looking at a
+// different tab entirely; a toast that vanishes in a few seconds would
+// almost always be missed. It stays until the user views or dismisses it.
 export function AnalysisNotifications() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const router = useRouter();
@@ -25,9 +28,7 @@ export function AnalysisNotifications() {
   }, []);
 
   useAnalysisNotifications((outcome) => {
-    const toast = { ...outcome, id: nextId++ };
-    setToasts((current) => [...current, toast]);
-    setTimeout(() => dismiss(toast.id), AUTO_DISMISS_MS);
+    setToasts((current) => [...current, { ...outcome, id: nextId++ }]);
     // a finished run changed data on whatever page is currently open (the
     // ticker page, queue, watchlist) — refresh so it's not stuck showing
     // the pre-completion state until the user next interacts with it
@@ -37,20 +38,20 @@ export function AnalysisNotifications() {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
+    <div className="fixed inset-x-0 top-16 z-50 flex flex-col items-center gap-2 px-4">
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className={`flex items-center gap-3 rounded-lg border px-4 py-3 text-sm shadow-lg ${
+          className={`flex w-full max-w-md items-center gap-3 rounded-lg border px-4 py-3 text-sm shadow-lg ${
             toast.status === "ready"
               ? "border-green-200 bg-green-50 text-green-900"
               : "border-red-200 bg-red-50 text-red-900"
           }`}
         >
-          <span>
+          <span className="flex-1">
             {toast.status === "ready" ? (
               <>
-                New analysis ready for <strong>{toast.ticker}</strong>
+                🎉 New analysis ready for <strong>{toast.ticker}</strong>
               </>
             ) : (
               <>
@@ -59,18 +60,14 @@ export function AnalysisNotifications() {
             )}
           </span>
           {toast.status === "ready" && (
-            <Link
-              href={`/stocks/${toast.ticker}`}
-              onClick={() => dismiss(toast.id)}
-              className="whitespace-nowrap font-medium underline"
-            >
-              View
-            </Link>
+            <Button asChild size="sm" onClick={() => dismiss(toast.id)}>
+              <Link href={`/stocks/${toast.ticker}`}>Read it</Link>
+            </Button>
           )}
           <button
             onClick={() => dismiss(toast.id)}
             aria-label="Dismiss"
-            className="ml-1 text-neutral-400 hover:text-neutral-600"
+            className="text-neutral-400 hover:text-neutral-600"
           >
             ×
           </button>
