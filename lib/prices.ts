@@ -79,18 +79,57 @@ function getEasternDateParts(date: Date) {
   return { year: Number(map.year), month: Number(map.month), day: Number(map.day) };
 }
 
-export function getRecentTradingDate(): Date {
-  // free tier is end-of-day data, so we start from yesterday, not today.
-  // NYSE trading days are defined in US/Eastern, so anchor to that calendar
-  // date (as a UTC-midnight Date) instead of the server's local timezone —
-  // otherwise this drifts by a day depending on where/when the app runs.
+// NYSE trading days are defined in US/Eastern, so anchor to that calendar
+// date (as a UTC-midnight Date) instead of the server's local timezone —
+// otherwise this drifts by a day depending on where/when the app runs.
+function getEasternToday(): Date {
   const { year, month, day } = getEasternDateParts(new Date());
-  const d = new Date(Date.UTC(year, month - 1, day));
+  return new Date(Date.UTC(year, month - 1, day));
+}
+
+function isTradingWeekday(d: Date): boolean {
+  return d.getUTCDay() !== 0 && d.getUTCDay() !== 6;
+}
+
+// NYSE regular-session close (ignoring rare early-close days, same
+// granularity the holiday handling elsewhere in this file already accepts).
+// Before this, Massive/Polygon reliably 403s any request for today's date
+// ("before end of day") — so gating on it avoids burning a whole extra API
+// call, per stock, on every refresh throughout the trading day for a
+// request we already know will fail.
+const MARKET_CLOSE_HOUR_ET = 16;
+
+function isAfterMarketCloseToday(): boolean {
+  const hour = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    hour: "2-digit",
+    hour12: false,
+  }).formatToParts(new Date()).find((p) => p.type === "hour")?.value;
+  return Number(hour) >= MARKET_CLOSE_HOUR_ET;
+}
+
+export function getRecentTradingDate(): Date {
+  // free tier can't get today's close until end of day (see getPrice), so
+  // this is the latest date we're guaranteed to already be able to fetch.
+  const d = getEasternToday();
   d.setUTCDate(d.getUTCDate() - 1);
-  while (d.getUTCDay() === 0 || d.getUTCDay() === 6) {
+  while (!isTradingWeekday(d)) {
     d.setUTCDate(d.getUTCDate() - 1); // skip Sat/Sun
   }
   return d;
+}
+
+function canTodayHaveData(today: Date): boolean {
+  return isTradingWeekday(today) && isAfterMarketCloseToday();
+}
+
+// The newest date that could possibly have data available right now: today,
+// once the market's closed, or otherwise the last confirmed trading day.
+// Used to decide whether a refresh is even worth attempting — it doesn't
+// guarantee today's close is ready yet, just that it's not impossible.
+export function getMostRecentPossibleTradingDate(): Date {
+  const today = getEasternToday();
+  return canTodayHaveData(today) ? today : getRecentTradingDate();
 }
 
 async function fetchOpenClose(ticker: string, date: Date) {
@@ -100,6 +139,26 @@ async function fetchOpenClose(ticker: string, date: Date) {
 }
 
 export async function getPrice(ticker: string): Promise<PriceResult> {
+  // Try today first, but only once the market's plausibly closed — before
+  // that, Massive/Polygon always 403s ("before end of day"), so attempting
+  // it would just be a wasted API call on every refresh throughout the
+  // trading day. Once it's worth trying, this saves the app from waiting a
+  // full extra day for data that's already available.
+  const today = getEasternToday();
+  if (canTodayHaveData(today)) {
+    try {
+      const res = await fetchOpenClose(ticker, today);
+      if (res.ok) {
+        const data = await res.json();
+        if (typeof data?.close === "number") {
+          return { ticker, price: data.close, asOf: today };
+        }
+      }
+    } catch {
+      // network hiccup — fall through to the fallback below
+    }
+  }
+
   const date = getRecentTradingDate();
 
   // step back further on market holidays (e.g. July 4th), which the
@@ -109,7 +168,7 @@ export async function getPrice(ticker: string): Promise<PriceResult> {
 
     if (res.status === 404) {
       date.setUTCDate(date.getUTCDate() - 1);
-      while (date.getUTCDay() === 0 || date.getUTCDay() === 6) {
+      while (!isTradingWeekday(date)) {
         date.setUTCDate(date.getUTCDate() - 1);
       }
       continue;
@@ -138,13 +197,15 @@ export async function getPrice(ticker: string): Promise<PriceResult> {
 
 export async function refreshAllPrices(): Promise<RefreshAllPricesResult> {
   const stocks = await prisma.stock.findMany();
-  const targetDate = toDateParam(getRecentTradingDate());
+  const targetDate = toDateParam(getMostRecentPossibleTradingDate());
   const updated: Stock[] = [];
   const failed: string[] = [];
 
   for (const stock of stocks) {
-    // already priced for the latest trading day, skip the API call
-    // entirely to avoid burning the API's per-minute rate limit
+    // already priced for the newest date that could possibly have data,
+    // skip the API call entirely to avoid burning the API's per-minute
+    // rate limit — this only skips once we actually have today's close,
+    // not merely because we tried and it wasn't ready yet
     if (stock.priceAsOf && toDateParam(stock.priceAsOf) === targetDate) {
       continue;
     }
