@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
 import { isAnalysisRunning } from "@/lib/analysis-status";
+import { formatAnalysisDate } from "@/lib/format-analysis-date";
 
 export default async function QueuePage() {
   await auth.protect();
@@ -20,14 +21,14 @@ export default async function QueuePage() {
     orderBy: { ticker: "asc" },
   });
 
-  const latestAnalyses = await prisma.analysis.findMany({
+  const analyses = await prisma.analysis.findMany({
     where: { ticker: { in: stocks.map((s) => s.ticker) } },
     orderBy: [{ ticker: "asc" }, { date: "desc" }],
-    distinct: ["ticker"],
   });
-  const latestAnalysisDateByTicker = new Map(
-    latestAnalyses.map((a) => [a.ticker, a.date])
-  );
+  const analysesByTicker = new Map<string, typeof analyses>();
+  for (const a of analyses) {
+    analysesByTicker.set(a.ticker, [...(analysesByTicker.get(a.ticker) ?? []), a]);
+  }
 
   return (
     <main className="max-w-2xl mx-auto mt-16 px-4">
@@ -46,7 +47,8 @@ export default async function QueuePage() {
           </TableHeader>
           <TableBody>
             {stocks.map((stock) => {
-              const latestAnalysisDate = latestAnalysisDateByTicker.get(stock.ticker) ?? null;
+              const tickerAnalyses = analysesByTicker.get(stock.ticker) ?? [];
+              const latestAnalysis = tickerAnalyses[0] ?? null;
 
               return (
                 <TableRow key={stock.id}>
@@ -57,7 +59,12 @@ export default async function QueuePage() {
                   </TableCell>
                   <TableCell>{stock.name}</TableCell>
                   <TableCell>
-                    {latestAnalysisDate ? latestAnalysisDate.toLocaleDateString() : "Never"}
+                    {latestAnalysis
+                      ? formatAnalysisDate(
+                          latestAnalysis.date,
+                          tickerAnalyses.map((a) => a.date)
+                        )
+                      : "Never"}
                   </TableCell>
                   <TableCell>
                     <RunAnalysisButton

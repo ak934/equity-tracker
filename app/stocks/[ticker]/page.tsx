@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
 import { AnalyzingIndicator } from "@/components/analyzing-indicator";
 import { isAnalysisRunning } from "@/lib/analysis-status";
+import { formatAnalysisDate } from "@/lib/format-analysis-date";
 
 const actionBadgeStyles: Record<string, string> = {
   buy: "bg-green-100 text-green-800",
@@ -73,7 +74,7 @@ export default async function StockPage({
               {latest.action}
             </span>
             <span className="text-sm text-neutral-500">
-              Analyzed {latest.date.toLocaleDateString()}
+              Analyzed {formatAnalysisDate(latest.date, analyses.map((a) => a.date))}
             </span>
             <div className="ml-auto flex gap-4 text-sm">
               <span>
@@ -108,7 +109,9 @@ export default async function StockPage({
                   >
                     {a.action}
                   </span>
-                  <span className="text-neutral-500">{a.date.toLocaleDateString()}</span>
+                  <span className="text-neutral-500">
+                    {formatAnalysisDate(a.date, analyses.map((x) => x.date))}
+                  </span>
                   <span className="ml-auto text-neutral-500">
                     Q{a.qualityScore} · V{a.valuationScore}
                   </span>

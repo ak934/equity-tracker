@@ -17,6 +17,7 @@ import { RefreshButton } from "@/components/refresh-button";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
 import { AnalyzingIndicator } from "@/components/analyzing-indicator";
 import { isAnalysisRunning } from "@/lib/analysis-status";
+import { formatAnalysisDate } from "@/lib/format-analysis-date";
 
 const actionBadgeStyles: Record<string, string> = {
   buy: "bg-green-100 text-green-800",
@@ -32,13 +33,16 @@ export default async function WatchlistPage() {
     orderBy: { ticker: "asc" },
   });
 
-  const latestAnalyses = await prisma.analysis.findMany({
+  const analyses = await prisma.analysis.findMany({
     where: { ticker: { in: stocks.map((s) => s.ticker) } },
     orderBy: [{ ticker: "asc" }, { date: "desc" }],
-    distinct: ["ticker"],
   });
+  const analysesByTicker = new Map<string, typeof analyses>();
+  for (const a of analyses) {
+    analysesByTicker.set(a.ticker, [...(analysesByTicker.get(a.ticker) ?? []), a]);
+  }
   const latestAnalysisByTicker = new Map(
-    latestAnalyses.map((a) => [a.ticker, a])
+    [...analysesByTicker].map(([ticker, list]) => [ticker, list[0]])
   );
 
   return (
@@ -131,7 +135,10 @@ export default async function WatchlistPage() {
                         href={`/stocks/${stock.ticker}`}
                         className="text-sm hover:underline"
                       >
-                        {latestAnalysis.date.toLocaleDateString()}
+                        {formatAnalysisDate(
+                          latestAnalysis.date,
+                          (analysesByTicker.get(stock.ticker) ?? []).map((a) => a.date)
+                        )}
                       </Link>
                     ) : (
                       "—"
