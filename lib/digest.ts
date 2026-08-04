@@ -1,51 +1,12 @@
-import { hasHitTargetPrice } from "./target-price";
-
-export interface TargetPriceStockInput {
-  ticker: string;
-  price: number | null | undefined;
-  targetPrice: number | null | undefined;
-}
-
 export interface AnalysisStockInput {
   ticker: string;
   latestAnalysisDate?: Date | null;
-}
-
-export interface DigestTargetPriceHit {
-  ticker: string;
-  name: string;
-  price: number | null | undefined;
-  targetPrice: number | null | undefined;
 }
 
 export interface DigestStaleAnalysis {
   ticker: string;
   name: string;
   latestAnalysisDate?: Date | null;
-}
-
-export function findNewTargetPriceHits<T extends TargetPriceStockInput>(
-  stocksBefore: T[],
-  stocksAfter: T[]
-): T[] {
-  const beforeByTicker = new Map(stocksBefore.map((s) => [s.ticker, s]));
-
-  return stocksAfter.filter((after) => {
-    const before = beforeByTicker.get(after.ticker);
-    // no prior snapshot to compare against, so we can't call this "new"
-    if (!before) return false;
-
-    const beforeHit = hasHitTargetPrice({
-      price: before.price,
-      targetPrice: before.targetPrice,
-    });
-    const afterHit = hasHitTargetPrice({
-      price: after.price,
-      targetPrice: after.targetPrice,
-    });
-
-    return !beforeHit && afterHit;
-  });
 }
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -104,24 +65,7 @@ export function computeReanalysisFlagUpdates(
   return { newlyStale, toClear };
 }
 
-export function buildDigestEmailHtml(
-  newEntries: DigestTargetPriceHit[],
-  staleAnalyses: DigestStaleAnalysis[]
-): string {
-  const newEntriesSection = newEntries.length
-    ? `
-      <h2>Target Price Hit</h2>
-      <ul>
-        ${newEntries
-          .map(
-            (s) =>
-              `<li>${s.ticker} (${s.name}) — $${s.price ?? "?"} (target $${s.targetPrice ?? "?"})</li>`
-          )
-          .join("\n")}
-      </ul>
-    `
-    : "";
-
+export function buildDigestEmailHtml(staleAnalyses: DigestStaleAnalysis[]): string {
   const staleAnalysesSection = staleAnalyses.length
     ? `
       <h2>Stale Analyses</h2>
@@ -142,7 +86,6 @@ export function buildDigestEmailHtml(
 
   return `
     <div>
-      ${newEntriesSection}
       ${staleAnalysesSection}
     </div>
   `;

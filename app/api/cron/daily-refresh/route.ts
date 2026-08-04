@@ -2,12 +2,10 @@ import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
 import { refreshAllPrices } from "@/lib/prices";
 import {
-  findNewTargetPriceHits,
   findStaleAnalyses,
   computeReanalysisFlagUpdates,
   buildDigestEmailHtml,
 } from "@/lib/digest";
-import { sendTargetPriceHitEmail } from "@/lib/notifications";
 
 const STALE_ANALYSIS_DAYS_THRESHOLD = 60;
 
@@ -16,8 +14,6 @@ export async function GET(request: Request) {
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return new Response("Unauthorized", { status: 401 });
   }
-
-  const stocksBefore = await prisma.stock.findMany();
 
   const { updated, failed } = await refreshAllPrices();
 
@@ -30,21 +26,6 @@ export async function GET(request: Request) {
   });
   const latestAnalysisDateByTicker = new Map(
     latestAnalyses.map((a) => [a.ticker, a.date])
-  );
-
-  const newEntries = findNewTargetPriceHits(
-    stocksBefore.map((s) => ({
-      ticker: s.ticker,
-      name: s.name,
-      price: s.lastPrice,
-      targetPrice: s.targetPrice,
-    })),
-    stocksAfter.map((s) => ({
-      ticker: s.ticker,
-      name: s.name,
-      price: s.lastPrice,
-      targetPrice: s.targetPrice,
-    }))
   );
 
   const staleAnalyses = findStaleAnalyses(
@@ -81,8 +62,6 @@ export async function GET(request: Request) {
     });
   }
 
-  await sendTargetPriceHitEmail(newEntries);
-
   let digestSent = false;
 
   if (staleAnalyses.length > 0) {
@@ -91,7 +70,7 @@ export async function GET(request: Request) {
       from: "Equity Tracker <onboarding@resend.dev>",
       to: process.env.DIGEST_EMAIL_TO!,
       subject: "Equity Tracker Daily Digest",
-      html: buildDigestEmailHtml([], staleAnalyses),
+      html: buildDigestEmailHtml(staleAnalyses),
     });
     digestSent = true;
   }
@@ -100,9 +79,7 @@ export async function GET(request: Request) {
     success: true,
     updated: updated.length,
     failed: failed.length,
-    newEntries: newEntries.length,
     staleAnalyses: staleAnalyses.length,
-    targetPriceEmailSent: newEntries.length > 0,
     digestSent,
   });
 }

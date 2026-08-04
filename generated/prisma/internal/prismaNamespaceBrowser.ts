@@ -78,7 +78,6 @@ export const StockScalarFieldEnum = {
   status: 'status',
   lastPrice: 'lastPrice',
   priceAsOf: 'priceAsOf',
-  targetPrice: 'targetPrice',
   hiddenFromDashboard: 'hiddenFromDashboard',
   needsReanalysis: 'needsReanalysis',
   reanalysisReason: 'reanalysisReason',

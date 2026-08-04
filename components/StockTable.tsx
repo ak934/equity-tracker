@@ -14,7 +14,6 @@ type Stock = {
   status: string;
   lastPrice: number | null;
   priceAsOf: Date | null;
-  targetPrice: number | null;
 };
 
 export function StockTable({ stocks }: { stocks: Stock[] }) {

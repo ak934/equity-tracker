@@ -11,8 +11,6 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { updateStockStatus, flagForReanalysis } from "@/app/actions/stocks";
-import { TargetPriceInput } from "@/components/TargetPriceInput";
-import { hasHitTargetPrice } from "@/lib/target-price";
 import { RefreshButton } from "@/components/refresh-button";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
 import { AnalyzingIndicator } from "@/components/analyzing-indicator";
@@ -62,7 +60,6 @@ export default async function WatchlistPage() {
               <TableHead>Ticker</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Target Price</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>As of</TableHead>
               <TableHead>Last Analyzed</TableHead>
@@ -73,14 +70,10 @@ export default async function WatchlistPage() {
           </TableHeader>
           <TableBody>
             {stocks.map((stock) => {
-              const targetHit = hasHitTargetPrice({
-                price: stock.lastPrice,
-                targetPrice: stock.targetPrice,
-              });
               const latestAnalysis = latestAnalysisByTicker.get(stock.ticker) ?? null;
 
               return (
-                <TableRow key={stock.id} className={targetHit ? "bg-green-50" : ""}>
+                <TableRow key={stock.id}>
                   <TableCell className="font-medium">
                     <Link href={`/stocks/${stock.ticker}`} className="hover:underline">
                       {stock.ticker}
@@ -119,9 +112,6 @@ export default async function WatchlistPage() {
                           </form>
                         ))}
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <TargetPriceInput stockId={stock.id} targetPrice={stock.targetPrice} />
                   </TableCell>
                   <TableCell>
                     {stock.lastPrice != null ? `$${stock.lastPrice.toFixed(2)}` : "—"}

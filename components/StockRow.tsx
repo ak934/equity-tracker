@@ -2,7 +2,6 @@ import Link from "next/link";
 import { TableCell, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { deleteStock, updateStockStatus } from "@/app/actions/stocks";
-import { hasHitTargetPrice } from "@/lib/target-price";
 
 type Stock = {
     id: string;
@@ -11,7 +10,6 @@ type Stock = {
     status: string;
     lastPrice: number | null;
     priceAsOf: Date | null;
-    targetPrice: number | null;
 };
 
 export function StockRow({
@@ -19,13 +17,8 @@ export function StockRow({
 }: {
     stock: Stock;
 }) {
-    const targetHit = hasHitTargetPrice({
-        price: stock.lastPrice,
-        targetPrice: stock.targetPrice,
-    });
-
     return (
-        <TableRow className={targetHit ? "bg-green-50" : ""}>
+        <TableRow>
             <TableCell className="font-medium">
                 <Link href={`/stocks/${stock.ticker}`} className="hover:underline">
                     {stock.ticker}
