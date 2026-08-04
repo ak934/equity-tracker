@@ -32,31 +32,33 @@ export function RunAnalysisButton({
     <button
       onClick={async () => {
         setIsAnalyzing(true);
-        // don't await this before navigating away — the request keeps the
-        // analysis running server-side regardless of what page is open, so
-        // navigateAfter should happen immediately, not once the (60-90s)
-        // analysis finishes. Whichever page the user ends up on reads the
-        // durable analysisRunning flag on its own next load/poll.
-        const done = fetch("/api/analysis", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ticker }),
-        })
-          .then(async (res) => {
-            // 409 means another instance of this button already started
-            // this ticker's run — treat it the same as our own success and
-            // let polling pick up completion
-            if (!res.ok && res.status !== 409) {
-              throw new Error(await res.text());
-            }
-            router.refresh();
-          })
-          .catch(() => setIsAnalyzing(false));
+        // The route handler responds as soon as analysisRunning is durably
+        // persisted (it defers the actual 60-90s analysis to run in the
+        // background), so awaiting it here is fast and guarantees the
+        // flag is set in the DB before we navigate — otherwise the
+        // destination page's own read could race the write and render as
+        // if nothing had started.
+        try {
+          const res = await fetch("/api/analysis", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ticker }),
+          });
+          // 409 means another instance of this button already started
+          // this ticker's run — treat it the same as our own success and
+          // let polling pick up completion
+          if (!res.ok && res.status !== 409) {
+            throw new Error(await res.text());
+          }
+        } catch {
+          setIsAnalyzing(false);
+          return;
+        }
 
         if (navigateAfter) {
           router.push(navigateAfter);
         } else {
-          await done;
+          router.refresh();
         }
       }}
       disabled={isAnalyzing}

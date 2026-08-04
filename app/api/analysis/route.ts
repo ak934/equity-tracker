@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateAnalysis } from "@/lib/analysis";
 import { isAnalysisRunning } from "@/lib/analysis-status";
@@ -41,44 +42,48 @@ export async function POST(request: Request) {
     data: { analysisRunning: true, analysisStartedAt: new Date() },
   });
 
-  try {
-    revalidateAll(ticker);
+  revalidateAll(ticker);
 
-    const result = await generateAnalysis(ticker, stock?.lastPrice ?? null);
+  // Respond as soon as analysisRunning is durably persisted, instead of
+  // after the full 60-90s generateAnalysis call. The caller awaits this
+  // response before navigating, so by the time any page (including the one
+  // it navigates to) reads the stock row, it's guaranteed to see
+  // analysisRunning: true rather than racing the DB write below.
+  after(async () => {
+    try {
+      const result = await generateAnalysis(ticker, stock?.lastPrice ?? null);
 
-    await prisma.analysis.create({
-      data: {
-        ticker,
-        qualityScore: result.qualityScore,
-        valuationScore: result.valuationScore,
-        action: result.action,
-        fullText: result.fullText,
-      },
-    });
+      await prisma.analysis.create({
+        data: {
+          ticker,
+          qualityScore: result.qualityScore,
+          valuationScore: result.valuationScore,
+          action: result.action,
+          fullText: result.fullText,
+        },
+      });
 
-    // a fresh analysis just ran, so whatever flagged this stock (manual or
-    // stale) is resolved
-    await prisma.stock.updateMany({
-      where: { ticker },
-      data: {
-        needsReanalysis: false,
-        reanalysisReason: null,
-        analysisRunning: false,
-        analysisStartedAt: null,
-      },
-    });
+      // a fresh analysis just ran, so whatever flagged this stock (manual or
+      // stale) is resolved
+      await prisma.stock.updateMany({
+        where: { ticker },
+        data: {
+          needsReanalysis: false,
+          reanalysisReason: null,
+          analysisRunning: false,
+          analysisStartedAt: null,
+        },
+      });
 
-    revalidateAll(ticker);
+      revalidateAll(ticker);
+    } catch {
+      await prisma.stock.updateMany({
+        where: { ticker },
+        data: { analysisRunning: false, analysisStartedAt: null },
+      });
+      revalidateAll(ticker);
+    }
+  });
 
-    return Response.json({ ok: true });
-  } catch (err) {
-    await prisma.stock.updateMany({
-      where: { ticker },
-      data: { analysisRunning: false, analysisStartedAt: null },
-    });
-    revalidateAll(ticker);
-
-    const message = err instanceof Error ? err.message : "Analysis failed";
-    return new Response(message, { status: 500 });
-  }
+  return Response.json({ ok: true, started: true });
 }
