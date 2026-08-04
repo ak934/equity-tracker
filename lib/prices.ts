@@ -44,24 +44,64 @@ function rank(r: { ticker: string; type?: string }, normalizedQuery: string): nu
   return 3;
 }
 
-export async function searchTickers(query: string): Promise<TickerSearchResult[]> {
+type TickerRaw = { ticker: string; name?: string; type?: string };
+
+async function fetchTickers(params: Record<string, string>): Promise<TickerRaw[]> {
   const apiKey = process.env.MASSIVE_API_KEY;
-  const url = `https://api.massive.com/v3/reference/tickers?search=${encodeURIComponent(query)}&active=true&limit=${FETCH_LIMIT}&apiKey=${apiKey}`;
-  const res = await fetch(url);
+  const qs = new URLSearchParams({ ...params, apiKey: apiKey ?? "" });
+  const res = await fetch(`https://api.massive.com/v3/reference/tickers?${qs}`);
 
   if (!res.ok) {
     throw new TickerSearchError(`Massive API error searching tickers: ${res.status}`, res.status);
   }
 
   const data = await res.json();
-  const results: Array<{ ticker: string; name?: string; type?: string }> = data?.results ?? [];
+  return data?.results ?? [];
+}
+
+// Real US tickers are 1-6 letters, optionally with a share-class suffix
+// like "BRK.B" — used to skip the exact-match lookup below for input that
+// obviously isn't a ticker (e.g. a company name), since it would just be a
+// wasted API call against a tightly rate-limited free tier.
+const TICKER_SHAPE_RE = /^[A-Z]{1,6}(\.[A-Z]{1,2})?$/;
+
+export async function searchTickers(query: string): Promise<TickerSearchResult[]> {
   const normalizedQuery = query.trim().toUpperCase();
 
-  return results
-    .filter((r): r is { ticker: string; name: string; type?: string } => Boolean(r.name))
-    .sort((a, b) => rank(a, normalizedQuery) - rank(b, normalizedQuery))
-    .slice(0, DISPLAY_LIMIT)
-    .map((r) => ({ ticker: r.ticker, name: r.name }));
+  // The substring `search` param sorts alphabetically by ticker with no
+  // relevance ranking, so a common substring can bury the real match past
+  // the fetch limit entirely regardless of local re-ranking below — e.g.
+  // searching "META" returns 25+ unrelated "X METALS" penny stocks before
+  // ever reaching the real ticker "META" alphabetically. Querying the exact
+  // ticker directly sidesteps that for the most common case: the user
+  // typing a real ticker. It's best-effort — if it fails, the substring
+  // search below still runs normally.
+  const [exactMatches, substringMatches] = await Promise.all([
+    TICKER_SHAPE_RE.test(normalizedQuery)
+      ? fetchTickers({ ticker: normalizedQuery, active: "true", market: "stocks" }).catch(() => [])
+      : Promise.resolve([]),
+    fetchTickers({
+      search: query,
+      active: "true",
+      market: "stocks",
+      limit: String(FETCH_LIMIT),
+    }),
+  ]);
+
+  const ranked = substringMatches
+    .filter((r): r is TickerRaw & { name: string } => Boolean(r.name))
+    .sort((a, b) => rank(a, normalizedQuery) - rank(b, normalizedQuery));
+
+  const seen = new Set<string>();
+  const merged: TickerSearchResult[] = [];
+  for (const r of [...exactMatches, ...ranked]) {
+    if (r.name && !seen.has(r.ticker)) {
+      seen.add(r.ticker);
+      merged.push({ ticker: r.ticker, name: r.name });
+    }
+  }
+
+  return merged.slice(0, DISPLAY_LIMIT);
 }
 
 export function toDateParam(d: Date): string {
