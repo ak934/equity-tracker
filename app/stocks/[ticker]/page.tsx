@@ -8,6 +8,7 @@ import { RunAnalysisButton } from "@/components/run-analysis-button";
 import { AnalyzingIndicator } from "@/components/analyzing-indicator";
 import { isAnalysisRunning } from "@/lib/analysis-status";
 import { formatAnalysisDate } from "@/lib/format-analysis-date";
+import { getUserTimezone } from "@/lib/user-timezone";
 import { TargetPricePrompt } from "@/components/TargetPricePrompt";
 
 const actionBadgeStyles: Record<string, string> = {
@@ -25,9 +26,10 @@ export default async function StockPage({
 
   const { ticker } = await params;
 
-  const [stock, analyses] = await Promise.all([
+  const [stock, analyses, timeZone] = await Promise.all([
     prisma.stock.findUnique({ where: { ticker } }),
     prisma.analysis.findMany({ where: { ticker }, orderBy: { date: "desc" } }),
+    getUserTimezone(),
   ]);
 
   const analyzing = stock ? isAnalysisRunning(stock) : false;
@@ -75,7 +77,7 @@ export default async function StockPage({
               {latest.action}
             </span>
             <span className="text-sm text-neutral-500">
-              Analyzed {formatAnalysisDate(latest.date, analyses.map((a) => a.date))}
+              Analyzed {formatAnalysisDate(latest.date, analyses.map((a) => a.date), timeZone)}
             </span>
             <div className="ml-auto flex gap-4 text-sm">
               <span>
@@ -115,7 +117,7 @@ export default async function StockPage({
                     {a.action}
                   </span>
                   <span className="text-neutral-500">
-                    {formatAnalysisDate(a.date, analyses.map((x) => x.date))}
+                    {formatAnalysisDate(a.date, analyses.map((x) => x.date), timeZone)}
                   </span>
                   <span className="ml-auto text-neutral-500">
                     Q{a.qualityScore} · V{a.valuationScore}

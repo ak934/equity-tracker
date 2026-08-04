@@ -12,14 +12,18 @@ import {
 import { RunAnalysisButton } from "@/components/run-analysis-button";
 import { isAnalysisRunning } from "@/lib/analysis-status";
 import { formatAnalysisDate } from "@/lib/format-analysis-date";
+import { getUserTimezone } from "@/lib/user-timezone";
 
 export default async function QueuePage() {
   await auth.protect();
 
-  const stocks = await prisma.stock.findMany({
-    where: { needsReanalysis: true },
-    orderBy: { ticker: "asc" },
-  });
+  const [stocks, timeZone] = await Promise.all([
+    prisma.stock.findMany({
+      where: { needsReanalysis: true },
+      orderBy: { ticker: "asc" },
+    }),
+    getUserTimezone(),
+  ]);
 
   const analyses = await prisma.analysis.findMany({
     where: { ticker: { in: stocks.map((s) => s.ticker) } },
@@ -62,7 +66,8 @@ export default async function QueuePage() {
                     {latestAnalysis
                       ? formatAnalysisDate(
                           latestAnalysis.date,
-                          tickerAnalyses.map((a) => a.date)
+                          tickerAnalyses.map((a) => a.date),
+                          timeZone
                         )
                       : "Never"}
                   </TableCell>

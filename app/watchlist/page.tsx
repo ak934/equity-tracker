@@ -16,6 +16,7 @@ import { RunAnalysisButton } from "@/components/run-analysis-button";
 import { AnalyzingIndicator } from "@/components/analyzing-indicator";
 import { isAnalysisRunning } from "@/lib/analysis-status";
 import { formatAnalysisDate } from "@/lib/format-analysis-date";
+import { getUserTimezone } from "@/lib/user-timezone";
 
 const actionBadgeStyles: Record<string, string> = {
   buy: "bg-green-100 text-green-800",
@@ -26,10 +27,13 @@ const actionBadgeStyles: Record<string, string> = {
 export default async function WatchlistPage() {
   await auth.protect();
 
-  const stocks = await prisma.stock.findMany({
-    where: { status: "watchlist" },
-    orderBy: { ticker: "asc" },
-  });
+  const [stocks, timeZone] = await Promise.all([
+    prisma.stock.findMany({
+      where: { status: "watchlist" },
+      orderBy: { ticker: "asc" },
+    }),
+    getUserTimezone(),
+  ]);
 
   const analyses = await prisma.analysis.findMany({
     where: { ticker: { in: stocks.map((s) => s.ticker) } },
@@ -127,7 +131,8 @@ export default async function WatchlistPage() {
                       >
                         {formatAnalysisDate(
                           latestAnalysis.date,
-                          (analysesByTicker.get(stock.ticker) ?? []).map((a) => a.date)
+                          (analysesByTicker.get(stock.ticker) ?? []).map((a) => a.date),
+                          timeZone
                         )}
                       </Link>
                     ) : (
