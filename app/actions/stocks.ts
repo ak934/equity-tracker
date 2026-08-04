@@ -118,3 +118,28 @@ export async function flagForReanalysis(formData: FormData) {
   revalidatePath("/");
   revalidatePath("/watchlist");
 }
+
+export async function setTargetPrice(formData: FormData) {
+  await auth.protect();
+  const id = String(formData.get("id") ?? "");
+  const targetPriceRaw = String(formData.get("targetPrice") ?? "").trim();
+
+  if (!id) {
+    throw new Error("Stock id is required");
+  }
+
+  const targetPrice = targetPriceRaw ? Number(targetPriceRaw) : null;
+  if (targetPriceRaw && Number.isNaN(targetPrice)) {
+    throw new Error("Target price must be a number");
+  }
+
+  await prisma.stock.update({
+    where: { id },
+    data: { targetPrice },
+  });
+
+  revalidatePath("/");
+  revalidatePath("/watchlist");
+  revalidatePath("/alerts");
+  revalidatePath("/stocks/[ticker]", "page");
+}

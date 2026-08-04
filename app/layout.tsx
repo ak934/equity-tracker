@@ -38,6 +38,7 @@ export default function RootLayout({
               <Link href="/">Search</Link>
               <Link href="/watchlist">Watchlist</Link>
               <Link href="/queue">Queue</Link>
+              <Link href="/alerts">Alerts</Link>
             </nav>
             <div className="flex items-center gap-3">
               <Show when="signed-out">

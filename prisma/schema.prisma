@@ -14,6 +14,7 @@ model Stock {
   status String // "Watchlist" | "Portfolio"
   lastPrice Float?
   priceAsOf DateTime?
+  targetPrice Float?
   hiddenFromDashboard Boolean @default(false)
   needsReanalysis Boolean @default(false)
   reanalysisReason String? // "manual" | "stale"

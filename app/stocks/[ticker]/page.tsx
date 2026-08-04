@@ -8,6 +8,7 @@ import { RunAnalysisButton } from "@/components/run-analysis-button";
 import { AnalyzingIndicator } from "@/components/analyzing-indicator";
 import { isAnalysisRunning } from "@/lib/analysis-status";
 import { formatAnalysisDate } from "@/lib/format-analysis-date";
+import { TargetPricePrompt } from "@/components/TargetPricePrompt";
 
 const actionBadgeStyles: Record<string, string> = {
   buy: "bg-green-100 text-green-800",
@@ -91,6 +92,10 @@ export default async function StockPage({
         </div>
       ) : (
         <p className="mt-4 text-neutral-500">No analysis yet.</p>
+      )}
+
+      {latest && stock && (
+        <TargetPricePrompt stockId={stock.id} targetPrice={stock.targetPrice} />
       )}
 
       {history.length > 0 && (
