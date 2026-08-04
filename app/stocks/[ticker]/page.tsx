@@ -28,27 +28,41 @@ export default async function StockPage({
     prisma.analysis.findMany({ where: { ticker }, orderBy: { date: "desc" } }),
   ]);
 
-  const [latest, ...history] = analyses;
   const analyzing = stock ? isAnalysisRunning(stock) : false;
+  const needsReanalysis = stock?.needsReanalysis ?? false;
+
+  // A flagged stock is queued for a fresh take using current information —
+  // showing the old write-up as "the" analysis would misrepresent it as
+  // up to date. Demote it into History until a new one lands.
+  const latest = needsReanalysis ? undefined : analyses[0];
+  const history = needsReanalysis ? analyses : analyses.slice(1);
 
   return (
     <div className="max-w-3xl mx-auto p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{ticker}</h1>
-        {latest ? (
+        {needsReanalysis ? (
           analyzing ? (
             <AnalyzingIndicator ticker={ticker} />
           ) : (
-            <Button asChild variant="outline">
-              <Link href="/queue">Go back to Queue</Link>
-            </Button>
+            <RunAnalysisButton ticker={ticker} initialAnalyzing={analyzing} />
           )
+        ) : latest ? (
+          <Button asChild variant="outline">
+            <Link href="/queue">Go back to Queue</Link>
+          </Button>
         ) : (
           <RunAnalysisButton ticker={ticker} initialAnalyzing={analyzing} />
         )}
       </div>
 
-      {latest ? (
+      {needsReanalysis ? (
+        <p className="mt-4 text-neutral-500">
+          {analyzing
+            ? "Generating a fresh analysis with the latest information — this can take a minute or two."
+            : "This stock is flagged for reanalysis. Run analysis to generate a fresh take before relying on its old one below."}
+        </p>
+      ) : latest ? (
         <div className="mt-6 rounded-lg border">
           <div className="flex flex-wrap items-center gap-3 border-b bg-neutral-50 px-5 py-3">
             <span
