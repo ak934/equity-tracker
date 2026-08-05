@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Equity Tracker
 
-## Getting Started
+A personal stock watchlist application that applies Buffett-style (value investing) analysis to a ~68-stock candidate list, with automated daily monitoring, buy-zone detection, and email alerts.
 
-First, run the development server:
+**Live app:** [equity-tracker-pearl.vercel.app](https://equity-tracker-pearl.vercel.app)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+> Status: actively in development. This ships the full watchlist app (Milestone 2). A portfolio-tracking and tax-mechanics layer is planned as a future, separate phase and is intentionally out of scope for now.
+
+## What it does
+
+- **Watchlist tracking** — maintains a list of candidate stocks with live prices, refreshed on a schedule
+- **Buy-zone signals** — flags when a stock's price enters a pre-defined buy-zone range
+- **AI-generated analysis** — runs a Buffett-style investment analysis per stock via the Anthropic API, with web search grounding for current information, and stores analysis history over time
+- **Re-analysis queue** — automatically flags stocks that need a fresh look (stale analysis, buy-zone entry, or manual flag) and surfaces them in a dedicated queue view
+- **Daily automation** — a scheduled job refreshes prices, detects buy-zone entries and stale analyses, and sends a daily email digest — no manual interaction required
+- **Auth-gated** — the app requires login; it is not publicly accessible
+
+## Architecture
+
+The codebase keeps three layers strictly separate:
+
+1. **Pure business logic** — plain TypeScript functions (e.g. buy-zone status, re-analysis flag computation) with no React or database calls, fully unit-testable in isolation
+2. **Data layer** — Prisma ORM queries against Postgres (Supabase), nothing else lives here
+3. **Presentation** — React Server/Client Components that render data; no business logic inside them
+
+This separation paid off directly: a cron job was silently overwriting manually-set re-analysis flags with automated "stale" flags. The fix was extracting the flagging logic into a pure function (`computeReanalysisFlagUpdates`) that skips already-flagged stocks — and because it was pure, it was straightforward to unit test and verify the fix.
+
+## Tech stack
+
+| Layer | Tool |
+|---|---|
+| Framework | Next.js (App Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS + shadcn/ui |
+| Database | Supabase (Postgres) |
+| ORM | Prisma 7 |
+| Auth | Clerk |
+| Hosting | Vercel (including Cron for scheduled jobs) |
+| Email | Resend |
+| AI analysis | Anthropic API (with web search tool) |
+| Price data | Massive Market Data API |
+| Testing | Vitest |
+| CI | GitHub Actions (lint + test on every PR) |
+
+## Environments
+
+- `main` → production
+- `staging` → a persistent branch with its own Supabase and Clerk instances, used to test AI calls and scheduled jobs before they touch production data
+
+## Project structure
+
+```
+app/                      # Next.js App Router pages, layouts, Server Actions
+components/               # React components (presentation only)
+lib/                      # Pure business logic + Prisma client
+prisma/                   # Schema and migrations
+scripts/                  # Standalone utility/test scripts
+.github/workflows/        # CI (lint + Vitest on PRs)
+.claude/skills/           # Custom Claude Code skill for the Buffett analysis template
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open [http://localhost:3000](http://localhost:3000).
 
-## Learn More
+Environment variables (Supabase connection strings, Clerk keys, Anthropic API key, Massive API key, Resend key) are required — see `.env.example` if present, or the relevant service dashboards.
 
-To learn more about Next.js, take a look at the following resources:
+## Roadmap
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Attach a custom domain (planned once the app reaches a stable post-hardening state)
+- Timezone correction for trading-day calculation (align `getRecentTradingDate()` with the NYSE calendar via `America/New_York`)
+- Portfolio tracking + tax mechanics (deferred, separate future project phase)

@@ -35,23 +35,12 @@ export function TickerSearchInput({
   const cooldownUntilRef = useRef(0);
 
   useEffect(() => {
-    if (selected || query.trim().length < MIN_QUERY_LENGTH) {
-      setResults([]);
-      return;
-    }
+    const trimmed = query.trim();
+    if (selected || trimmed.length < MIN_QUERY_LENGTH) return;
 
-    const key = query.trim().toLowerCase();
-    const cached = cacheRef.current.get(key);
-    if (cached) {
-      setResults(cached);
-      setOpen(cached.length > 0);
-      setHighlighted(0);
-      return;
-    }
-
-    if (Date.now() < cooldownUntilRef.current) {
-      return;
-    }
+    const key = trimmed.toLowerCase();
+    if (cacheRef.current.has(key)) return;
+    if (Date.now() < cooldownUntilRef.current) return;
 
     let cancelled = false;
     const handle = setTimeout(async () => {
@@ -102,6 +91,20 @@ export function TickerSearchInput({
 
   function handleChange(value: string) {
     setQuery(value);
+    const trimmed = value.trim();
+
+    if (trimmed.length < MIN_QUERY_LENGTH) {
+      setResults([]);
+      setOpen(false);
+      return;
+    }
+
+    const cached = cacheRef.current.get(trimmed.toLowerCase());
+    if (cached) {
+      setResults(cached);
+      setOpen(cached.length > 0);
+      setHighlighted(0);
+    }
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {

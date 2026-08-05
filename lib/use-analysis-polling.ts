@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 // Next.js reuses the browser's back/forward cache by design — not something
@@ -13,20 +13,19 @@ import { useRouter } from "next/navigation";
 // (e.g. the ticker leaving the Queue list).
 export function useAnalysisPolling(ticker: string, active: boolean) {
   const router = useRouter();
-  const activeRef = useRef(active);
-  activeRef.current = active;
 
   useEffect(() => {
     if (!active) return;
 
     let cancelled = false;
+    let hasRefreshed = false;
 
     const check = async () => {
       try {
         const res = await fetch(`/api/analysis/status?ticker=${encodeURIComponent(ticker)}`);
         const { running } = await res.json();
-        if (!cancelled && !running && activeRef.current) {
-          activeRef.current = false;
+        if (!cancelled && !running && !hasRefreshed) {
+          hasRefreshed = true;
           router.refresh();
         }
       } catch {
