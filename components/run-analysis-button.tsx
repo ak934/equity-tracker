@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAnalysisPolling } from "@/lib/use-analysis-polling";
 
 export function RunAnalysisButton({
@@ -14,14 +14,16 @@ export function RunAnalysisButton({
   initialAnalyzing?: boolean;
 }) {
   const [isAnalyzing, setIsAnalyzing] = useState(initialAnalyzing);
+  const [prevInitialAnalyzing, setPrevInitialAnalyzing] = useState(initialAnalyzing);
   const router = useRouter();
 
   // the server is the source of truth for whether a run is still in flight
   // (it keeps going even if this component unmounts), so re-sync whenever a
   // fresh server read comes in
-  useEffect(() => {
+  if (initialAnalyzing !== prevInitialAnalyzing) {
+    setPrevInitialAnalyzing(initialAnalyzing);
     setIsAnalyzing(initialAnalyzing);
-  }, [initialAnalyzing]);
+  }
 
   // while a run is in flight — including one kicked off before this
   // component mounted, e.g. after navigating back to this page — poll for

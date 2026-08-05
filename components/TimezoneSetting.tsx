@@ -19,6 +19,9 @@ export function TimezoneSetting({ currentTimezone }: { currentTimezone: string |
 
   useEffect(() => {
     if (currentTimezone !== null) return;
+    // The server can't know the visitor's real timezone, so this has to
+    // read it from the browser once mounted rather than during render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelected(Intl.DateTimeFormat().resolvedOptions().timeZone);
   }, [currentTimezone]);
 
