@@ -21,10 +21,12 @@ export function WatchlistStockTable({
   rows,
   allWatchlists,
   timeZone,
+  showManagementColumns = true,
 }: {
   rows: WatchlistRow[];
   allWatchlists: { id: string; name: string }[];
   timeZone: string;
+  showManagementColumns?: boolean;
 }) {
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
@@ -39,8 +41,12 @@ export function WatchlistStockTable({
             <TableHead>Last Analyzed</TableHead>
             <TableHead>Q-Score</TableHead>
             <TableHead>V-Score</TableHead>
-            <TableHead>Lists</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            {showManagementColumns && (
+              <>
+                <TableHead>Lists</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -105,22 +111,26 @@ export function WatchlistStockTable({
               <TableCell className="font-mono tabular-nums">
                 {latestAnalysis ? `${latestAnalysis.valuationScore}/100` : "—"}
               </TableCell>
-              <TableCell>
-                <StockWatchlistMenu
-                  stockId={stock.id}
-                  allWatchlists={allWatchlists}
-                  memberIds={watchlistIds}
-                />
-              </TableCell>
-              <TableCell className="text-right">
-                <form action={updateStockStatus}>
-                  <input type="hidden" name="id" value={stock.id} />
-                  <input type="hidden" name="status" value="portfolio" />
-                  <Button type="submit" variant="secondary" size="sm">
-                    Move to Dashboard
-                  </Button>
-                </form>
-              </TableCell>
+              {showManagementColumns && (
+                <>
+                  <TableCell>
+                    <StockWatchlistMenu
+                      stockId={stock.id}
+                      allWatchlists={allWatchlists}
+                      memberIds={watchlistIds}
+                    />
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <form action={updateStockStatus}>
+                      <input type="hidden" name="id" value={stock.id} />
+                      <input type="hidden" name="status" value="portfolio" />
+                      <Button type="submit" variant="secondary" size="sm">
+                        Move to Dashboard
+                      </Button>
+                    </form>
+                  </TableCell>
+                </>
+              )}
             </TableRow>
           ))}
         </TableBody>
