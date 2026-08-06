@@ -1,11 +1,47 @@
+import { SignInButton, SignUpButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
+import { ArrowRight, LineChart } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { AddStockForm } from "@/components/AddStockForm";
+import { Button } from "@/components/ui/button";
 import { RefreshButton } from "@/components/refresh-button";
 import { StockTable } from "@/components/StockTable";
 
 export default async function Home() {
-  await auth.protect();
+  const { userId } = await auth();
+
+  if (!userId) {
+    return (
+      <main className="flex flex-1 flex-col items-center justify-center px-4 text-center">
+        <span className="flex size-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
+          <LineChart className="size-7" />
+        </span>
+        <h1 className="mt-6 max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">
+          The app that tracks your finances and helps you make investment decisions.
+        </h1>
+        <p className="mt-4 max-w-xl text-muted-foreground">
+          Follow the stocks you care about, get AI-backed buy/hold/avoid analysis, and get
+          notified the moment a price hits your target.
+        </p>
+        <div className="mt-8">
+          <SignUpButton>
+            <Button size="lg" className="gap-2 px-6">
+              Get Started
+              <ArrowRight className="size-4" />
+            </Button>
+          </SignUpButton>
+        </div>
+        <p className="mt-4 text-sm text-muted-foreground">
+          Already have an account?{" "}
+          <SignInButton>
+            <button type="button" className="font-medium text-primary hover:underline">
+              Sign in
+            </button>
+          </SignInButton>
+        </p>
+      </main>
+    );
+  }
 
   const stocks = await prisma.stock.findMany({
     where: { hiddenFromDashboard: false },

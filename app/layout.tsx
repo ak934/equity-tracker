@@ -53,7 +53,7 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ClerkProvider appearance={{ theme: shadcn }}>
           <NavBar timezone={timezone} />
-          <div className="flex-1">{children}</div>
+          <div className="flex flex-1 flex-col">{children}</div>
           <Show when="signed-in">
             <AnalysisNotifications />
           </Show>
