@@ -1,161 +1,97 @@
 import Link from "next/link";
+import { Trash2 } from "lucide-react";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Badge, actionBadgeVariant } from "@/components/ui/badge";
-import { updateStockStatus, flagForReanalysis } from "@/app/actions/stocks";
-import { RefreshButton } from "@/components/refresh-button";
-import { RunAnalysisButton } from "@/components/run-analysis-button";
-import { AnalyzingIndicator } from "@/components/analyzing-indicator";
-import { isAnalysisRunning } from "@/lib/analysis-status";
-import { formatAnalysisDate } from "@/lib/format-analysis-date";
+import { getWatchlistRows } from "@/lib/watchlist-rows";
 import { getUserTimezone } from "@/lib/user-timezone";
+import { Button } from "@/components/ui/button";
+import { CreateWatchlistForm } from "@/components/CreateWatchlistForm";
+import { WatchlistStockTable } from "@/components/WatchlistStockTable";
+import { RefreshButton } from "@/components/refresh-button";
+import { deleteWatchlist } from "@/app/actions/watchlists";
 
-export default async function WatchlistPage() {
+export default async function WatchlistIndexPage() {
   await auth.protect();
 
-  const [stocks, timeZone] = await Promise.all([
-    prisma.stock.findMany({
-      where: { status: "watchlist" },
-      orderBy: { ticker: "asc" },
+  const [watchlists, timeZone] = await Promise.all([
+    prisma.watchlist.findMany({
+      orderBy: { createdAt: "asc" },
+      include: { _count: { select: { stocks: true } } },
     }),
     getUserTimezone(),
   ]);
 
-  const analyses = await prisma.analysis.findMany({
-    where: { ticker: { in: stocks.map((s) => s.ticker) } },
-    orderBy: [{ ticker: "asc" }, { date: "desc" }],
+  const unsorted = await getWatchlistRows({
+    status: "watchlist",
+    watchlists: { none: {} },
   });
-  const analysesByTicker = new Map<string, typeof analyses>();
-  for (const a of analyses) {
-    analysesByTicker.set(a.ticker, [...(analysesByTicker.get(a.ticker) ?? []), a]);
-  }
-  const latestAnalysisByTicker = new Map(
-    [...analysesByTicker].map(([ticker, list]) => [ticker, list[0]])
-  );
+
+  const allWatchlists = watchlists.map((w) => ({ id: w.id, name: w.name }));
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Watchlist</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Watchlists</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Stocks you&apos;re following but haven&apos;t added to your dashboard.
+            Organize the companies you&apos;re considering by theme — sector, strategy,
+            whatever groups them for you.
           </p>
         </div>
-        {stocks.length > 0 && <RefreshButton />}
+        <CreateWatchlistForm />
       </div>
-      {stocks.length === 0 ? (
+
+      {watchlists.length === 0 ? (
         <div className="mt-6 rounded-xl border border-dashed border-border px-6 py-12 text-center">
-          <p className="text-sm text-muted-foreground">No stocks in your watchlist yet.</p>
+          <p className="text-sm text-muted-foreground">
+            No watchlists yet — create one above to start organizing.
+          </p>
         </div>
       ) : (
-        <div className="mt-6 overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Ticker</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>As of</TableHead>
-              <TableHead>Last Analyzed</TableHead>
-              <TableHead>Q-Score</TableHead>
-              <TableHead>V-Score</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {stocks.map((stock) => {
-              const latestAnalysis = latestAnalysisByTicker.get(stock.ticker) ?? null;
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {watchlists.map((w) => (
+            <div
+              key={w.id}
+              className="flex items-start justify-between gap-3 rounded-xl border border-border bg-card p-4 shadow-sm transition-colors hover:border-primary/40"
+            >
+              <Link href={`/watchlist/${w.id}`} className="flex-1">
+                <p className="font-medium">{w.name}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {w._count.stocks} stock{w._count.stocks === 1 ? "" : "s"}
+                </p>
+              </Link>
+              <form action={deleteWatchlist}>
+                <input type="hidden" name="id" value={w.id} />
+                <Button
+                  type="submit"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={`Delete ${w.name}`}
+                >
+                  <Trash2 className="size-4" />
+                </Button>
+              </form>
+            </div>
+          ))}
+        </div>
+      )}
 
-              return (
-                <TableRow key={stock.id}>
-                  <TableCell className="font-medium">
-                    <Link href={`/stocks/${stock.ticker}`} className="hover:text-primary">
-                      {stock.ticker}
-                    </Link>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">{stock.name}</TableCell>
-                  <TableCell>
-                    <div className="flex flex-col items-start gap-1">
-                      {latestAnalysis ? (
-                        <Badge variant={actionBadgeVariant(latestAnalysis.action)}>
-                          {latestAnalysis.action}
-                        </Badge>
-                      ) : (
-                        <RunAnalysisButton
-                          ticker={stock.ticker}
-                          initialAnalyzing={isAnalysisRunning(stock)}
-                        />
-                      )}
-                      {latestAnalysis &&
-                        (stock.needsReanalysis ? (
-                          isAnalysisRunning(stock) ? (
-                            <AnalyzingIndicator ticker={stock.ticker} />
-                          ) : (
-                            <span className="text-xs text-warning">Flagged for reanalysis</span>
-                          )
-                        ) : (
-                          <form action={flagForReanalysis}>
-                            <input type="hidden" name="id" value={stock.id} />
-                            <Button type="submit" variant="outline" size="sm">
-                              Flag for Reanalysis
-                            </Button>
-                          </form>
-                        ))}
-                    </div>
-                  </TableCell>
-                  <TableCell className="font-mono tabular-nums">
-                    {stock.lastPrice != null ? `$${stock.lastPrice.toFixed(2)}` : "—"}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {stock.priceAsOf ? stock.priceAsOf.toLocaleDateString() : "—"}
-                  </TableCell>
-                  <TableCell>
-                    {latestAnalysis ? (
-                      <Link
-                        href={`/stocks/${stock.ticker}`}
-                        className="text-sm text-muted-foreground hover:text-primary"
-                      >
-                        {formatAnalysisDate(
-                          latestAnalysis.date,
-                          (analysesByTicker.get(stock.ticker) ?? []).map((a) => a.date),
-                          timeZone
-                        )}
-                      </Link>
-                    ) : (
-                      "—"
-                    )}
-                  </TableCell>
-                  <TableCell className="font-mono tabular-nums">
-                    {latestAnalysis ? `${latestAnalysis.qualityScore}/100` : "—"}
-                  </TableCell>
-                  <TableCell className="font-mono tabular-nums">
-                    {latestAnalysis ? `${latestAnalysis.valuationScore}/100` : "—"}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <form action={updateStockStatus}>
-                      <input type="hidden" name="id" value={stock.id} />
-                      <input type="hidden" name="status" value="portfolio" />
-                      <Button type="submit" variant="secondary" size="sm">
-                        Remove from Watchlist
-                      </Button>
-                    </form>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+      <div className="mt-10 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 className="text-lg font-semibold tracking-tight">Unsorted</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            On your watchlist but not yet filed into a category.
+          </p>
+        </div>
+        {unsorted.length > 0 && <RefreshButton />}
+      </div>
+      {unsorted.length === 0 ? (
+        <div className="mt-4 rounded-xl border border-dashed border-border px-6 py-8 text-center">
+          <p className="text-sm text-muted-foreground">Nothing unsorted right now.</p>
+        </div>
+      ) : (
+        <div className="mt-4">
+          <WatchlistStockTable rows={unsorted} allWatchlists={allWatchlists} timeZone={timeZone} />
         </div>
       )}
     </main>

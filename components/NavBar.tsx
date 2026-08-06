@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
   { href: "/", label: "Search" },
-  { href: "/watchlist", label: "Watchlist" },
+  { href: "/watchlist", label: "Watchlists" },
   { href: "/queue", label: "Queue" },
   { href: "/alerts", label: "Alerts" },
 ];
@@ -31,7 +31,8 @@ export function NavBar({ timezone }: { timezone: string | null }) {
           </Link>
           <nav className="flex items-center gap-1 text-sm font-medium">
             {NAV_LINKS.map((link) => {
-              const active = pathname === link.href;
+              const active =
+                link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
               return (
                 <Link
                   key={link.href}

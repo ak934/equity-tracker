@@ -9,5 +9,6 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/Stock'
+export type * from './models/Watchlist'
 export type * from './models/Analysis'
 export type * from './commonInputTypes'

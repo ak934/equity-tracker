@@ -23,6 +23,11 @@ export * from './enums';
  */
 export type Stock = Prisma.StockModel
 /**
+ * Model Watchlist
+ * 
+ */
+export type Watchlist = Prisma.WatchlistModel
+/**
  * Model Analysis
  * 
  */

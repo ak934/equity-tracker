@@ -8,19 +8,31 @@ datasource db {
 }
 
 model Stock {
-  id                  String    @id @default(cuid())
-  ticker              String    @unique
+  id                  String      @id @default(cuid())
+  ticker              String      @unique
   name                String
   status              String
   lastPrice           Float?
-  createdAt           DateTime  @default(now())
+  createdAt           DateTime    @default(now())
   priceAsOf           DateTime?
-  hiddenFromDashboard Boolean   @default(false)
-  needsReanalysis     Boolean   @default(false)
+  hiddenFromDashboard Boolean     @default(false)
+  needsReanalysis     Boolean     @default(false)
   reanalysisReason    String?
-  analysisRunning     Boolean   @default(false)
+  analysisRunning     Boolean     @default(false)
   analysisStartedAt   DateTime?
   targetPrice         Float?
+  watchlists          Watchlist[] @relation("StockWatchlists")
+}
+
+// A stock only carries this once it's marked status "watchlist" — these
+// are the user's own categories (e.g. "Biotech", "Dividend Growth") for
+// organizing which companies they're considering, not the watchlist
+// status itself. A stock can belong to several, or none yet ("Unsorted").
+model Watchlist {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  stocks    Stock[]  @relation("StockWatchlists")
 }
 
 model Analysis {

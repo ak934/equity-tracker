@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Stock: 'Stock',
+  Watchlist: 'Watchlist',
   Analysis: 'Analysis'
 } as const
 
@@ -77,17 +78,26 @@ export const StockScalarFieldEnum = {
   name: 'name',
   status: 'status',
   lastPrice: 'lastPrice',
+  createdAt: 'createdAt',
   priceAsOf: 'priceAsOf',
-  targetPrice: 'targetPrice',
   hiddenFromDashboard: 'hiddenFromDashboard',
   needsReanalysis: 'needsReanalysis',
   reanalysisReason: 'reanalysisReason',
   analysisRunning: 'analysisRunning',
   analysisStartedAt: 'analysisStartedAt',
-  createdAt: 'createdAt'
+  targetPrice: 'targetPrice'
 } as const
 
 export type StockScalarFieldEnum = (typeof StockScalarFieldEnum)[keyof typeof StockScalarFieldEnum]
+
+
+export const WatchlistScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt'
+} as const
+
+export type WatchlistScalarFieldEnum = (typeof WatchlistScalarFieldEnum)[keyof typeof WatchlistScalarFieldEnum]
 
 
 export const AnalysisScalarFieldEnum = {

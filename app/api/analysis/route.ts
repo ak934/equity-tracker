@@ -9,6 +9,7 @@ function revalidateAll(ticker: string) {
   revalidatePath(`/stocks/${ticker}`);
   revalidatePath("/");
   revalidatePath("/watchlist");
+  revalidatePath("/watchlist/[id]", "page");
   revalidatePath("/queue");
 }
 

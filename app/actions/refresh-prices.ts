@@ -22,6 +22,7 @@ export async function refreshPrices() {
 
     revalidatePath("/");
     revalidatePath("/watchlist");
+    revalidatePath("/watchlist/[id]", "page");
     revalidatePath("/alerts");
     return { failed };
 }
