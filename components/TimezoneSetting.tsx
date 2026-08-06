@@ -43,7 +43,7 @@ export function TimezoneSetting({ currentTimezone }: { currentTimezone: string |
           setSelected(currentTimezone ?? "UTC");
           setEditing(true);
         }}
-        className="text-xs text-neutral-500 hover:text-neutral-700"
+        className="text-xs text-muted-foreground hover:text-foreground"
       >
         🕐 {currentTimezone}
       </button>
@@ -53,7 +53,7 @@ export function TimezoneSetting({ currentTimezone }: { currentTimezone: string |
   return (
     <div className="flex items-center gap-2 text-xs">
       {currentTimezone === null && (
-        <span className="text-neutral-600">
+        <span className="text-muted-foreground">
           What timezone are you in? So analysis times show correctly.
         </span>
       )}
@@ -61,7 +61,7 @@ export function TimezoneSetting({ currentTimezone }: { currentTimezone: string |
         value={selected}
         onChange={(e) => setSelected(e.target.value)}
         disabled={isPending}
-        className="rounded border border-input bg-transparent px-1.5 py-1 text-xs"
+        className="rounded border border-input bg-transparent px-1.5 py-1 text-xs text-foreground"
       >
         {TIMEZONES.map((tz) => (
           <option key={tz} value={tz}>
@@ -76,7 +76,7 @@ export function TimezoneSetting({ currentTimezone }: { currentTimezone: string |
         <button
           type="button"
           onClick={() => setEditing(false)}
-          className="text-neutral-400 hover:text-neutral-600"
+          className="text-muted-foreground hover:text-foreground"
         >
           Cancel
         </button>

@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { setTargetPrice } from "@/app/actions/stocks";
 import { hasHitTargetPrice } from "@/lib/target-price";
 import { RefreshButton } from "@/components/refresh-button";
@@ -23,18 +24,24 @@ export default async function AlertsPage() {
   });
 
   return (
-    <main className="max-w-3xl mx-auto mt-16 px-4">
-      <h1 className="text-2xl font-bold mb-6">Alerts</h1>
-      {stocks.length > 0 && (
-        <div className="mb-4">
-          <RefreshButton />
+    <main className="mx-auto max-w-3xl px-4 py-10">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Alerts</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            We&apos;ll email you when a stock hits its target price.
+          </p>
         </div>
-      )}
+        {stocks.length > 0 && <RefreshButton />}
+      </div>
       {stocks.length === 0 ? (
-        <p className="text-neutral-500">
-          No target prices set yet. Set one from a stock&apos;s analysis page and it&apos;ll show up here.
-        </p>
+        <div className="mt-6 rounded-xl border border-dashed border-border px-6 py-12 text-center">
+          <p className="text-sm text-muted-foreground">
+            No target prices set yet. Set one from a stock&apos;s analysis page and it&apos;ll show up here.
+          </p>
+        </div>
       ) : (
+        <div className="mt-6 overflow-hidden rounded-xl border border-border bg-card shadow-sm">
         <Table>
           <TableHeader>
             <TableRow>
@@ -43,7 +50,7 @@ export default async function AlertsPage() {
               <TableHead>Price</TableHead>
               <TableHead>Target</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -54,29 +61,27 @@ export default async function AlertsPage() {
               });
 
               return (
-                <TableRow key={stock.id} className={hit ? "bg-green-50" : ""}>
+                <TableRow key={stock.id} className={hit ? "bg-positive/5" : ""}>
                   <TableCell className="font-medium">
-                    <Link href={`/stocks/${stock.ticker}`} className="hover:underline">
+                    <Link href={`/stocks/${stock.ticker}`} className="hover:text-primary">
                       {stock.ticker}
                     </Link>
                   </TableCell>
-                  <TableCell>{stock.name}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-muted-foreground">{stock.name}</TableCell>
+                  <TableCell className="font-mono tabular-nums">
                     {stock.lastPrice != null ? `$${stock.lastPrice.toFixed(2)}` : "—"}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="font-mono tabular-nums">
                     {stock.targetPrice != null ? `$${stock.targetPrice.toFixed(2)}` : "—"}
                   </TableCell>
                   <TableCell>
                     {hit ? (
-                      <span className="inline-block rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
-                        🎯 Hit — buy now!
-                      </span>
+                      <Badge variant="positive">🎯 Hit — buy now!</Badge>
                     ) : (
-                      <span className="text-xs text-neutral-400">Watching</span>
+                      <span className="text-xs text-muted-foreground">Watching</span>
                     )}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-right">
                     <form action={setTargetPrice}>
                       <input type="hidden" name="id" value={stock.id} />
                       <input type="hidden" name="targetPrice" value="" />
@@ -90,6 +95,7 @@ export default async function AlertsPage() {
             })}
           </TableBody>
         </Table>
+        </div>
       )}
     </main>
   );

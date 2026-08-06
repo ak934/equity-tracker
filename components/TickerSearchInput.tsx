@@ -132,7 +132,7 @@ export function TickerSearchInput({
           className="flex h-8 w-full items-center justify-between gap-3 rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm"
         >
           <span className="font-medium">{selected.ticker}</span>
-          <span className="text-neutral-500">{displayName(selected.name)}</span>
+          <span className="text-muted-foreground">{displayName(selected.name)}</span>
         </button>
       ) : (
         <Input
@@ -159,7 +159,7 @@ export function TickerSearchInput({
             <li
               key={r.ticker}
               className={`flex items-center justify-between gap-3 cursor-pointer px-2.5 py-1.5 text-sm ${
-                i === highlighted ? "bg-neutral-100" : ""
+                i === highlighted ? "bg-accent" : ""
               }`}
               onMouseDown={(e) => {
                 e.preventDefault();
@@ -168,7 +168,7 @@ export function TickerSearchInput({
               onMouseEnter={() => setHighlighted(i)}
             >
               <span className="font-medium">{r.ticker}</span>
-              <span className="text-neutral-500">{displayName(r.name)}</span>
+              <span className="text-muted-foreground">{displayName(r.name)}</span>
             </li>
           ))}
         </ul>

@@ -19,7 +19,7 @@ export function AddStockForm() {
                 setSelected(null);
                 setResetKey((k) => k + 1);
             }}
-            className='flex gap-2 mb-4'
+            className='flex gap-2'
         >
             <TickerSearchInput key={resetKey} onSelectionChange={setSelected} />
             <Button type="submit" disabled={!selected}>Add</Button>

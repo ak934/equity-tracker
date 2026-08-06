@@ -25,7 +25,7 @@ export function StockTable({ stocks }: { stocks: Stock[] }) {
           <TableHead>Name</TableHead>
           <TableHead>Price</TableHead>
           <TableHead>As of</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead className="text-right">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

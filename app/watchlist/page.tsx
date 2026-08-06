@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Badge, actionBadgeVariant } from "@/components/ui/badge";
 import { updateStockStatus, flagForReanalysis } from "@/app/actions/stocks";
 import { RefreshButton } from "@/components/refresh-button";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
@@ -17,12 +18,6 @@ import { AnalyzingIndicator } from "@/components/analyzing-indicator";
 import { isAnalysisRunning } from "@/lib/analysis-status";
 import { formatAnalysisDate } from "@/lib/format-analysis-date";
 import { getUserTimezone } from "@/lib/user-timezone";
-
-const actionBadgeStyles: Record<string, string> = {
-  buy: "bg-green-100 text-green-800",
-  hold: "bg-amber-100 text-amber-800",
-  avoid: "bg-red-100 text-red-800",
-};
 
 export default async function WatchlistPage() {
   await auth.protect();
@@ -48,16 +43,22 @@ export default async function WatchlistPage() {
   );
 
   return (
-    <main className="max-w-5xl mx-auto mt-16 px-4">
-      <h1 className="text-2xl font-bold mb-6">Watchlist</h1>
-      {stocks.length > 0 && (
-        <div className="mb-4">
-          <RefreshButton />
+    <main className="mx-auto max-w-5xl px-4 py-10">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Watchlist</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Stocks you&apos;re following but haven&apos;t added to your dashboard.
+          </p>
         </div>
-      )}
+        {stocks.length > 0 && <RefreshButton />}
+      </div>
       {stocks.length === 0 ? (
-        <p className="text-neutral-500">No stocks in your watchlist yet.</p>
+        <div className="mt-6 rounded-xl border border-dashed border-border px-6 py-12 text-center">
+          <p className="text-sm text-muted-foreground">No stocks in your watchlist yet.</p>
+        </div>
       ) : (
+        <div className="mt-6 overflow-hidden rounded-xl border border-border bg-card shadow-sm">
         <Table>
           <TableHeader>
             <TableRow>
@@ -69,7 +70,7 @@ export default async function WatchlistPage() {
               <TableHead>Last Analyzed</TableHead>
               <TableHead>Q-Score</TableHead>
               <TableHead>V-Score</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -79,21 +80,17 @@ export default async function WatchlistPage() {
               return (
                 <TableRow key={stock.id}>
                   <TableCell className="font-medium">
-                    <Link href={`/stocks/${stock.ticker}`} className="hover:underline">
+                    <Link href={`/stocks/${stock.ticker}`} className="hover:text-primary">
                       {stock.ticker}
                     </Link>
                   </TableCell>
-                  <TableCell>{stock.name}</TableCell>
+                  <TableCell className="text-muted-foreground">{stock.name}</TableCell>
                   <TableCell>
                     <div className="flex flex-col items-start gap-1">
                       {latestAnalysis ? (
-                        <span
-                          className={`inline-block rounded px-2 py-0.5 text-xs font-medium capitalize ${
-                            actionBadgeStyles[latestAnalysis.action] ?? "bg-neutral-100 text-neutral-600"
-                          }`}
-                        >
+                        <Badge variant={actionBadgeVariant(latestAnalysis.action)}>
                           {latestAnalysis.action}
-                        </span>
+                        </Badge>
                       ) : (
                         <RunAnalysisButton
                           ticker={stock.ticker}
@@ -105,7 +102,7 @@ export default async function WatchlistPage() {
                           isAnalysisRunning(stock) ? (
                             <AnalyzingIndicator ticker={stock.ticker} />
                           ) : (
-                            <span className="text-xs text-amber-600">Flagged for reanalysis</span>
+                            <span className="text-xs text-warning">Flagged for reanalysis</span>
                           )
                         ) : (
                           <form action={flagForReanalysis}>
@@ -117,17 +114,17 @@ export default async function WatchlistPage() {
                         ))}
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="font-mono tabular-nums">
                     {stock.lastPrice != null ? `$${stock.lastPrice.toFixed(2)}` : "—"}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-muted-foreground">
                     {stock.priceAsOf ? stock.priceAsOf.toLocaleDateString() : "—"}
                   </TableCell>
                   <TableCell>
                     {latestAnalysis ? (
                       <Link
                         href={`/stocks/${stock.ticker}`}
-                        className="text-sm hover:underline"
+                        className="text-sm text-muted-foreground hover:text-primary"
                       >
                         {formatAnalysisDate(
                           latestAnalysis.date,
@@ -139,13 +136,13 @@ export default async function WatchlistPage() {
                       "—"
                     )}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="font-mono tabular-nums">
                     {latestAnalysis ? `${latestAnalysis.qualityScore}/100` : "—"}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="font-mono tabular-nums">
                     {latestAnalysis ? `${latestAnalysis.valuationScore}/100` : "—"}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-right">
                     <form action={updateStockStatus}>
                       <input type="hidden" name="id" value={stock.id} />
                       <input type="hidden" name="status" value="portfolio" />
@@ -159,6 +156,7 @@ export default async function WatchlistPage() {
             })}
           </TableBody>
         </Table>
+        </div>
       )}
     </main>
   );

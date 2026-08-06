@@ -35,18 +35,24 @@ export default async function QueuePage() {
   }
 
   return (
-    <main className="max-w-2xl mx-auto mt-16 px-4">
-      <h1 className="text-2xl font-bold mb-6">Reanalysis Queue</h1>
+    <main className="mx-auto max-w-2xl px-4 py-10">
+      <h1 className="text-2xl font-semibold tracking-tight">Reanalysis Queue</h1>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Stocks flagged for a fresh take before their old analysis is trusted again.
+      </p>
       {stocks.length === 0 ? (
-        <p className="text-neutral-500">Nothing needs attention right now.</p>
+        <div className="mt-6 rounded-xl border border-dashed border-border px-6 py-12 text-center">
+          <p className="text-sm text-muted-foreground">Nothing needs attention right now.</p>
+        </div>
       ) : (
+        <div className="mt-6 overflow-hidden rounded-xl border border-border bg-card shadow-sm">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Ticker</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Last Analysis</TableHead>
-              <TableHead>Action</TableHead>
+              <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -57,12 +63,12 @@ export default async function QueuePage() {
               return (
                 <TableRow key={stock.id}>
                   <TableCell className="font-medium">
-                    <Link href={`/stocks/${stock.ticker}`} className="hover:underline">
+                    <Link href={`/stocks/${stock.ticker}`} className="hover:text-primary">
                       {stock.ticker}
                     </Link>
                   </TableCell>
-                  <TableCell>{stock.name}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-muted-foreground">{stock.name}</TableCell>
+                  <TableCell className="text-muted-foreground">
                     {latestAnalysis
                       ? formatAnalysisDate(
                           latestAnalysis.date,
@@ -71,7 +77,7 @@ export default async function QueuePage() {
                         )
                       : "Never"}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-right">
                     <RunAnalysisButton
                       ticker={stock.ticker}
                       navigateAfter={
@@ -85,6 +91,7 @@ export default async function QueuePage() {
             })}
           </TableBody>
         </Table>
+        </div>
       )}
     </main>
   );

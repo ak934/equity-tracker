@@ -42,13 +42,13 @@ export function AnalysisNotifications() {
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className={`flex w-full max-w-md items-center gap-3 rounded-lg border px-4 py-3 text-sm shadow-lg ${
+          className={`flex w-full max-w-md items-center gap-3 rounded-lg border px-4 py-3 text-sm shadow-lg backdrop-blur-sm ${
             toast.status === "ready"
-              ? "border-green-200 bg-green-50 text-green-900"
-              : "border-red-200 bg-red-50 text-red-900"
+              ? "border-positive/30 bg-positive/10 text-positive"
+              : "border-destructive/30 bg-destructive/10 text-destructive"
           }`}
         >
-          <span className="flex-1">
+          <span className="flex-1 text-foreground">
             {toast.status === "ready" ? (
               <>
                 🎉 New analysis ready for <strong>{toast.ticker}</strong>
@@ -67,7 +67,7 @@ export function AnalysisNotifications() {
           <button
             onClick={() => dismiss(toast.id)}
             aria-label="Dismiss"
-            className="text-neutral-400 hover:text-neutral-600"
+            className="text-muted-foreground hover:text-foreground"
           >
             ×
           </button>

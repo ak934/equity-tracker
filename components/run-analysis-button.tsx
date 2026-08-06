@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { useAnalysisPolling } from "@/lib/use-analysis-polling";
 
 export function RunAnalysisButton({
@@ -31,7 +32,8 @@ export function RunAnalysisButton({
   useAnalysisPolling(ticker, isAnalyzing);
 
   return (
-    <button
+    <Button
+      size="sm"
       onClick={async () => {
         setIsAnalyzing(true);
         // The route handler responds as soon as analysisRunning is durably
@@ -64,9 +66,8 @@ export function RunAnalysisButton({
         }
       }}
       disabled={isAnalyzing}
-      className="rounded bg-black px-3 py-1.5 text-sm text-white disabled:opacity-50"
     >
       {isAnalyzing ? "Analyzing..." : "Run Analysis"}
-    </button>
+    </Button>
   );
 }

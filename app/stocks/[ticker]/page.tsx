@@ -4,18 +4,13 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
+import { Badge, actionBadgeVariant } from "@/components/ui/badge";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
 import { AnalyzingIndicator } from "@/components/analyzing-indicator";
 import { isAnalysisRunning } from "@/lib/analysis-status";
 import { formatAnalysisDate } from "@/lib/format-analysis-date";
 import { getUserTimezone } from "@/lib/user-timezone";
 import { TargetPricePrompt } from "@/components/TargetPricePrompt";
-
-const actionBadgeStyles: Record<string, string> = {
-  buy: "bg-green-100 text-green-800",
-  hold: "bg-amber-100 text-amber-800",
-  avoid: "bg-red-100 text-red-800",
-};
 
 export default async function StockPage({
   params,
@@ -42,9 +37,9 @@ export default async function StockPage({
   const history = needsReanalysis ? analyses : analyses.slice(1);
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{ticker}</h1>
+    <div className="mx-auto max-w-3xl px-4 py-10">
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-2xl font-semibold tracking-tight">{ticker}</h1>
         {needsReanalysis ? (
           analyzing ? (
             <AnalyzingIndicator ticker={ticker} />
@@ -61,39 +56,35 @@ export default async function StockPage({
       </div>
 
       {needsReanalysis ? (
-        <p className="mt-4 text-neutral-500">
+        <p className="mt-4 text-sm text-muted-foreground">
           {analyzing
             ? "Generating a fresh analysis with the latest information — this can take a minute or two."
             : "This stock is flagged for reanalysis. Run analysis to generate a fresh take before relying on its old one below."}
         </p>
       ) : latest ? (
-        <div className="mt-6 rounded-lg border">
-          <div className="flex flex-wrap items-center gap-3 border-b bg-neutral-50 px-5 py-3">
-            <span
-              className={`inline-block rounded px-2.5 py-1 text-sm font-medium capitalize ${
-                actionBadgeStyles[latest.action] ?? "bg-neutral-100 text-neutral-600"
-              }`}
-            >
+        <div className="mt-6 overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+          <div className="flex flex-wrap items-center gap-3 border-b border-border bg-muted/40 px-5 py-3">
+            <Badge variant={actionBadgeVariant(latest.action)} className="px-2.5 py-1 text-sm">
               {latest.action}
-            </span>
-            <span className="text-sm text-neutral-500">
+            </Badge>
+            <span className="text-sm text-muted-foreground">
               Analyzed {formatAnalysisDate(latest.date, analyses.map((a) => a.date), timeZone)}
             </span>
             <div className="ml-auto flex gap-4 text-sm">
-              <span>
-                Quality <span className="font-semibold">{latest.qualityScore}/100</span>
+              <span className="text-muted-foreground">
+                Quality <span className="font-mono font-semibold text-foreground">{latest.qualityScore}/100</span>
               </span>
-              <span>
-                Valuation <span className="font-semibold">{latest.valuationScore}/100</span>
+              <span className="text-muted-foreground">
+                Valuation <span className="font-mono font-semibold text-foreground">{latest.valuationScore}/100</span>
               </span>
             </div>
           </div>
-          <div className="prose prose-neutral prose-sm sm:prose-base max-w-none px-5 py-5">
+          <div className="prose prose-neutral dark:prose-invert prose-sm sm:prose-base max-w-none px-5 py-5">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{latest.fullText}</ReactMarkdown>
           </div>
         </div>
       ) : (
-        <p className="mt-4 text-neutral-500">No analysis yet.</p>
+        <p className="mt-4 text-sm text-muted-foreground">No analysis yet.</p>
       )}
 
       {latest && stock && (
@@ -102,28 +93,22 @@ export default async function StockPage({
 
       {history.length > 0 && (
         <details className="mt-6">
-          <summary className="cursor-pointer text-sm font-medium text-neutral-500">
+          <summary className="cursor-pointer text-sm font-medium text-muted-foreground">
             History ({history.length})
           </summary>
           <div className="mt-3 space-y-2">
             {history.map((a) => (
-              <details key={a.id} className="rounded border text-sm">
+              <details key={a.id} className="rounded-lg border border-border text-sm">
                 <summary className="flex flex-wrap items-center gap-3 cursor-pointer px-4 py-2.5">
-                  <span
-                    className={`inline-block rounded px-2 py-0.5 text-xs font-medium capitalize ${
-                      actionBadgeStyles[a.action] ?? "bg-neutral-100 text-neutral-600"
-                    }`}
-                  >
-                    {a.action}
-                  </span>
-                  <span className="text-neutral-500">
+                  <Badge variant={actionBadgeVariant(a.action)}>{a.action}</Badge>
+                  <span className="text-muted-foreground">
                     {formatAnalysisDate(a.date, analyses.map((x) => x.date), timeZone)}
                   </span>
-                  <span className="ml-auto text-neutral-500">
+                  <span className="ml-auto font-mono text-muted-foreground">
                     Q{a.qualityScore} · V{a.valuationScore}
                   </span>
                 </summary>
-                <div className="prose prose-neutral prose-sm max-w-none border-t px-4 py-4">
+                <div className="prose prose-neutral dark:prose-invert prose-sm max-w-none border-t border-border px-4 py-4">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{a.fullText}</ReactMarkdown>
                 </div>
               </details>
