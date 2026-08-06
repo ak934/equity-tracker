@@ -8,29 +8,29 @@ datasource db {
 }
 
 model Stock {
-  id     String @id @default(cuid())
-  ticker String @unique
-  name   String
-  status String // "Watchlist" | "Portfolio"
-  lastPrice Float?
-  priceAsOf DateTime?
-  targetPrice Float?
-  hiddenFromDashboard Boolean @default(false)
-  needsReanalysis Boolean @default(false)
-  reanalysisReason String? // "manual" | "stale"
-  analysisRunning Boolean @default(false)
-  analysisStartedAt DateTime?
-  createdAt DateTime @default(now())
+  id                  String    @id @default(cuid())
+  ticker              String    @unique
+  name                String
+  status              String
+  lastPrice           Float?
+  createdAt           DateTime  @default(now())
+  priceAsOf           DateTime?
+  hiddenFromDashboard Boolean   @default(false)
+  needsReanalysis     Boolean   @default(false)
+  reanalysisReason    String?
+  analysisRunning     Boolean   @default(false)
+  analysisStartedAt   DateTime?
+  targetPrice         Float?
 }
 
 model Analysis {
-  id             String @id @default(cuid())
+  id             String   @id @default(cuid())
   ticker         String
   date           DateTime @default(now())
   qualityScore   Int
   valuationScore Int
   action         String
-  fullText       String 
+  fullText       String
 
   @@index([ticker])
 }
