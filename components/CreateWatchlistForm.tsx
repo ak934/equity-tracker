@@ -13,6 +13,8 @@ export function CreateWatchlistForm() {
     <form
       ref={formRef}
       action={async (formData) => {
+        const name = String(formData.get("name") ?? "").trim();
+        if (!name) return;
         await createWatchlist(formData);
         formRef.current?.reset();
         setValue("");
@@ -27,9 +29,7 @@ export function CreateWatchlistForm() {
         required
         className="max-w-xs"
       />
-      <Button type="submit" disabled={!value.trim()}>
-        New Watchlist
-      </Button>
+      <Button type="submit">New Watchlist</Button>
     </form>
   );
 }
