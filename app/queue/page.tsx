@@ -74,7 +74,9 @@ export default async function QueuePage() {
                   <TableCell>
                     <RunAnalysisButton
                       ticker={stock.ticker}
-                      navigateAfter={`/stocks/${stock.ticker}`}
+                      navigateAfter={
+                        stocks.length === 1 ? `/stocks/${stock.ticker}` : undefined
+                      }
                       initialAnalyzing={isAnalysisRunning(stock)}
                     />
                   </TableCell>
