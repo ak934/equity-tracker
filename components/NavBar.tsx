@@ -4,7 +4,6 @@ import { SignInButton, SignUpButton, Show, UserButton } from "@clerk/nextjs";
 import { LineChart } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { TimezoneSetting } from "@/components/TimezoneSetting";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -56,7 +55,6 @@ export function NavBar({ timezone }: { timezone: string | null }) {
           <Show when="signed-in">
             <TimezoneSetting currentTimezone={timezone} />
           </Show>
-          <ThemeToggle />
           <Show when="signed-out">
             <div className="flex items-center gap-2">
               <SignInButton>

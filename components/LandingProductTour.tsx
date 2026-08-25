@@ -89,9 +89,6 @@ export function LandingProductTour() {
           <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
             From ticker to target price in four steps
           </h2>
-          <p className="mt-2 text-muted-foreground">
-            Here&apos;s what&apos;s following companies is like.
-          </p>
         </Reveal>
 
         <div className="mt-16 space-y-20">

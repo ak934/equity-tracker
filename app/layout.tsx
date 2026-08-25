@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AnalysisNotifications } from "@/components/analysis-notifications";
 import { NavBar } from "@/components/NavBar";
-import { THEME_STORAGE_KEY } from "@/components/ThemeToggle";
 import { getUserTimezone, hasUserTimezone } from "@/lib/user-timezone";
 import "./globals.css";
 
@@ -23,16 +22,6 @@ export const metadata: Metadata = {
   description: "Track stocks, watchlists, and AI-generated equity analysis.",
 };
 
-const noFlashThemeScript = `
-(function () {
-  try {
-    var stored = localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)});
-    var dark = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
-    document.documentElement.classList.toggle("dark", dark);
-  } catch (e) {}
-})();
-`;
-
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -45,11 +34,7 @@ export default async function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full scroll-smooth antialiased`}
-      suppressHydrationWarning
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: noFlashThemeScript }} />
-      </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ClerkProvider appearance={{ theme: shadcn }}>
           <NavBar timezone={timezone} />
