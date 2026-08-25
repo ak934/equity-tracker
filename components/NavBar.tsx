@@ -29,26 +29,28 @@ export function NavBar({ timezone }: { timezone: string | null }) {
             </span>
             <span className="hidden sm:inline">Equity Tracker</span>
           </Link>
-          <nav className="flex items-center gap-1 text-sm font-medium">
-            {NAV_LINKS.map((link) => {
-              const active =
-                link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "rounded-md px-2.5 py-1.5 transition-colors",
-                    active
-                      ? "bg-accent text-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-foreground"
-                  )}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </nav>
+          <Show when="signed-in">
+            <nav className="flex items-center gap-1 text-sm font-medium">
+              {NAV_LINKS.map((link) => {
+                const active =
+                  link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                      "rounded-md px-2.5 py-1.5 transition-colors",
+                      active
+                        ? "bg-accent text-foreground"
+                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+            </nav>
+          </Show>
         </div>
         <div className="flex items-center gap-3">
           <Show when="signed-in">
