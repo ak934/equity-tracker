@@ -90,7 +90,7 @@ export function LandingProductTour() {
             From ticker to target price in four steps
           </h2>
           <p className="mt-2 text-muted-foreground">
-            Here&apos;s what following DoorDash (DASH) looks like.
+            Here&apos;s what&apos;s following companies is like.
           </p>
         </Reveal>
 
