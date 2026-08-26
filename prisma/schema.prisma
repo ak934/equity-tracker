@@ -43,6 +43,21 @@ model Analysis {
   valuationScore Int
   action         String
   fullText       String
+  frameworkName  String   @default("Buffett")
 
   @@index([ticker])
+}
+
+// A user's own analysis framework — freeform instructions substituted for
+// the built-in Buffett persona/criteria when generating an analysis. The
+// Buffett framework itself isn't a row here; it's the default when no
+// AnalysisFramework is selected.
+model AnalysisFramework {
+  id           String   @id @default(cuid())
+  clerkUserId  String
+  name         String
+  instructions String
+  createdAt    DateTime @default(now())
+
+  @@index([clerkUserId])
 }

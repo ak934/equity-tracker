@@ -56,3 +56,8 @@ export type Watchlist = Prisma.WatchlistModel
  * 
  */
 export type Analysis = Prisma.AnalysisModel
+/**
+ * Model AnalysisFramework
+ * 
+ */
+export type AnalysisFramework = Prisma.AnalysisFrameworkModel

@@ -19,9 +19,9 @@ function revalidateAll(ticker: string) {
 // user tries in the meantime. A fetch() to a Route Handler isn't part of
 // that queue, so the rest of the app stays interactive while this runs.
 export async function POST(request: Request) {
-  await auth.protect();
+  const { userId } = await auth.protect();
 
-  const { ticker } = await request.json();
+  const { ticker, frameworkId } = await request.json();
   if (typeof ticker !== "string" || !ticker) {
     return new Response("ticker is required", { status: 400 });
   }
@@ -30,6 +30,13 @@ export async function POST(request: Request) {
   if (stock && isAnalysisRunning(stock)) {
     return new Response("An analysis is already running for this ticker", { status: 409 });
   }
+
+  // Scoped to the requesting user so one user can't run another's
+  // framework by guessing an id.
+  const framework =
+    typeof frameworkId === "string" && frameworkId
+      ? await prisma.analysisFramework.findFirst({ where: { id: frameworkId, clerkUserId: userId } })
+      : null;
 
   // marked durably in the DB, not just in the browser's component state, so
   // that leaving the page (or closing the tab) doesn't lose track of the run
@@ -52,7 +59,11 @@ export async function POST(request: Request) {
   // analysisRunning: true rather than racing the DB write below.
   after(async () => {
     try {
-      const result = await generateAnalysis(ticker, stock?.lastPrice ?? null);
+      const result = await generateAnalysis(
+        ticker,
+        stock?.lastPrice ?? null,
+        framework ? { name: framework.name, instructions: framework.instructions } : null
+      );
 
       await prisma.analysis.create({
         data: {
@@ -61,6 +72,7 @@ export async function POST(request: Request) {
           valuationScore: result.valuationScore,
           action: result.action,
           fullText: result.fullText,
+          frameworkName: framework?.name ?? "Buffett",
         },
       });
 

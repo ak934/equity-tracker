@@ -15,6 +15,11 @@ export type AnalysisResult = {
   fullText: string;
 };
 
+export type CustomFramework = {
+  name: string;
+  instructions: string;
+};
+
 const BUFFETT_SYSTEM_PROMPT = `You are Warren Buffett, the value investor from Omaha. You speak plainly, use folksy analogies (See's Candies, Coca-Cola, railroads), think in decades not quarters, and are deeply skeptical of hype. You always ask: "Would I be happy owning this for 10 years if the market closed tomorrow?"
 
 Never use Wall Street jargon like "EBITDA" or "multiple expansion." Be honest about uncertainty, but give a clear opinion rather than hedging into mush.`;
@@ -57,16 +62,63 @@ After Part C, on its own line, output ONLY this fenced JSON block with no extra 
 Map BUY→buy, WATCH→hold, PASS→avoid.`;
 }
 
+function customSystemPrompt(framework: CustomFramework) {
+  return `You are a rigorous, plain-speaking investment analyst applying a custom framework the user has defined, called "${framework.name}". Be honest about uncertainty, but give a clear opinion rather than hedging into mush. Avoid unexplained Wall Street jargon.
+
+The user's framework:
+${framework.instructions}`;
+}
+
+function buildCustomPrompt(ticker: string, price: number | null, framework: CustomFramework) {
+  return `Analyze ${ticker} as an investment. ${
+    price ? `Last known price in our system: $${price}.` : ""
+  }
+
+## Step 1 — Research primary sources first
+Before forming an opinion, search for and read (in order): the latest 10-K (revenue breakdown, margins, risk factors, MD&A), the latest earnings call transcript (management tone, how they handle tough questions), and the latest proxy/DEF 14A (insider ownership, share pledging, related-party deals). Then fill gaps with web searches for current price, market cap, revenue/earnings trend (3-5yr), profit margins, debt levels, industry growth, and recent news. Don't rely on memory for numbers — they change. Briefly note in Part A which sources you could and couldn't find.
+
+## Step 2 — Apply this custom framework: "${framework.name}"
+${framework.instructions}
+
+Based on the above, form a Quality assessment (the qualitative, business-durability side of the framework) and a Valuation assessment (whether today's price is reasonable given the framework). Score each internally on a 0-100 scale as you go.
+
+## Step 2A — Triple-Pass Discipline (mandatory, do this internally before answering)
+Run three full passes on both the Quality score and the Valuation score before finalizing — this is not optional, and the biggest errors get caught on passes 2-3, not pass 1:
+- **Pass 1 (base case):** score naturally from the research and framework above. Flag any part you're unsure of.
+- **Pass 2 (steel-man):** argue the opposite lean on every point — if Pass 1 leaned bullish, steel-man the bear case (and vice versa). Re-score.
+- **Pass 3 (devil's advocate, mandatory):** argue for the OPPOSITE action of wherever Pass 2 landed, to stress-test the weakest point in the current verdict. Re-score. The score after Pass 3 is final — not an average of the three passes.
+
+## Step 3 — Deliver the output
+**Part A** — 3 to 5 paragraphs applying the framework above in plain language, ending with a clear verdict: buy, hold, or avoid, and why. Note which sources you could/couldn't find. End with one line noting this is education, not financial advice.
+
+**Part B** — a markdown scorecard table covering the key points from the framework above, each with a one-line reason, plus an **Overall Verdict** of BUY, WATCH, or PASS.
+
+**Part C** — a short delta block showing only the pass-1-to-final movement, not the full pass-by-pass history:
+> **Quality Score: __/100** (v1: __ → final __; what moved: ____)
+> **Valuation Score: __/100** (v1: __ → final __; what moved: ____)
+> **Devil's advocate verdict:** one sentence on what the opposite-stance case argued and whether it changed the action.
+
+After Part C, on its own line, output ONLY this fenced JSON block with no extra commentary:
+\`\`\`json
+{"qualityScore": <0-100, the final Quality Score from Part C>, "valuationScore": <0-100, the final Valuation Score from Part C>, "action": "<buy|hold|avoid>"}
+\`\`\`
+Map BUY→buy, WATCH→hold, PASS→avoid.`;
+}
+
 export async function generateAnalysis(
   ticker: string,
-  price: number | null
+  price: number | null,
+  framework?: CustomFramework | null
 ): Promise<AnalysisResult> {
+  const system = framework ? customSystemPrompt(framework) : BUFFETT_SYSTEM_PROMPT;
+  const prompt = framework ? buildCustomPrompt(ticker, price, framework) : buildPrompt(ticker, price);
+
   const response = await getClient().messages.create({
     model: "claude-sonnet-4-6",
     max_tokens: 6000,
-    system: BUFFETT_SYSTEM_PROMPT,
+    system,
     tools: [{ type: "web_search_20250305", name: "web_search" }],
-    messages: [{ role: "user", content: buildPrompt(ticker, price) }],
+    messages: [{ role: "user", content: prompt }],
   });
 
   const fullOutput = response.content

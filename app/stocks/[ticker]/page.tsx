@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { prisma } from "@/lib/prisma";
 import { Badge, actionBadgeVariant } from "@/components/ui/badge";
-import { RunAnalysisButton } from "@/components/run-analysis-button";
+import { AnalysisRunner } from "@/components/AnalysisRunner";
 import { AnalyzingIndicator } from "@/components/analyzing-indicator";
 import { isAnalysisRunning } from "@/lib/analysis-status";
 import { formatAnalysisDate } from "@/lib/format-analysis-date";
@@ -15,14 +15,18 @@ export default async function StockPage({
 }: {
   params: Promise<{ ticker: string }>;
 }) {
-  await auth.protect();
+  const { userId } = await auth.protect();
 
   const { ticker } = await params;
 
-  const [stock, analyses, timeZone] = await Promise.all([
+  const [stock, analyses, timeZone, frameworks] = await Promise.all([
     prisma.stock.findUnique({ where: { ticker } }),
     prisma.analysis.findMany({ where: { ticker }, orderBy: { date: "desc" } }),
     getUserTimezone(),
+    prisma.analysisFramework.findMany({
+      where: { clerkUserId: userId },
+      orderBy: { createdAt: "asc" },
+    }),
   ]);
 
   const analyzing = stock ? isAnalysisRunning(stock) : false;
@@ -42,10 +46,10 @@ export default async function StockPage({
           analyzing ? (
             <AnalyzingIndicator ticker={ticker} />
           ) : (
-            <RunAnalysisButton ticker={ticker} initialAnalyzing={analyzing} />
+            <AnalysisRunner ticker={ticker} initialAnalyzing={analyzing} frameworks={frameworks} />
           )
         ) : !latest ? (
-          <RunAnalysisButton ticker={ticker} initialAnalyzing={analyzing} />
+          <AnalysisRunner ticker={ticker} initialAnalyzing={analyzing} frameworks={frameworks} />
         ) : null}
       </div>
 
@@ -62,7 +66,8 @@ export default async function StockPage({
               {latest.action}
             </Badge>
             <span className="text-sm text-muted-foreground">
-              Analyzed {formatAnalysisDate(latest.date, analyses.map((a) => a.date), timeZone)}
+              Analyzed {formatAnalysisDate(latest.date, analyses.map((a) => a.date), timeZone)} ·{" "}
+              {latest.frameworkName}
             </span>
             <div className="ml-auto flex gap-4 text-sm">
               <span className="text-muted-foreground">
@@ -96,7 +101,8 @@ export default async function StockPage({
                 <summary className="flex flex-wrap items-center gap-3 cursor-pointer px-4 py-2.5">
                   <Badge variant={actionBadgeVariant(a.action)}>{a.action}</Badge>
                   <span className="text-muted-foreground">
-                    {formatAnalysisDate(a.date, analyses.map((x) => x.date), timeZone)}
+                    {formatAnalysisDate(a.date, analyses.map((x) => x.date), timeZone)} ·{" "}
+                    {a.frameworkName}
                   </span>
                   <span className="ml-auto font-mono text-muted-foreground">
                     Q{a.qualityScore} · V{a.valuationScore}

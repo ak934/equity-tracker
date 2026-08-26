@@ -44,6 +44,7 @@ export type AnalysisMinAggregateOutputType = {
   valuationScore: number | null
   action: string | null
   fullText: string | null
+  frameworkName: string | null
 }
 
 export type AnalysisMaxAggregateOutputType = {
@@ -54,6 +55,7 @@ export type AnalysisMaxAggregateOutputType = {
   valuationScore: number | null
   action: string | null
   fullText: string | null
+  frameworkName: string | null
 }
 
 export type AnalysisCountAggregateOutputType = {
@@ -64,6 +66,7 @@ export type AnalysisCountAggregateOutputType = {
   valuationScore: number
   action: number
   fullText: number
+  frameworkName: number
   _all: number
 }
 
@@ -86,6 +89,7 @@ export type AnalysisMinAggregateInputType = {
   valuationScore?: true
   action?: true
   fullText?: true
+  frameworkName?: true
 }
 
 export type AnalysisMaxAggregateInputType = {
@@ -96,6 +100,7 @@ export type AnalysisMaxAggregateInputType = {
   valuationScore?: true
   action?: true
   fullText?: true
+  frameworkName?: true
 }
 
 export type AnalysisCountAggregateInputType = {
@@ -106,6 +111,7 @@ export type AnalysisCountAggregateInputType = {
   valuationScore?: true
   action?: true
   fullText?: true
+  frameworkName?: true
   _all?: true
 }
 
@@ -203,6 +209,7 @@ export type AnalysisGroupByOutputType = {
   valuationScore: number
   action: string
   fullText: string
+  frameworkName: string
   _count: AnalysisCountAggregateOutputType | null
   _avg: AnalysisAvgAggregateOutputType | null
   _sum: AnalysisSumAggregateOutputType | null
@@ -236,6 +243,7 @@ export type AnalysisWhereInput = {
   valuationScore?: Prisma.IntFilter<"Analysis"> | number
   action?: Prisma.StringFilter<"Analysis"> | string
   fullText?: Prisma.StringFilter<"Analysis"> | string
+  frameworkName?: Prisma.StringFilter<"Analysis"> | string
 }
 
 export type AnalysisOrderByWithRelationInput = {
@@ -246,6 +254,7 @@ export type AnalysisOrderByWithRelationInput = {
   valuationScore?: Prisma.SortOrder
   action?: Prisma.SortOrder
   fullText?: Prisma.SortOrder
+  frameworkName?: Prisma.SortOrder
 }
 
 export type AnalysisWhereUniqueInput = Prisma.AtLeast<{
@@ -259,6 +268,7 @@ export type AnalysisWhereUniqueInput = Prisma.AtLeast<{
   valuationScore?: Prisma.IntFilter<"Analysis"> | number
   action?: Prisma.StringFilter<"Analysis"> | string
   fullText?: Prisma.StringFilter<"Analysis"> | string
+  frameworkName?: Prisma.StringFilter<"Analysis"> | string
 }, "id">
 
 export type AnalysisOrderByWithAggregationInput = {
@@ -269,6 +279,7 @@ export type AnalysisOrderByWithAggregationInput = {
   valuationScore?: Prisma.SortOrder
   action?: Prisma.SortOrder
   fullText?: Prisma.SortOrder
+  frameworkName?: Prisma.SortOrder
   _count?: Prisma.AnalysisCountOrderByAggregateInput
   _avg?: Prisma.AnalysisAvgOrderByAggregateInput
   _max?: Prisma.AnalysisMaxOrderByAggregateInput
@@ -287,6 +298,7 @@ export type AnalysisScalarWhereWithAggregatesInput = {
   valuationScore?: Prisma.IntWithAggregatesFilter<"Analysis"> | number
   action?: Prisma.StringWithAggregatesFilter<"Analysis"> | string
   fullText?: Prisma.StringWithAggregatesFilter<"Analysis"> | string
+  frameworkName?: Prisma.StringWithAggregatesFilter<"Analysis"> | string
 }
 
 export type AnalysisCreateInput = {
@@ -297,6 +309,7 @@ export type AnalysisCreateInput = {
   valuationScore: number
   action: string
   fullText: string
+  frameworkName?: string
 }
 
 export type AnalysisUncheckedCreateInput = {
@@ -307,6 +320,7 @@ export type AnalysisUncheckedCreateInput = {
   valuationScore: number
   action: string
   fullText: string
+  frameworkName?: string
 }
 
 export type AnalysisUpdateInput = {
@@ -317,6 +331,7 @@ export type AnalysisUpdateInput = {
   valuationScore?: Prisma.IntFieldUpdateOperationsInput | number
   action?: Prisma.StringFieldUpdateOperationsInput | string
   fullText?: Prisma.StringFieldUpdateOperationsInput | string
+  frameworkName?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type AnalysisUncheckedUpdateInput = {
@@ -327,6 +342,7 @@ export type AnalysisUncheckedUpdateInput = {
   valuationScore?: Prisma.IntFieldUpdateOperationsInput | number
   action?: Prisma.StringFieldUpdateOperationsInput | string
   fullText?: Prisma.StringFieldUpdateOperationsInput | string
+  frameworkName?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type AnalysisCreateManyInput = {
@@ -337,6 +353,7 @@ export type AnalysisCreateManyInput = {
   valuationScore: number
   action: string
   fullText: string
+  frameworkName?: string
 }
 
 export type AnalysisUpdateManyMutationInput = {
@@ -347,6 +364,7 @@ export type AnalysisUpdateManyMutationInput = {
   valuationScore?: Prisma.IntFieldUpdateOperationsInput | number
   action?: Prisma.StringFieldUpdateOperationsInput | string
   fullText?: Prisma.StringFieldUpdateOperationsInput | string
+  frameworkName?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type AnalysisUncheckedUpdateManyInput = {
@@ -357,6 +375,7 @@ export type AnalysisUncheckedUpdateManyInput = {
   valuationScore?: Prisma.IntFieldUpdateOperationsInput | number
   action?: Prisma.StringFieldUpdateOperationsInput | string
   fullText?: Prisma.StringFieldUpdateOperationsInput | string
+  frameworkName?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type AnalysisCountOrderByAggregateInput = {
@@ -367,6 +386,7 @@ export type AnalysisCountOrderByAggregateInput = {
   valuationScore?: Prisma.SortOrder
   action?: Prisma.SortOrder
   fullText?: Prisma.SortOrder
+  frameworkName?: Prisma.SortOrder
 }
 
 export type AnalysisAvgOrderByAggregateInput = {
@@ -382,6 +402,7 @@ export type AnalysisMaxOrderByAggregateInput = {
   valuationScore?: Prisma.SortOrder
   action?: Prisma.SortOrder
   fullText?: Prisma.SortOrder
+  frameworkName?: Prisma.SortOrder
 }
 
 export type AnalysisMinOrderByAggregateInput = {
@@ -392,6 +413,7 @@ export type AnalysisMinOrderByAggregateInput = {
   valuationScore?: Prisma.SortOrder
   action?: Prisma.SortOrder
   fullText?: Prisma.SortOrder
+  frameworkName?: Prisma.SortOrder
 }
 
 export type AnalysisSumOrderByAggregateInput = {
@@ -417,6 +439,7 @@ export type AnalysisSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   valuationScore?: boolean
   action?: boolean
   fullText?: boolean
+  frameworkName?: boolean
 }, ExtArgs["result"]["analysis"]>
 
 export type AnalysisSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -427,6 +450,7 @@ export type AnalysisSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   valuationScore?: boolean
   action?: boolean
   fullText?: boolean
+  frameworkName?: boolean
 }, ExtArgs["result"]["analysis"]>
 
 export type AnalysisSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -437,6 +461,7 @@ export type AnalysisSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   valuationScore?: boolean
   action?: boolean
   fullText?: boolean
+  frameworkName?: boolean
 }, ExtArgs["result"]["analysis"]>
 
 export type AnalysisSelectScalar = {
@@ -447,9 +472,10 @@ export type AnalysisSelectScalar = {
   valuationScore?: boolean
   action?: boolean
   fullText?: boolean
+  frameworkName?: boolean
 }
 
-export type AnalysisOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ticker" | "date" | "qualityScore" | "valuationScore" | "action" | "fullText", ExtArgs["result"]["analysis"]>
+export type AnalysisOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ticker" | "date" | "qualityScore" | "valuationScore" | "action" | "fullText" | "frameworkName", ExtArgs["result"]["analysis"]>
 
 export type $AnalysisPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Analysis"
@@ -462,6 +488,7 @@ export type $AnalysisPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     valuationScore: number
     action: string
     fullText: string
+    frameworkName: string
   }, ExtArgs["result"]["analysis"]>
   composites: {}
 }
@@ -892,6 +919,7 @@ export interface AnalysisFieldRefs {
   readonly valuationScore: Prisma.FieldRef<"Analysis", 'Int'>
   readonly action: Prisma.FieldRef<"Analysis", 'String'>
   readonly fullText: Prisma.FieldRef<"Analysis", 'String'>
+  readonly frameworkName: Prisma.FieldRef<"Analysis", 'String'>
 }
     
 

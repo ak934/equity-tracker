@@ -399,7 +399,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   Stock: 'Stock',
   Watchlist: 'Watchlist',
-  Analysis: 'Analysis'
+  Analysis: 'Analysis',
+  AnalysisFramework: 'AnalysisFramework'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -415,7 +416,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "stock" | "watchlist" | "analysis"
+    modelProps: "stock" | "watchlist" | "analysis" | "analysisFramework"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -641,6 +642,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    AnalysisFramework: {
+      payload: Prisma.$AnalysisFrameworkPayload<ExtArgs>
+      fields: Prisma.AnalysisFrameworkFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AnalysisFrameworkFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalysisFrameworkPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AnalysisFrameworkFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalysisFrameworkPayload>
+        }
+        findFirst: {
+          args: Prisma.AnalysisFrameworkFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalysisFrameworkPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AnalysisFrameworkFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalysisFrameworkPayload>
+        }
+        findMany: {
+          args: Prisma.AnalysisFrameworkFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalysisFrameworkPayload>[]
+        }
+        create: {
+          args: Prisma.AnalysisFrameworkCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalysisFrameworkPayload>
+        }
+        createMany: {
+          args: Prisma.AnalysisFrameworkCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AnalysisFrameworkCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalysisFrameworkPayload>[]
+        }
+        delete: {
+          args: Prisma.AnalysisFrameworkDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalysisFrameworkPayload>
+        }
+        update: {
+          args: Prisma.AnalysisFrameworkUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalysisFrameworkPayload>
+        }
+        deleteMany: {
+          args: Prisma.AnalysisFrameworkDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AnalysisFrameworkUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AnalysisFrameworkUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalysisFrameworkPayload>[]
+        }
+        upsert: {
+          args: Prisma.AnalysisFrameworkUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalysisFrameworkPayload>
+        }
+        aggregate: {
+          args: Prisma.AnalysisFrameworkAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAnalysisFramework>
+        }
+        groupBy: {
+          args: Prisma.AnalysisFrameworkGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AnalysisFrameworkGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AnalysisFrameworkCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AnalysisFrameworkCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -715,10 +790,22 @@ export const AnalysisScalarFieldEnum = {
   qualityScore: 'qualityScore',
   valuationScore: 'valuationScore',
   action: 'action',
-  fullText: 'fullText'
+  fullText: 'fullText',
+  frameworkName: 'frameworkName'
 } as const
 
 export type AnalysisScalarFieldEnum = (typeof AnalysisScalarFieldEnum)[keyof typeof AnalysisScalarFieldEnum]
+
+
+export const AnalysisFrameworkScalarFieldEnum = {
+  id: 'id',
+  clerkUserId: 'clerkUserId',
+  name: 'name',
+  instructions: 'instructions',
+  createdAt: 'createdAt'
+} as const
+
+export type AnalysisFrameworkScalarFieldEnum = (typeof AnalysisFrameworkScalarFieldEnum)[keyof typeof AnalysisFrameworkScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -967,6 +1054,7 @@ export type GlobalOmitConfig = {
   stock?: Prisma.StockOmit
   watchlist?: Prisma.WatchlistOmit
   analysis?: Prisma.AnalysisOmit
+  analysisFramework?: Prisma.AnalysisFrameworkOmit
 }
 
 /* Types for Logging */

@@ -9,10 +9,12 @@ export function RunAnalysisButton({
   ticker,
   navigateAfter,
   initialAnalyzing = false,
+  frameworkId,
 }: {
   ticker: string;
   navigateAfter?: string;
   initialAnalyzing?: boolean;
+  frameworkId?: string;
 }) {
   const [isAnalyzing, setIsAnalyzing] = useState(initialAnalyzing);
   const [prevInitialAnalyzing, setPrevInitialAnalyzing] = useState(initialAnalyzing);
@@ -46,7 +48,7 @@ export function RunAnalysisButton({
           const res = await fetch("/api/analysis", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ticker }),
+            body: JSON.stringify({ ticker, frameworkId }),
           });
           // 409 means another instance of this button already started
           // this ticker's run — treat it the same as our own success and
