@@ -86,9 +86,6 @@ export function LandingProductTour() {
           <p className="text-sm font-semibold uppercase tracking-wide text-primary">
             How it works
           </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-            From ticker to target price in four steps
-          </h2>
         </Reveal>
 
         <div className="mt-16 space-y-20">
@@ -100,7 +97,7 @@ export function LandingProductTour() {
             <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
               <div className="flex gap-2">
                 <div className="flex h-8 flex-1 items-center rounded-lg border border-input px-2.5 text-sm text-muted-foreground">
-                  doordash
+                  DoorDash
                 </div>
                 <Button size="sm" disabled className="pointer-events-none">
                   Add
