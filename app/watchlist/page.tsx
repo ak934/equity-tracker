@@ -76,14 +76,16 @@ export default async function WatchlistIndexPage() {
       )}
 
       <div className="mt-10">
-        <h2 className="text-lg font-semibold tracking-tight">Unsorted</h2>
+        <h2 className="text-lg font-semibold tracking-tight">
+          Companies that you may be interested in
+        </h2>
         <p className="mt-1 text-sm text-muted-foreground">
           On your watchlist but not yet filed into a category.
         </p>
       </div>
       {unsorted.length === 0 ? (
         <div className="mt-4 rounded-xl border border-dashed border-border px-6 py-8 text-center">
-          <p className="text-sm text-muted-foreground">Nothing unsorted right now.</p>
+          <p className="text-sm text-muted-foreground">Nothing here right now.</p>
         </div>
       ) : (
         <div className="mt-4">
