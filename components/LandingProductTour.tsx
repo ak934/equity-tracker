@@ -196,10 +196,6 @@ export function LandingProductTour() {
             </div>
           </Step>
         </div>
-
-        <p className="mt-16 text-center text-xs text-muted-foreground">
-          Illustrative example — not live data or a real analysis.
-        </p>
       </div>
     </section>
   );
