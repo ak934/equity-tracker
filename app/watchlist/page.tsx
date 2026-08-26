@@ -32,7 +32,7 @@ export default async function WatchlistIndexPage() {
     <main className="mx-auto max-w-5xl px-4 py-10">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Watchlists</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">My Watchlists</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Organize the companies you&apos;re considering by theme — sector, strategy,
             whatever groups them for you.

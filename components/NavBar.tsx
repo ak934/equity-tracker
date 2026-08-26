@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
-  { href: "/watchlist", label: "Watchlists" },
+  { href: "/watchlist", label: "My Watchlists" },
   { href: "/queue", label: "Queue" },
   { href: "/analyses", label: "Analyses" },
   { href: "/alerts", label: "Alerts" },
