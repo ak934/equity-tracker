@@ -17,10 +17,6 @@ export default async function FrameworksPage() {
     <main className="mx-auto max-w-3xl px-4 py-10">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">My Frameworks</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Buffett&apos;s approach is the default for every analysis. Create your own to evaluate
-          stocks your way instead.
-        </p>
       </div>
 
       <div className="mt-6 rounded-xl border border-border bg-card p-4 shadow-sm">
