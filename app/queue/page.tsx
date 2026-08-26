@@ -36,10 +36,7 @@ export default async function QueuePage() {
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-10">
-      <h1 className="text-2xl font-semibold tracking-tight">Reanalysis Queue</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Stocks flagged for a fresh take before their old analysis is trusted again.
-      </p>
+      <h1 className="text-2xl font-semibold tracking-tight">Stocks that are waiting to be analyzed</h1>
       {stocks.length === 0 ? (
         <div className="mt-6 rounded-xl border border-dashed border-border px-6 py-12 text-center">
           <p className="text-sm text-muted-foreground">Nothing needs attention right now.</p>
