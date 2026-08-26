@@ -23,7 +23,7 @@ export function CreateWatchlistForm() {
     >
       <Input
         name="name"
-        placeholder="e.g. Biotech, Dividend Growth…"
+        placeholder="Watchlist name"
         value={value}
         onChange={(e) => setValue(e.target.value)}
         required
