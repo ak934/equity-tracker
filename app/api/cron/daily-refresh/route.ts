@@ -1,13 +1,11 @@
 import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
-import { refreshAllPrices } from "@/lib/prices";
+import { refreshPricesAndNotify } from "@/lib/refresh-prices";
 import {
   findStaleAnalyses,
   computeReanalysisFlagUpdates,
   buildDigestEmailHtml,
 } from "@/lib/digest";
-import { findNewTargetPriceHits } from "@/lib/alerts";
-import { sendTargetPriceHitEmail } from "@/lib/notifications";
 
 const STALE_ANALYSIS_DAYS_THRESHOLD = 60;
 
@@ -17,26 +15,7 @@ export async function GET(request: Request) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  const stocksBefore = await prisma.stock.findMany();
-
-  const { updated, failed } = await refreshAllPrices();
-
-  const stocksAfter = await prisma.stock.findMany();
-
-  const newEntries = findNewTargetPriceHits(
-    stocksBefore.map((s) => ({
-      ticker: s.ticker,
-      name: s.name,
-      price: s.lastPrice,
-      targetPrice: s.targetPrice,
-    })),
-    stocksAfter.map((s) => ({
-      ticker: s.ticker,
-      name: s.name,
-      price: s.lastPrice,
-      targetPrice: s.targetPrice,
-    }))
-  );
+  const { stocksAfter, updated, failed, newTargetPriceHits } = await refreshPricesAndNotify();
 
   const latestAnalyses = await prisma.analysis.findMany({
     where: { ticker: { in: stocksAfter.map((s) => s.ticker) } },
@@ -81,8 +60,6 @@ export async function GET(request: Request) {
     });
   }
 
-  await sendTargetPriceHitEmail(newEntries);
-
   let digestSent = false;
 
   if (staleAnalyses.length > 0) {
@@ -100,9 +77,8 @@ export async function GET(request: Request) {
     success: true,
     updated: updated.length,
     failed: failed.length,
-    newEntries: newEntries.length,
+    newTargetPriceHits,
     staleAnalyses: staleAnalyses.length,
-    targetPriceEmailSent: newEntries.length > 0,
     digestSent,
   });
 }

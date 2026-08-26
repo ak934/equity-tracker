@@ -7,7 +7,6 @@ import { getUserTimezone } from "@/lib/user-timezone";
 import { Button } from "@/components/ui/button";
 import { CreateWatchlistForm } from "@/components/CreateWatchlistForm";
 import { WatchlistStockTable } from "@/components/WatchlistStockTable";
-import { RefreshButton } from "@/components/refresh-button";
 import { deleteWatchlist } from "@/app/actions/watchlists";
 
 export default async function WatchlistIndexPage() {
@@ -76,14 +75,11 @@ export default async function WatchlistIndexPage() {
         </div>
       )}
 
-      <div className="mt-10 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h2 className="text-lg font-semibold tracking-tight">Unsorted</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            On your watchlist but not yet filed into a category.
-          </p>
-        </div>
-        {unsorted.length > 0 && <RefreshButton />}
+      <div className="mt-10">
+        <h2 className="text-lg font-semibold tracking-tight">Unsorted</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          On your watchlist but not yet filed into a category.
+        </p>
       </div>
       {unsorted.length === 0 ? (
         <div className="mt-4 rounded-xl border border-dashed border-border px-6 py-8 text-center">

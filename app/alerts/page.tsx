@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { setTargetPrice } from "@/app/actions/stocks";
 import { hasHitTargetPrice } from "@/lib/target-price";
-import { RefreshButton } from "@/components/refresh-button";
 
 export default async function AlertsPage() {
   await auth.protect();
@@ -25,14 +24,11 @@ export default async function AlertsPage() {
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Alerts</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            We&apos;ll email you when a stock hits its target price.
-          </p>
-        </div>
-        {stocks.length > 0 && <RefreshButton />}
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">Alerts</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          We&apos;ll email you when a stock hits its target price.
+        </p>
       </div>
       {stocks.length === 0 ? (
         <div className="mt-6 rounded-xl border border-dashed border-border px-6 py-12 text-center">

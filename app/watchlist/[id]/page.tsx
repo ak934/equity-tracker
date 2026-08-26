@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { WatchlistNameEditor } from "@/components/WatchlistNameEditor";
 import { AddStockToWatchlistForm } from "@/components/AddStockToWatchlistForm";
 import { WatchlistStockTable } from "@/components/WatchlistStockTable";
-import { RefreshButton } from "@/components/refresh-button";
 import { deleteWatchlist } from "@/app/actions/watchlists";
 
 export default async function WatchlistDetailPage({
@@ -49,9 +48,8 @@ export default async function WatchlistDetailPage({
         </form>
       </div>
 
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+      <div className="mt-6">
         <AddStockToWatchlistForm watchlistId={watchlist.id} />
-        {rows.length > 0 && <RefreshButton />}
       </div>
 
       {rows.length === 0 ? (
