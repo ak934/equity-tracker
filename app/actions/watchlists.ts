@@ -95,6 +95,36 @@ export async function addStockToWatchlist(formData: FormData) {
   revalidatePath("/watchlist/[id]", "page");
 }
 
+// Adds/upserts a stock in "watchlist" status without filing it into any
+// category — it shows up under Unsorted until the user assigns it.
+export async function addStock(formData: FormData) {
+  await auth.protect();
+  const ticker = String(formData.get("ticker") ?? "").trim().toUpperCase();
+  const name = String(formData.get("name") ?? "").trim();
+
+  if (!ticker || !name) {
+    throw new Error("Ticker and name are required");
+  }
+
+  let lastPrice: number | null = null;
+  let priceAsOf: Date | null = null;
+  try {
+    const price = await getPrice(ticker);
+    lastPrice = price.price;
+    priceAsOf = price.asOf;
+  } catch (err) {
+    console.error(`Failed to fetch initial price for ${ticker}:`, err);
+  }
+
+  await prisma.stock.upsert({
+    where: { ticker },
+    create: { ticker, name, status: "watchlist", lastPrice, priceAsOf },
+    update: { name, status: "watchlist" },
+  });
+
+  revalidatePath("/watchlist");
+}
+
 export async function setStockWatchlistMembership(formData: FormData) {
   await auth.protect();
   const stockId = String(formData.get("stockId") ?? "");

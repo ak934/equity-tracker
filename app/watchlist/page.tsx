@@ -6,6 +6,7 @@ import { getWatchlistRows } from "@/lib/watchlist-rows";
 import { getUserTimezone } from "@/lib/user-timezone";
 import { Button } from "@/components/ui/button";
 import { CreateWatchlistForm } from "@/components/CreateWatchlistForm";
+import { AddStockForm } from "@/components/AddStockForm";
 import { WatchlistStockTable } from "@/components/WatchlistStockTable";
 import { deleteWatchlist } from "@/app/actions/watchlists";
 
@@ -38,6 +39,10 @@ export default async function WatchlistIndexPage() {
           </p>
         </div>
         <CreateWatchlistForm />
+      </div>
+
+      <div className="mt-4">
+        <AddStockForm />
       </div>
 
       {watchlists.length === 0 ? (
