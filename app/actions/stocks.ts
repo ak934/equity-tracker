@@ -44,6 +44,24 @@ export async function flagForReanalysis(formData: FormData) {
   });
 
   revalidatePath("/watchlist");
+  revalidatePath("/queue");
+}
+
+export async function removeFromQueue(formData: FormData) {
+  await auth.protect();
+  const id = String(formData.get("id") ?? "");
+
+  if (!id) {
+    throw new Error("Stock id is required");
+  }
+
+  await prisma.stock.update({
+    where: { id },
+    data: { needsReanalysis: false, reanalysisReason: null },
+  });
+
+  revalidatePath("/watchlist");
+  revalidatePath("/queue");
 }
 
 export async function setTargetPrice(formData: FormData) {

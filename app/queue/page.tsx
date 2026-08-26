@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Trash2 } from "lucide-react";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import {
@@ -9,7 +10,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
+import { removeFromQueue } from "@/app/actions/stocks";
 import { isAnalysisRunning } from "@/lib/analysis-status";
 import { formatAnalysisDate } from "@/lib/format-analysis-date";
 import { getUserTimezone } from "@/lib/user-timezone";
@@ -75,13 +78,26 @@ export default async function QueuePage() {
                       : "Never"}
                   </TableCell>
                   <TableCell className="text-right">
-                    <RunAnalysisButton
-                      ticker={stock.ticker}
-                      navigateAfter={
-                        stocks.length === 1 ? `/stocks/${stock.ticker}` : undefined
-                      }
-                      initialAnalyzing={isAnalysisRunning(stock)}
-                    />
+                    <div className="flex items-center justify-end gap-2">
+                      <RunAnalysisButton
+                        ticker={stock.ticker}
+                        navigateAfter={
+                          stocks.length === 1 ? `/stocks/${stock.ticker}` : undefined
+                        }
+                        initialAnalyzing={isAnalysisRunning(stock)}
+                      />
+                      <form action={removeFromQueue}>
+                        <input type="hidden" name="id" value={stock.id} />
+                        <Button
+                          type="submit"
+                          variant="ghost"
+                          size="icon-sm"
+                          aria-label={`Remove ${stock.ticker} from queue`}
+                        >
+                          <Trash2 className="size-4" />
+                        </Button>
+                      </form>
+                    </div>
                   </TableCell>
                 </TableRow>
               );

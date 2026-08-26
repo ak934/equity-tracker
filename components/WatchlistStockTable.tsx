@@ -70,7 +70,7 @@ export function WatchlistStockTable({
                       isAnalysisRunning(stock) ? (
                         <AnalyzingIndicator ticker={stock.ticker} />
                       ) : (
-                        <span className="text-xs text-warning">Flagged for reanalysis</span>
+                        <span className="text-xs text-warning">Company Added to Queue</span>
                       )
                     ) : (
                       <form action={flagForReanalysis}>
