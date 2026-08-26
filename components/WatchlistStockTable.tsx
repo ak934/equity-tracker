@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge, actionBadgeVariant } from "@/components/ui/badge";
 import { StockWatchlistMenu } from "@/components/StockWatchlistMenu";
-import { updateStockStatus, flagForReanalysis } from "@/app/actions/stocks";
+import { flagForReanalysis } from "@/app/actions/stocks";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
 import { AnalyzingIndicator } from "@/components/analyzing-indicator";
 import { isAnalysisRunning } from "@/lib/analysis-status";
@@ -41,12 +41,7 @@ export function WatchlistStockTable({
             <TableHead>Last Analyzed</TableHead>
             <TableHead>Q-Score</TableHead>
             <TableHead>V-Score</TableHead>
-            {showManagementColumns && (
-              <>
-                <TableHead>Lists</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </>
-            )}
+            {showManagementColumns && <TableHead className="text-right">Lists</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -112,24 +107,13 @@ export function WatchlistStockTable({
                 {latestAnalysis ? `${latestAnalysis.valuationScore}/100` : "—"}
               </TableCell>
               {showManagementColumns && (
-                <>
-                  <TableCell>
-                    <StockWatchlistMenu
-                      stockId={stock.id}
-                      allWatchlists={allWatchlists}
-                      memberIds={watchlistIds}
-                    />
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <form action={updateStockStatus}>
-                      <input type="hidden" name="id" value={stock.id} />
-                      <input type="hidden" name="status" value="portfolio" />
-                      <Button type="submit" variant="secondary" size="sm">
-                        Move to Dashboard
-                      </Button>
-                    </form>
-                  </TableCell>
-                </>
+                <TableCell className="text-right">
+                  <StockWatchlistMenu
+                    stockId={stock.id}
+                    allWatchlists={allWatchlists}
+                    memberIds={watchlistIds}
+                  />
+                </TableCell>
               )}
             </TableRow>
           ))}

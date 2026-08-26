@@ -52,8 +52,8 @@ export async function deleteWatchlist(formData: FormData) {
 }
 
 // Adds an existing or brand-new stock straight into a specific watchlist —
-// mirrors addStock's upsert-by-ticker so re-adding an already-tracked
-// ticker just connects it rather than erroring.
+// upserts by ticker so re-adding an already-tracked ticker just connects
+// it rather than erroring.
 export async function addStockToWatchlist(formData: FormData) {
   await auth.protect();
   const watchlistId = String(formData.get("watchlistId") ?? "");

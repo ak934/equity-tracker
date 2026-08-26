@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
-  { href: "/", label: "Search" },
   { href: "/watchlist", label: "Watchlists" },
   { href: "/queue", label: "Queue" },
   { href: "/alerts", label: "Alerts" },
@@ -31,8 +30,7 @@ export function NavBar({ timezone }: { timezone: string | null }) {
           <Show when="signed-in">
             <nav className="flex items-center gap-1 text-sm font-medium">
               {NAV_LINKS.map((link) => {
-                const active =
-                  link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+                const active = pathname.startsWith(link.href);
                 return (
                   <Link
                     key={link.href}

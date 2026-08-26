@@ -20,7 +20,6 @@ export async function refreshPrices() {
     );
     await sendTargetPriceHitEmail(newHits);
 
-    revalidatePath("/");
     revalidatePath("/watchlist");
     revalidatePath("/watchlist/[id]", "page");
     revalidatePath("/alerts");
