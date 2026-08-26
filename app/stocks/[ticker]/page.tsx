@@ -1,9 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
-import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { prisma } from "@/lib/prisma";
-import { Button } from "@/components/ui/button";
 import { Badge, actionBadgeVariant } from "@/components/ui/badge";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
 import { AnalyzingIndicator } from "@/components/analyzing-indicator";
@@ -46,13 +44,9 @@ export default async function StockPage({
           ) : (
             <RunAnalysisButton ticker={ticker} initialAnalyzing={analyzing} />
           )
-        ) : latest ? (
-          <Button asChild variant="outline">
-            <Link href="/queue">Go back to Queue</Link>
-          </Button>
-        ) : (
+        ) : !latest ? (
           <RunAnalysisButton ticker={ticker} initialAnalyzing={analyzing} />
-        )}
+        ) : null}
       </div>
 
       {needsReanalysis ? (
