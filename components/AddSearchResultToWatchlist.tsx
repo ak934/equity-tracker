@@ -1,12 +1,14 @@
 "use client";
 
-import { useTransition } from "react";
-import { addStockToWatchlist } from "@/app/actions/watchlists";
+import { useState, useTransition } from "react";
+import { addStockToWatchlist, createWatchlist } from "@/app/actions/watchlists";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -24,18 +26,69 @@ export function AddSearchResultToWatchlist({
   allWatchlists: { id: string; name: string }[];
 }) {
   const [isPending, startTransition] = useTransition();
+  const [creating, setCreating] = useState(false);
+  const [newName, setNewName] = useState("");
 
-  function addTo(watchlistId: string) {
+  async function addToWatchlist(watchlistId: string) {
     const formData = new FormData();
     formData.set("watchlistId", watchlistId);
     formData.set("ticker", ticker);
     formData.set("name", name);
+    await addStockToWatchlist(formData);
+  }
+
+  function addTo(watchlistId: string) {
+    startTransition(() => addToWatchlist(watchlistId));
+  }
+
+  function createAndAdd() {
+    const listName = newName.trim();
+    if (!listName) return;
     startTransition(async () => {
-      await addStockToWatchlist(formData);
+      const formData = new FormData();
+      formData.set("name", listName);
+      const watchlist = await createWatchlist(formData);
+      await addToWatchlist(watchlist.id);
+      setCreating(false);
+      setNewName("");
     });
   }
 
-  if (allWatchlists.length === 0) return null;
+  if (creating) {
+    return (
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          createAndAdd();
+        }}
+        className="flex items-center gap-2"
+      >
+        <Input
+          autoFocus
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+          placeholder="Watchlist name"
+          className="h-7 w-40 text-sm"
+          disabled={isPending}
+        />
+        <Button type="submit" size="sm" disabled={isPending || !newName.trim()}>
+          Create
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            setCreating(false);
+            setNewName("");
+          }}
+          disabled={isPending}
+        >
+          Cancel
+        </Button>
+      </form>
+    );
+  }
 
   return (
     <DropdownMenu>
@@ -50,6 +103,10 @@ export function AddSearchResultToWatchlist({
             {watchlist.name}
           </DropdownMenuItem>
         ))}
+        {allWatchlists.length > 0 && <DropdownMenuSeparator />}
+        <DropdownMenuItem onSelect={() => setCreating(true)}>
+          + New watchlist
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

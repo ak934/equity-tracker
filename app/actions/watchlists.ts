@@ -14,9 +14,11 @@ export async function createWatchlist(formData: FormData) {
     throw new Error("Watchlist name is required");
   }
 
-  await prisma.watchlist.create({ data: { name } });
+  const watchlist = await prisma.watchlist.create({ data: { name } });
 
   revalidatePath("/watchlist");
+
+  return watchlist;
 }
 
 export async function renameWatchlist(formData: FormData) {
