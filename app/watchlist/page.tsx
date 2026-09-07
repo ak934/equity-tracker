@@ -7,7 +7,6 @@ import { getUserTimezone } from "@/lib/user-timezone";
 import { Button } from "@/components/ui/button";
 import { CreateWatchlistForm } from "@/components/CreateWatchlistForm";
 import { AddStockForm } from "@/components/AddStockForm";
-import { WatchlistStockTable } from "@/components/WatchlistStockTable";
 import { RecentlySearchedTable, type RecentSearchRow } from "@/components/RecentlySearchedTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { deleteWatchlist } from "@/app/actions/watchlists";
@@ -43,16 +42,38 @@ export default async function WatchlistIndexPage() {
   });
   const stockByTicker = new Map(matchingStocks.map((s) => [s.ticker, s]));
 
-  const recentRows: RecentSearchRow[] = searchHistory.map((h) => {
+  // Unsorted stocks (tracked but not filed into any watchlist yet) live in
+  // the Recently Searched tab rather than a separate "Unsorted" section —
+  // there's nothing to distinguish them from a ticker someone just looked
+  // up. Search-history rows take priority; a stock without one (e.g.
+  // seeded before this feature existed) falls back to its createdAt.
+  const recentRowsByTicker = new Map<string, RecentSearchRow>();
+
+  for (const h of searchHistory) {
     const stock = stockByTicker.get(h.ticker);
-    return {
+    recentRowsByTicker.set(h.ticker, {
       ticker: h.ticker,
       name: h.name,
       searchedAt: h.searchedAt,
       stockId: stock?.id ?? null,
       memberIds: stock?.watchlists.map((w) => w.id) ?? [],
-    };
-  });
+    });
+  }
+
+  for (const row of unsorted) {
+    if (recentRowsByTicker.has(row.stock.ticker)) continue;
+    recentRowsByTicker.set(row.stock.ticker, {
+      ticker: row.stock.ticker,
+      name: row.stock.name,
+      searchedAt: row.stock.createdAt,
+      stockId: row.stock.id,
+      memberIds: row.watchlistIds,
+    });
+  }
+
+  const recentRows = Array.from(recentRowsByTicker.values()).sort(
+    (a, b) => b.searchedAt.getTime() - a.searchedAt.getTime()
+  );
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10">
@@ -104,12 +125,6 @@ export default async function WatchlistIndexPage() {
                   </form>
                 </div>
               ))}
-            </div>
-          )}
-
-          {unsorted.length > 0 && (
-            <div className="mt-10">
-              <WatchlistStockTable rows={unsorted} allWatchlists={allWatchlists} timeZone={timeZone} />
             </div>
           )}
         </TabsContent>
