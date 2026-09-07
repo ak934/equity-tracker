@@ -61,3 +61,18 @@ model AnalysisFramework {
 
   @@index([clerkUserId])
 }
+
+// One row per ticker a user has looked up in the ticker search box,
+// whether or not they went on to add it — powers the "Recently Searched"
+// tab. Re-searching an already-logged ticker bumps searchedAt instead of
+// creating a duplicate row.
+model SearchHistory {
+  id          String   @id @default(cuid())
+  clerkUserId String
+  ticker      String
+  name        String
+  searchedAt  DateTime @default(now())
+
+  @@unique([clerkUserId, ticker])
+  @@index([clerkUserId])
+}

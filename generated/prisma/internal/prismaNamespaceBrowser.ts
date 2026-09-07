@@ -54,7 +54,8 @@ export const ModelName = {
   Stock: 'Stock',
   Watchlist: 'Watchlist',
   Analysis: 'Analysis',
-  AnalysisFramework: 'AnalysisFramework'
+  AnalysisFramework: 'AnalysisFramework',
+  SearchHistory: 'SearchHistory'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -124,6 +125,17 @@ export const AnalysisFrameworkScalarFieldEnum = {
 } as const
 
 export type AnalysisFrameworkScalarFieldEnum = (typeof AnalysisFrameworkScalarFieldEnum)[keyof typeof AnalysisFrameworkScalarFieldEnum]
+
+
+export const SearchHistoryScalarFieldEnum = {
+  id: 'id',
+  clerkUserId: 'clerkUserId',
+  ticker: 'ticker',
+  name: 'name',
+  searchedAt: 'searchedAt'
+} as const
+
+export type SearchHistoryScalarFieldEnum = (typeof SearchHistoryScalarFieldEnum)[keyof typeof SearchHistoryScalarFieldEnum]
 
 
 export const SortOrder = {

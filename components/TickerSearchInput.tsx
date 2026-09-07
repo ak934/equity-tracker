@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { searchStockTickers } from "@/app/actions/stocks";
+import { logTickerSearch, searchStockTickers } from "@/app/actions/stocks";
 import { Input } from "@/components/ui/input";
 
 export type TickerResult = {
@@ -81,6 +81,9 @@ export function TickerSearchInput({
     setResults([]);
     setOpen(false);
     onSelectionChange?.(result);
+    logTickerSearch(result.ticker, result.name).catch((err) => {
+      console.error(`Failed to log search for ${result.ticker}:`, err);
+    });
   }
 
   function clearSelection() {

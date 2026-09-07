@@ -61,3 +61,8 @@ export type Analysis = Prisma.AnalysisModel
  * 
  */
 export type AnalysisFramework = Prisma.AnalysisFrameworkModel
+/**
+ * Model SearchHistory
+ * 
+ */
+export type SearchHistory = Prisma.SearchHistoryModel

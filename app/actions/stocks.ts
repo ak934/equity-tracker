@@ -30,6 +30,22 @@ export async function searchStockTickers(query: string): Promise<TickerSearchRes
   }
 }
 
+export async function logTickerSearch(ticker: string, name: string) {
+  const { userId } = await auth.protect();
+  const trimmedTicker = ticker.trim().toUpperCase();
+  const trimmedName = name.trim();
+
+  if (!trimmedTicker) return;
+
+  await prisma.searchHistory.upsert({
+    where: { clerkUserId_ticker: { clerkUserId: userId, ticker: trimmedTicker } },
+    create: { clerkUserId: userId, ticker: trimmedTicker, name: trimmedName },
+    update: { name: trimmedName, searchedAt: new Date() },
+  });
+
+  revalidatePath("/watchlist");
+}
+
 export async function flagForReanalysis(formData: FormData) {
   await auth.protect();
   const id = String(formData.get("id") ?? "");

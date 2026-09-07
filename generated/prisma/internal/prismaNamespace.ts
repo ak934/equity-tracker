@@ -400,7 +400,8 @@ export const ModelName = {
   Stock: 'Stock',
   Watchlist: 'Watchlist',
   Analysis: 'Analysis',
-  AnalysisFramework: 'AnalysisFramework'
+  AnalysisFramework: 'AnalysisFramework',
+  SearchHistory: 'SearchHistory'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -416,7 +417,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "stock" | "watchlist" | "analysis" | "analysisFramework"
+    modelProps: "stock" | "watchlist" | "analysis" | "analysisFramework" | "searchHistory"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -716,6 +717,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SearchHistory: {
+      payload: Prisma.$SearchHistoryPayload<ExtArgs>
+      fields: Prisma.SearchHistoryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SearchHistoryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchHistoryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SearchHistoryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchHistoryPayload>
+        }
+        findFirst: {
+          args: Prisma.SearchHistoryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchHistoryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SearchHistoryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchHistoryPayload>
+        }
+        findMany: {
+          args: Prisma.SearchHistoryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchHistoryPayload>[]
+        }
+        create: {
+          args: Prisma.SearchHistoryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchHistoryPayload>
+        }
+        createMany: {
+          args: Prisma.SearchHistoryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SearchHistoryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchHistoryPayload>[]
+        }
+        delete: {
+          args: Prisma.SearchHistoryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchHistoryPayload>
+        }
+        update: {
+          args: Prisma.SearchHistoryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchHistoryPayload>
+        }
+        deleteMany: {
+          args: Prisma.SearchHistoryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SearchHistoryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SearchHistoryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchHistoryPayload>[]
+        }
+        upsert: {
+          args: Prisma.SearchHistoryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchHistoryPayload>
+        }
+        aggregate: {
+          args: Prisma.SearchHistoryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSearchHistory>
+        }
+        groupBy: {
+          args: Prisma.SearchHistoryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SearchHistoryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SearchHistoryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SearchHistoryCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -806,6 +881,17 @@ export const AnalysisFrameworkScalarFieldEnum = {
 } as const
 
 export type AnalysisFrameworkScalarFieldEnum = (typeof AnalysisFrameworkScalarFieldEnum)[keyof typeof AnalysisFrameworkScalarFieldEnum]
+
+
+export const SearchHistoryScalarFieldEnum = {
+  id: 'id',
+  clerkUserId: 'clerkUserId',
+  ticker: 'ticker',
+  name: 'name',
+  searchedAt: 'searchedAt'
+} as const
+
+export type SearchHistoryScalarFieldEnum = (typeof SearchHistoryScalarFieldEnum)[keyof typeof SearchHistoryScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1055,6 +1141,7 @@ export type GlobalOmitConfig = {
   watchlist?: Prisma.WatchlistOmit
   analysis?: Prisma.AnalysisOmit
   analysisFramework?: Prisma.AnalysisFrameworkOmit
+  searchHistory?: Prisma.SearchHistoryOmit
 }
 
 /* Types for Logging */
