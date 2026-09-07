@@ -15,10 +15,10 @@ import { setTargetPrice } from "@/app/actions/stocks";
 import { hasHitTargetPrice } from "@/lib/target-price";
 
 export default async function AlertsPage() {
-  await auth.protect();
+  const { userId } = await auth.protect();
 
   const stocks = await prisma.stock.findMany({
-    where: { targetPrice: { not: null } },
+    where: { targetPrice: { not: null }, clerkUserId: userId },
     orderBy: { ticker: "asc" },
   });
 

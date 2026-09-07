@@ -47,15 +47,15 @@ export async function logTickerSearch(ticker: string, name: string) {
 }
 
 export async function flagForReanalysis(formData: FormData) {
-  await auth.protect();
+  const { userId } = await auth.protect();
   const id = String(formData.get("id") ?? "");
 
   if (!id) {
     throw new Error("Stock id is required");
   }
 
-  await prisma.stock.update({
-    where: { id },
+  await prisma.stock.updateMany({
+    where: { id, clerkUserId: userId },
     data: { needsReanalysis: true, reanalysisReason: "manual" },
   });
 
@@ -64,15 +64,15 @@ export async function flagForReanalysis(formData: FormData) {
 }
 
 export async function removeFromQueue(formData: FormData) {
-  await auth.protect();
+  const { userId } = await auth.protect();
   const id = String(formData.get("id") ?? "");
 
   if (!id) {
     throw new Error("Stock id is required");
   }
 
-  await prisma.stock.update({
-    where: { id },
+  await prisma.stock.updateMany({
+    where: { id, clerkUserId: userId },
     data: { needsReanalysis: false, reanalysisReason: null },
   });
 
@@ -81,7 +81,7 @@ export async function removeFromQueue(formData: FormData) {
 }
 
 export async function setTargetPrice(formData: FormData) {
-  await auth.protect();
+  const { userId } = await auth.protect();
   const id = String(formData.get("id") ?? "");
   const targetPriceRaw = String(formData.get("targetPrice") ?? "").trim();
 
@@ -94,8 +94,8 @@ export async function setTargetPrice(formData: FormData) {
     throw new Error("Target price must be a number");
   }
 
-  await prisma.stock.update({
-    where: { id },
+  await prisma.stock.updateMany({
+    where: { id, clerkUserId: userId },
     data: { targetPrice },
   });
 

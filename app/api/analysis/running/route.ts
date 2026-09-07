@@ -7,10 +7,10 @@ import { isAnalysisRunning } from "@/lib/analysis-status";
 // any) the user is on. Small, infrequent read — the table only ever holds
 // as many in-flight rows as there are concurrent analysis runs.
 export async function GET() {
-  await auth.protect();
+  const { userId } = await auth.protect();
 
   const running = await prisma.stock.findMany({
-    where: { analysisRunning: true },
+    where: { analysisRunning: true, clerkUserId: userId },
     select: { ticker: true, analysisRunning: true, analysisStartedAt: true },
   });
 

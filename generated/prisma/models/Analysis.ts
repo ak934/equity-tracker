@@ -38,6 +38,7 @@ export type AnalysisSumAggregateOutputType = {
 
 export type AnalysisMinAggregateOutputType = {
   id: string | null
+  clerkUserId: string | null
   ticker: string | null
   date: Date | null
   qualityScore: number | null
@@ -49,6 +50,7 @@ export type AnalysisMinAggregateOutputType = {
 
 export type AnalysisMaxAggregateOutputType = {
   id: string | null
+  clerkUserId: string | null
   ticker: string | null
   date: Date | null
   qualityScore: number | null
@@ -60,6 +62,7 @@ export type AnalysisMaxAggregateOutputType = {
 
 export type AnalysisCountAggregateOutputType = {
   id: number
+  clerkUserId: number
   ticker: number
   date: number
   qualityScore: number
@@ -83,6 +86,7 @@ export type AnalysisSumAggregateInputType = {
 
 export type AnalysisMinAggregateInputType = {
   id?: true
+  clerkUserId?: true
   ticker?: true
   date?: true
   qualityScore?: true
@@ -94,6 +98,7 @@ export type AnalysisMinAggregateInputType = {
 
 export type AnalysisMaxAggregateInputType = {
   id?: true
+  clerkUserId?: true
   ticker?: true
   date?: true
   qualityScore?: true
@@ -105,6 +110,7 @@ export type AnalysisMaxAggregateInputType = {
 
 export type AnalysisCountAggregateInputType = {
   id?: true
+  clerkUserId?: true
   ticker?: true
   date?: true
   qualityScore?: true
@@ -203,6 +209,7 @@ export type AnalysisGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 
 export type AnalysisGroupByOutputType = {
   id: string
+  clerkUserId: string
   ticker: string
   date: Date
   qualityScore: number
@@ -237,6 +244,7 @@ export type AnalysisWhereInput = {
   OR?: Prisma.AnalysisWhereInput[]
   NOT?: Prisma.AnalysisWhereInput | Prisma.AnalysisWhereInput[]
   id?: Prisma.StringFilter<"Analysis"> | string
+  clerkUserId?: Prisma.StringFilter<"Analysis"> | string
   ticker?: Prisma.StringFilter<"Analysis"> | string
   date?: Prisma.DateTimeFilter<"Analysis"> | Date | string
   qualityScore?: Prisma.IntFilter<"Analysis"> | number
@@ -248,6 +256,7 @@ export type AnalysisWhereInput = {
 
 export type AnalysisOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  clerkUserId?: Prisma.SortOrder
   ticker?: Prisma.SortOrder
   date?: Prisma.SortOrder
   qualityScore?: Prisma.SortOrder
@@ -262,6 +271,7 @@ export type AnalysisWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.AnalysisWhereInput | Prisma.AnalysisWhereInput[]
   OR?: Prisma.AnalysisWhereInput[]
   NOT?: Prisma.AnalysisWhereInput | Prisma.AnalysisWhereInput[]
+  clerkUserId?: Prisma.StringFilter<"Analysis"> | string
   ticker?: Prisma.StringFilter<"Analysis"> | string
   date?: Prisma.DateTimeFilter<"Analysis"> | Date | string
   qualityScore?: Prisma.IntFilter<"Analysis"> | number
@@ -273,6 +283,7 @@ export type AnalysisWhereUniqueInput = Prisma.AtLeast<{
 
 export type AnalysisOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  clerkUserId?: Prisma.SortOrder
   ticker?: Prisma.SortOrder
   date?: Prisma.SortOrder
   qualityScore?: Prisma.SortOrder
@@ -292,6 +303,7 @@ export type AnalysisScalarWhereWithAggregatesInput = {
   OR?: Prisma.AnalysisScalarWhereWithAggregatesInput[]
   NOT?: Prisma.AnalysisScalarWhereWithAggregatesInput | Prisma.AnalysisScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Analysis"> | string
+  clerkUserId?: Prisma.StringWithAggregatesFilter<"Analysis"> | string
   ticker?: Prisma.StringWithAggregatesFilter<"Analysis"> | string
   date?: Prisma.DateTimeWithAggregatesFilter<"Analysis"> | Date | string
   qualityScore?: Prisma.IntWithAggregatesFilter<"Analysis"> | number
@@ -303,6 +315,7 @@ export type AnalysisScalarWhereWithAggregatesInput = {
 
 export type AnalysisCreateInput = {
   id?: string
+  clerkUserId: string
   ticker: string
   date?: Date | string
   qualityScore: number
@@ -314,6 +327,7 @@ export type AnalysisCreateInput = {
 
 export type AnalysisUncheckedCreateInput = {
   id?: string
+  clerkUserId: string
   ticker: string
   date?: Date | string
   qualityScore: number
@@ -325,6 +339,7 @@ export type AnalysisUncheckedCreateInput = {
 
 export type AnalysisUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   qualityScore?: Prisma.IntFieldUpdateOperationsInput | number
@@ -336,6 +351,7 @@ export type AnalysisUpdateInput = {
 
 export type AnalysisUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   qualityScore?: Prisma.IntFieldUpdateOperationsInput | number
@@ -347,6 +363,7 @@ export type AnalysisUncheckedUpdateInput = {
 
 export type AnalysisCreateManyInput = {
   id?: string
+  clerkUserId: string
   ticker: string
   date?: Date | string
   qualityScore: number
@@ -358,6 +375,7 @@ export type AnalysisCreateManyInput = {
 
 export type AnalysisUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   qualityScore?: Prisma.IntFieldUpdateOperationsInput | number
@@ -369,6 +387,7 @@ export type AnalysisUpdateManyMutationInput = {
 
 export type AnalysisUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   qualityScore?: Prisma.IntFieldUpdateOperationsInput | number
@@ -380,6 +399,7 @@ export type AnalysisUncheckedUpdateManyInput = {
 
 export type AnalysisCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  clerkUserId?: Prisma.SortOrder
   ticker?: Prisma.SortOrder
   date?: Prisma.SortOrder
   qualityScore?: Prisma.SortOrder
@@ -396,6 +416,7 @@ export type AnalysisAvgOrderByAggregateInput = {
 
 export type AnalysisMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  clerkUserId?: Prisma.SortOrder
   ticker?: Prisma.SortOrder
   date?: Prisma.SortOrder
   qualityScore?: Prisma.SortOrder
@@ -407,6 +428,7 @@ export type AnalysisMaxOrderByAggregateInput = {
 
 export type AnalysisMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  clerkUserId?: Prisma.SortOrder
   ticker?: Prisma.SortOrder
   date?: Prisma.SortOrder
   qualityScore?: Prisma.SortOrder
@@ -433,6 +455,7 @@ export type IntFieldUpdateOperationsInput = {
 
 export type AnalysisSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  clerkUserId?: boolean
   ticker?: boolean
   date?: boolean
   qualityScore?: boolean
@@ -444,6 +467,7 @@ export type AnalysisSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
 
 export type AnalysisSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  clerkUserId?: boolean
   ticker?: boolean
   date?: boolean
   qualityScore?: boolean
@@ -455,6 +479,7 @@ export type AnalysisSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
 
 export type AnalysisSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  clerkUserId?: boolean
   ticker?: boolean
   date?: boolean
   qualityScore?: boolean
@@ -466,6 +491,7 @@ export type AnalysisSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 
 export type AnalysisSelectScalar = {
   id?: boolean
+  clerkUserId?: boolean
   ticker?: boolean
   date?: boolean
   qualityScore?: boolean
@@ -475,13 +501,14 @@ export type AnalysisSelectScalar = {
   frameworkName?: boolean
 }
 
-export type AnalysisOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ticker" | "date" | "qualityScore" | "valuationScore" | "action" | "fullText" | "frameworkName", ExtArgs["result"]["analysis"]>
+export type AnalysisOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkUserId" | "ticker" | "date" | "qualityScore" | "valuationScore" | "action" | "fullText" | "frameworkName", ExtArgs["result"]["analysis"]>
 
 export type $AnalysisPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Analysis"
   objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    clerkUserId: string
     ticker: string
     date: Date
     qualityScore: number
@@ -913,6 +940,7 @@ export interface Prisma__AnalysisClient<T, Null = never, ExtArgs extends runtime
  */
 export interface AnalysisFieldRefs {
   readonly id: Prisma.FieldRef<"Analysis", 'String'>
+  readonly clerkUserId: Prisma.FieldRef<"Analysis", 'String'>
   readonly ticker: Prisma.FieldRef<"Analysis", 'String'>
   readonly date: Prisma.FieldRef<"Analysis", 'DateTime'>
   readonly qualityScore: Prisma.FieldRef<"Analysis", 'Int'>

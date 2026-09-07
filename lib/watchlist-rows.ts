@@ -10,18 +10,22 @@ export type WatchlistRow = {
 
 // Shared by the Unsorted section and each watchlist detail page — both
 // need the same stock + latest-analysis + list-membership shape, just
-// filtered differently.
+// filtered differently. clerkUserId is a required, separate parameter
+// (merged into the where clause here) rather than left for each caller to
+// remember to include, since forgetting it is exactly how Stock rows leak
+// across users.
 export async function getWatchlistRows(
-  where: Prisma.StockWhereInput
+  clerkUserId: string,
+  where: Prisma.StockWhereInput = {}
 ): Promise<WatchlistRow[]> {
   const stocks = await prisma.stock.findMany({
-    where,
+    where: { ...where, clerkUserId },
     orderBy: { ticker: "asc" },
     include: { watchlists: { select: { id: true } } },
   });
 
   const analyses = await prisma.analysis.findMany({
-    where: { ticker: { in: stocks.map((s) => s.ticker) } },
+    where: { clerkUserId, ticker: { in: stocks.map((s) => s.ticker) } },
     orderBy: [{ ticker: "asc" }, { date: "desc" }],
   });
   const analysesByTicker = new Map<string, Analysis[]>();

@@ -14,13 +14,17 @@ export default async function WatchlistDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await auth.protect();
+  const { userId } = await auth.protect();
 
   const { id } = await params;
 
   const [watchlist, allWatchlistsRaw, timeZone] = await Promise.all([
-    prisma.watchlist.findUnique({ where: { id } }),
-    prisma.watchlist.findMany({ select: { id: true, name: true }, orderBy: { createdAt: "asc" } }),
+    prisma.watchlist.findFirst({ where: { id, clerkUserId: userId } }),
+    prisma.watchlist.findMany({
+      where: { clerkUserId: userId },
+      select: { id: true, name: true },
+      orderBy: { createdAt: "asc" },
+    }),
     getUserTimezone(),
   ]);
 
@@ -28,7 +32,7 @@ export default async function WatchlistDetailPage({
     notFound();
   }
 
-  const rows = await getWatchlistRows({ status: "watchlist", watchlists: { some: { id } } });
+  const rows = await getWatchlistRows(userId, { status: "watchlist", watchlists: { some: { id } } });
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10">

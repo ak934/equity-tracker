@@ -18,18 +18,18 @@ import { formatAnalysisDate } from "@/lib/format-analysis-date";
 import { getUserTimezone } from "@/lib/user-timezone";
 
 export default async function QueuePage() {
-  await auth.protect();
+  const { userId } = await auth.protect();
 
   const [stocks, timeZone] = await Promise.all([
     prisma.stock.findMany({
-      where: { needsReanalysis: true },
+      where: { needsReanalysis: true, clerkUserId: userId },
       orderBy: { ticker: "asc" },
     }),
     getUserTimezone(),
   ]);
 
   const analyses = await prisma.analysis.findMany({
-    where: { ticker: { in: stocks.map((s) => s.ticker) } },
+    where: { clerkUserId: userId, ticker: { in: stocks.map((s) => s.ticker) } },
     orderBy: [{ ticker: "asc" }, { date: "desc" }],
   });
   const analysesByTicker = new Map<string, typeof analyses>();

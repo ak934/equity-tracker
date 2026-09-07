@@ -18,6 +18,7 @@ export default async function WatchlistIndexPage() {
 
   const [watchlists, timeZone, searchHistory] = await Promise.all([
     prisma.watchlist.findMany({
+      where: { clerkUserId: userId },
       orderBy: { createdAt: "asc" },
       include: { _count: { select: { stocks: true } } },
     }),
@@ -29,7 +30,7 @@ export default async function WatchlistIndexPage() {
     }),
   ]);
 
-  const unsorted = await getWatchlistRows({
+  const unsorted = await getWatchlistRows(userId, {
     status: "watchlist",
     watchlists: { none: {} },
   });
@@ -37,7 +38,7 @@ export default async function WatchlistIndexPage() {
   const allWatchlists = watchlists.map((w) => ({ id: w.id, name: w.name }));
 
   const matchingStocks = await prisma.stock.findMany({
-    where: { ticker: { in: searchHistory.map((h) => h.ticker) } },
+    where: { clerkUserId: userId, ticker: { in: searchHistory.map((h) => h.ticker) } },
     include: { watchlists: { select: { id: true } } },
   });
   const stockByTicker = new Map(matchingStocks.map((s) => [s.ticker, s]));

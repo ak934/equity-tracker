@@ -38,6 +38,7 @@ export type StockSumAggregateOutputType = {
 
 export type StockMinAggregateOutputType = {
   id: string | null
+  clerkUserId: string | null
   ticker: string | null
   name: string | null
   status: string | null
@@ -54,6 +55,7 @@ export type StockMinAggregateOutputType = {
 
 export type StockMaxAggregateOutputType = {
   id: string | null
+  clerkUserId: string | null
   ticker: string | null
   name: string | null
   status: string | null
@@ -70,6 +72,7 @@ export type StockMaxAggregateOutputType = {
 
 export type StockCountAggregateOutputType = {
   id: number
+  clerkUserId: number
   ticker: number
   name: number
   status: number
@@ -98,6 +101,7 @@ export type StockSumAggregateInputType = {
 
 export type StockMinAggregateInputType = {
   id?: true
+  clerkUserId?: true
   ticker?: true
   name?: true
   status?: true
@@ -114,6 +118,7 @@ export type StockMinAggregateInputType = {
 
 export type StockMaxAggregateInputType = {
   id?: true
+  clerkUserId?: true
   ticker?: true
   name?: true
   status?: true
@@ -130,6 +135,7 @@ export type StockMaxAggregateInputType = {
 
 export type StockCountAggregateInputType = {
   id?: true
+  clerkUserId?: true
   ticker?: true
   name?: true
   status?: true
@@ -233,6 +239,7 @@ export type StockGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 
 export type StockGroupByOutputType = {
   id: string
+  clerkUserId: string
   ticker: string
   name: string
   status: string
@@ -272,6 +279,7 @@ export type StockWhereInput = {
   OR?: Prisma.StockWhereInput[]
   NOT?: Prisma.StockWhereInput | Prisma.StockWhereInput[]
   id?: Prisma.StringFilter<"Stock"> | string
+  clerkUserId?: Prisma.StringFilter<"Stock"> | string
   ticker?: Prisma.StringFilter<"Stock"> | string
   name?: Prisma.StringFilter<"Stock"> | string
   status?: Prisma.StringFilter<"Stock"> | string
@@ -289,6 +297,7 @@ export type StockWhereInput = {
 
 export type StockOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  clerkUserId?: Prisma.SortOrder
   ticker?: Prisma.SortOrder
   name?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -306,10 +315,12 @@ export type StockOrderByWithRelationInput = {
 
 export type StockWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  ticker?: string
+  clerkUserId_ticker?: Prisma.StockClerkUserIdTickerCompoundUniqueInput
   AND?: Prisma.StockWhereInput | Prisma.StockWhereInput[]
   OR?: Prisma.StockWhereInput[]
   NOT?: Prisma.StockWhereInput | Prisma.StockWhereInput[]
+  clerkUserId?: Prisma.StringFilter<"Stock"> | string
+  ticker?: Prisma.StringFilter<"Stock"> | string
   name?: Prisma.StringFilter<"Stock"> | string
   status?: Prisma.StringFilter<"Stock"> | string
   lastPrice?: Prisma.FloatNullableFilter<"Stock"> | number | null
@@ -322,10 +333,11 @@ export type StockWhereUniqueInput = Prisma.AtLeast<{
   analysisStartedAt?: Prisma.DateTimeNullableFilter<"Stock"> | Date | string | null
   targetPrice?: Prisma.FloatNullableFilter<"Stock"> | number | null
   watchlists?: Prisma.WatchlistListRelationFilter
-}, "id" | "ticker">
+}, "id" | "clerkUserId_ticker">
 
 export type StockOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  clerkUserId?: Prisma.SortOrder
   ticker?: Prisma.SortOrder
   name?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -350,6 +362,7 @@ export type StockScalarWhereWithAggregatesInput = {
   OR?: Prisma.StockScalarWhereWithAggregatesInput[]
   NOT?: Prisma.StockScalarWhereWithAggregatesInput | Prisma.StockScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Stock"> | string
+  clerkUserId?: Prisma.StringWithAggregatesFilter<"Stock"> | string
   ticker?: Prisma.StringWithAggregatesFilter<"Stock"> | string
   name?: Prisma.StringWithAggregatesFilter<"Stock"> | string
   status?: Prisma.StringWithAggregatesFilter<"Stock"> | string
@@ -366,6 +379,7 @@ export type StockScalarWhereWithAggregatesInput = {
 
 export type StockCreateInput = {
   id?: string
+  clerkUserId: string
   ticker: string
   name: string
   status: string
@@ -383,6 +397,7 @@ export type StockCreateInput = {
 
 export type StockUncheckedCreateInput = {
   id?: string
+  clerkUserId: string
   ticker: string
   name: string
   status: string
@@ -400,6 +415,7 @@ export type StockUncheckedCreateInput = {
 
 export type StockUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -417,6 +433,7 @@ export type StockUpdateInput = {
 
 export type StockUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -434,6 +451,7 @@ export type StockUncheckedUpdateInput = {
 
 export type StockCreateManyInput = {
   id?: string
+  clerkUserId: string
   ticker: string
   name: string
   status: string
@@ -450,6 +468,7 @@ export type StockCreateManyInput = {
 
 export type StockUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -466,6 +485,7 @@ export type StockUpdateManyMutationInput = {
 
 export type StockUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -480,8 +500,14 @@ export type StockUncheckedUpdateManyInput = {
   targetPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
+export type StockClerkUserIdTickerCompoundUniqueInput = {
+  clerkUserId: string
+  ticker: string
+}
+
 export type StockCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  clerkUserId?: Prisma.SortOrder
   ticker?: Prisma.SortOrder
   name?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -503,6 +529,7 @@ export type StockAvgOrderByAggregateInput = {
 
 export type StockMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  clerkUserId?: Prisma.SortOrder
   ticker?: Prisma.SortOrder
   name?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -519,6 +546,7 @@ export type StockMaxOrderByAggregateInput = {
 
 export type StockMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  clerkUserId?: Prisma.SortOrder
   ticker?: Prisma.SortOrder
   name?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -616,6 +644,7 @@ export type StockUncheckedUpdateManyWithoutWatchlistsNestedInput = {
 
 export type StockCreateWithoutWatchlistsInput = {
   id?: string
+  clerkUserId: string
   ticker: string
   name: string
   status: string
@@ -632,6 +661,7 @@ export type StockCreateWithoutWatchlistsInput = {
 
 export type StockUncheckedCreateWithoutWatchlistsInput = {
   id?: string
+  clerkUserId: string
   ticker: string
   name: string
   status: string
@@ -672,6 +702,7 @@ export type StockScalarWhereInput = {
   OR?: Prisma.StockScalarWhereInput[]
   NOT?: Prisma.StockScalarWhereInput | Prisma.StockScalarWhereInput[]
   id?: Prisma.StringFilter<"Stock"> | string
+  clerkUserId?: Prisma.StringFilter<"Stock"> | string
   ticker?: Prisma.StringFilter<"Stock"> | string
   name?: Prisma.StringFilter<"Stock"> | string
   status?: Prisma.StringFilter<"Stock"> | string
@@ -688,6 +719,7 @@ export type StockScalarWhereInput = {
 
 export type StockUpdateWithoutWatchlistsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -704,6 +736,7 @@ export type StockUpdateWithoutWatchlistsInput = {
 
 export type StockUncheckedUpdateWithoutWatchlistsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -720,6 +753,7 @@ export type StockUncheckedUpdateWithoutWatchlistsInput = {
 
 export type StockUncheckedUpdateManyWithoutWatchlistsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -767,6 +801,7 @@ export type StockCountOutputTypeCountWatchlistsArgs<ExtArgs extends runtime.Type
 
 export type StockSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  clerkUserId?: boolean
   ticker?: boolean
   name?: boolean
   status?: boolean
@@ -785,6 +820,7 @@ export type StockSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 
 export type StockSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  clerkUserId?: boolean
   ticker?: boolean
   name?: boolean
   status?: boolean
@@ -801,6 +837,7 @@ export type StockSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 
 export type StockSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  clerkUserId?: boolean
   ticker?: boolean
   name?: boolean
   status?: boolean
@@ -817,6 +854,7 @@ export type StockSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 
 export type StockSelectScalar = {
   id?: boolean
+  clerkUserId?: boolean
   ticker?: boolean
   name?: boolean
   status?: boolean
@@ -831,7 +869,7 @@ export type StockSelectScalar = {
   targetPrice?: boolean
 }
 
-export type StockOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ticker" | "name" | "status" | "lastPrice" | "createdAt" | "priceAsOf" | "hiddenFromDashboard" | "needsReanalysis" | "reanalysisReason" | "analysisRunning" | "analysisStartedAt" | "targetPrice", ExtArgs["result"]["stock"]>
+export type StockOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkUserId" | "ticker" | "name" | "status" | "lastPrice" | "createdAt" | "priceAsOf" | "hiddenFromDashboard" | "needsReanalysis" | "reanalysisReason" | "analysisRunning" | "analysisStartedAt" | "targetPrice", ExtArgs["result"]["stock"]>
 export type StockInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   watchlists?: boolean | Prisma.Stock$watchlistsArgs<ExtArgs>
   _count?: boolean | Prisma.StockCountOutputTypeDefaultArgs<ExtArgs>
@@ -846,6 +884,7 @@ export type $StockPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    clerkUserId: string
     ticker: string
     name: string
     status: string
@@ -1283,6 +1322,7 @@ export interface Prisma__StockClient<T, Null = never, ExtArgs extends runtime.Ty
  */
 export interface StockFieldRefs {
   readonly id: Prisma.FieldRef<"Stock", 'String'>
+  readonly clerkUserId: Prisma.FieldRef<"Stock", 'String'>
   readonly ticker: Prisma.FieldRef<"Stock", 'String'>
   readonly name: Prisma.FieldRef<"Stock", 'String'>
   readonly status: Prisma.FieldRef<"Stock", 'String'>

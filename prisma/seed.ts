@@ -5,6 +5,8 @@ import { PrismaPg } from '@prisma/adapter-pg'
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL })
 const prisma = new PrismaClient({ adapter })
 
+const SEED_CLERK_USER_ID = process.env.SEED_CLERK_USER_ID ?? "seed-user"
+
 async function main(){
     const stocks = [
     { ticker: "AAPL", name: "Apple Inc.", status: "watchlist"},
@@ -16,9 +18,9 @@ async function main(){
 
     for (const stock of stocks){
         await prisma.stock.upsert({
-            where: {ticker : stock.ticker },
+            where: {clerkUserId_ticker: {clerkUserId: SEED_CLERK_USER_ID, ticker: stock.ticker}},
             update: {},
-            create: stock,
+            create: {...stock, clerkUserId: SEED_CLERK_USER_ID},
         })
     }
 }

@@ -22,16 +22,22 @@ export default async function StockPage({
 
   const [stock, analyses, timeZone, frameworks, watchlists] = await Promise.all([
     prisma.stock.findUnique({
-      where: { ticker },
+      where: { clerkUserId_ticker: { clerkUserId: userId, ticker } },
       include: { watchlists: { select: { id: true } } },
     }),
-    prisma.analysis.findMany({ where: { ticker }, orderBy: { date: "desc" } }),
+    prisma.analysis.findMany({
+      where: { clerkUserId: userId, ticker },
+      orderBy: { date: "desc" },
+    }),
     getUserTimezone(),
     prisma.analysisFramework.findMany({
       where: { clerkUserId: userId },
       orderBy: { createdAt: "asc" },
     }),
-    prisma.watchlist.findMany({ orderBy: { createdAt: "asc" } }),
+    prisma.watchlist.findMany({
+      where: { clerkUserId: userId },
+      orderBy: { createdAt: "asc" },
+    }),
   ]);
 
   const allWatchlists = watchlists.map((w) => ({ id: w.id, name: w.name }));

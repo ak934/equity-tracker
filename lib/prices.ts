@@ -242,24 +242,36 @@ export async function refreshAllPrices(): Promise<RefreshAllPricesResult> {
   const updated: Stock[] = [];
   const failed: string[] = [];
 
+  // Stock rows are now per-user (two users tracking the same ticker each
+  // get their own row), but the market price is identical for everyone —
+  // group by ticker so a shared ticker costs one external API call no
+  // matter how many users track it, not one per row.
+  const stocksByTicker = new Map<string, Stock[]>();
   for (const stock of stocks) {
+    stocksByTicker.set(stock.ticker, [...(stocksByTicker.get(stock.ticker) ?? []), stock]);
+  }
+
+  for (const [ticker, group] of stocksByTicker) {
     // already priced for the newest date that could possibly have data,
     // skip the API call entirely to avoid burning the API's per-minute
-    // rate limit — this only skips once we actually have today's close,
-    // not merely because we tried and it wasn't ready yet
-    if (stock.priceAsOf && toDateParam(stock.priceAsOf) === targetDate) {
+    // rate limit — this only skips once every row sharing this ticker
+    // actually has today's close, not merely because we tried and it
+    // wasn't ready yet
+    if (group.every((s) => s.priceAsOf && toDateParam(s.priceAsOf) === targetDate)) {
       continue;
     }
     try {
-      const { price, asOf } = await getPrice(stock.ticker);
-      const stock_ = await prisma.stock.update({
-        where: { id: stock.id },
-        data: { lastPrice: price, priceAsOf: asOf },
-      });
-      updated.push(stock_);
+      const { price, asOf } = await getPrice(ticker);
+      for (const stock of group) {
+        const stock_ = await prisma.stock.update({
+          where: { id: stock.id },
+          data: { lastPrice: price, priceAsOf: asOf },
+        });
+        updated.push(stock_);
+      }
     } catch (err) {
-      console.error(`Failed to refresh ${stock.ticker}:`, err);
-      failed.push(stock.ticker);
+      console.error(`Failed to refresh ${ticker}:`, err);
+      failed.push(ticker);
     }
   }
 

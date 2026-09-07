@@ -7,14 +7,14 @@ import { prisma } from "@/lib/prisma";
 import { getPrice } from "@/lib/prices";
 
 export async function createWatchlist(formData: FormData) {
-  await auth.protect();
+  const { userId } = await auth.protect();
   const name = String(formData.get("name") ?? "").trim();
 
   if (!name) {
     throw new Error("Watchlist name is required");
   }
 
-  const watchlist = await prisma.watchlist.create({ data: { name } });
+  const watchlist = await prisma.watchlist.create({ data: { name, clerkUserId: userId } });
 
   revalidatePath("/watchlist");
 
@@ -22,7 +22,7 @@ export async function createWatchlist(formData: FormData) {
 }
 
 export async function renameWatchlist(formData: FormData) {
-  await auth.protect();
+  const { userId } = await auth.protect();
   const id = String(formData.get("id") ?? "");
   const name = String(formData.get("name") ?? "").trim();
 
@@ -30,14 +30,14 @@ export async function renameWatchlist(formData: FormData) {
     throw new Error("Watchlist id and name are required");
   }
 
-  await prisma.watchlist.update({ where: { id }, data: { name } });
+  await prisma.watchlist.updateMany({ where: { id, clerkUserId: userId }, data: { name } });
 
   revalidatePath("/watchlist");
   revalidatePath("/watchlist/[id]", "page");
 }
 
 export async function deleteWatchlist(formData: FormData) {
-  await auth.protect();
+  const { userId } = await auth.protect();
   const id = String(formData.get("id") ?? "");
 
   if (!id) {
@@ -47,7 +47,7 @@ export async function deleteWatchlist(formData: FormData) {
   // Deleting only removes this category — the join rows are cascaded, but
   // the stocks themselves stay in "watchlist" status, falling back to
   // Unsorted rather than disappearing.
-  await prisma.watchlist.delete({ where: { id } });
+  await prisma.watchlist.deleteMany({ where: { id, clerkUserId: userId } });
 
   revalidatePath("/watchlist");
   redirect("/watchlist");
@@ -57,13 +57,20 @@ export async function deleteWatchlist(formData: FormData) {
 // upserts by ticker so re-adding an already-tracked ticker just connects
 // it rather than erroring.
 export async function addStockToWatchlist(formData: FormData) {
-  await auth.protect();
+  const { userId } = await auth.protect();
   const watchlistId = String(formData.get("watchlistId") ?? "");
   const ticker = String(formData.get("ticker") ?? "").trim().toUpperCase();
   const name = String(formData.get("name") ?? "").trim();
 
   if (!watchlistId || !ticker || !name) {
     throw new Error("Watchlist, ticker, and name are required");
+  }
+
+  const watchlist = await prisma.watchlist.findFirst({
+    where: { id: watchlistId, clerkUserId: userId },
+  });
+  if (!watchlist) {
+    throw new Error("Watchlist not found");
   }
 
   let lastPrice: number | null = null;
@@ -77,8 +84,9 @@ export async function addStockToWatchlist(formData: FormData) {
   }
 
   await prisma.stock.upsert({
-    where: { ticker },
+    where: { clerkUserId_ticker: { clerkUserId: userId, ticker } },
     create: {
+      clerkUserId: userId,
       ticker,
       name,
       status: "watchlist",
@@ -100,7 +108,7 @@ export async function addStockToWatchlist(formData: FormData) {
 // Adds/upserts a stock in "watchlist" status without filing it into any
 // category — it shows up under Unsorted until the user assigns it.
 export async function addStock(formData: FormData) {
-  await auth.protect();
+  const { userId } = await auth.protect();
   const ticker = String(formData.get("ticker") ?? "").trim().toUpperCase();
   const name = String(formData.get("name") ?? "").trim();
 
@@ -119,8 +127,8 @@ export async function addStock(formData: FormData) {
   }
 
   await prisma.stock.upsert({
-    where: { ticker },
-    create: { ticker, name, status: "watchlist", lastPrice, priceAsOf },
+    where: { clerkUserId_ticker: { clerkUserId: userId, ticker } },
+    create: { clerkUserId: userId, ticker, name, status: "watchlist", lastPrice, priceAsOf },
     update: { name, status: "watchlist" },
   });
 
@@ -128,13 +136,21 @@ export async function addStock(formData: FormData) {
 }
 
 export async function setStockWatchlistMembership(formData: FormData) {
-  await auth.protect();
+  const { userId } = await auth.protect();
   const stockId = String(formData.get("stockId") ?? "");
   const watchlistId = String(formData.get("watchlistId") ?? "");
   const member = String(formData.get("member") ?? "") === "true";
 
   if (!stockId || !watchlistId) {
     throw new Error("Stock id and watchlist id are required");
+  }
+
+  const [stock, watchlist] = await Promise.all([
+    prisma.stock.findFirst({ where: { id: stockId, clerkUserId: userId } }),
+    prisma.watchlist.findFirst({ where: { id: watchlistId, clerkUserId: userId } }),
+  ]);
+  if (!stock || !watchlist) {
+    throw new Error("Stock or watchlist not found");
   }
 
   await prisma.stock.update({
@@ -156,12 +172,20 @@ export async function setStockWatchlistMembership(formData: FormData) {
 // — the one-click "move" a user reaches for instead of unchecking the old
 // list and checking the new one separately.
 export async function moveStockToWatchlist(formData: FormData) {
-  await auth.protect();
+  const { userId } = await auth.protect();
   const stockId = String(formData.get("stockId") ?? "");
   const watchlistId = String(formData.get("watchlistId") ?? "");
 
   if (!stockId || !watchlistId) {
     throw new Error("Stock id and watchlist id are required");
+  }
+
+  const [stock, watchlist] = await Promise.all([
+    prisma.stock.findFirst({ where: { id: stockId, clerkUserId: userId } }),
+    prisma.watchlist.findFirst({ where: { id: watchlistId, clerkUserId: userId } }),
+  ]);
+  if (!stock || !watchlist) {
+    throw new Error("Stock or watchlist not found");
   }
 
   await prisma.stock.update({

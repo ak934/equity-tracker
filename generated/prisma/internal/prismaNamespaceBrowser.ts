@@ -76,6 +76,7 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const StockScalarFieldEnum = {
   id: 'id',
+  clerkUserId: 'clerkUserId',
   ticker: 'ticker',
   name: 'name',
   status: 'status',
@@ -95,6 +96,7 @@ export type StockScalarFieldEnum = (typeof StockScalarFieldEnum)[keyof typeof St
 
 export const WatchlistScalarFieldEnum = {
   id: 'id',
+  clerkUserId: 'clerkUserId',
   name: 'name',
   createdAt: 'createdAt'
 } as const
@@ -104,6 +106,7 @@ export type WatchlistScalarFieldEnum = (typeof WatchlistScalarFieldEnum)[keyof t
 
 export const AnalysisScalarFieldEnum = {
   id: 'id',
+  clerkUserId: 'clerkUserId',
   ticker: 'ticker',
   date: 'date',
   qualityScore: 'qualityScore',

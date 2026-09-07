@@ -26,7 +26,9 @@ export async function POST(request: Request) {
     return new Response("ticker is required", { status: 400 });
   }
 
-  const stock = await prisma.stock.findUnique({ where: { ticker } });
+  const stock = await prisma.stock.findUnique({
+    where: { clerkUserId_ticker: { clerkUserId: userId, ticker } },
+  });
   if (stock && isAnalysisRunning(stock)) {
     return new Response("An analysis is already running for this ticker", { status: 409 });
   }
@@ -46,7 +48,7 @@ export async function POST(request: Request) {
   // a process that died mid-run (dev server restart, deploy, crash) as
   // stale, since nothing else could ever clear it in that case.
   await prisma.stock.updateMany({
-    where: { ticker },
+    where: { ticker, clerkUserId: userId },
     data: { analysisRunning: true, analysisStartedAt: new Date() },
   });
 
@@ -67,6 +69,7 @@ export async function POST(request: Request) {
 
       await prisma.analysis.create({
         data: {
+          clerkUserId: userId,
           ticker,
           qualityScore: result.qualityScore,
           valuationScore: result.valuationScore,
@@ -79,7 +82,7 @@ export async function POST(request: Request) {
       // a fresh analysis just ran, so whatever flagged this stock (manual or
       // stale) is resolved
       await prisma.stock.updateMany({
-        where: { ticker },
+        where: { ticker, clerkUserId: userId },
         data: {
           needsReanalysis: false,
           reanalysisReason: null,
@@ -91,7 +94,7 @@ export async function POST(request: Request) {
       revalidateAll(ticker);
     } catch {
       await prisma.stock.updateMany({
-        where: { ticker },
+        where: { ticker, clerkUserId: userId },
         data: { analysisRunning: false, analysisStartedAt: null },
       });
       revalidateAll(ticker);

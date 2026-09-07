@@ -8,14 +8,16 @@ import { isAnalysisRunning } from "@/lib/analysis-status";
 // so this is the ground truth check the polling hook uses to decide whether
 // it's safe to stop showing "Analyzing...".
 export async function GET(request: Request) {
-  await auth.protect();
+  const { userId } = await auth.protect();
 
   const ticker = new URL(request.url).searchParams.get("ticker");
   if (!ticker) {
     return new Response("ticker is required", { status: 400 });
   }
 
-  const stock = await prisma.stock.findUnique({ where: { ticker } });
+  const stock = await prisma.stock.findUnique({
+    where: { clerkUserId_ticker: { clerkUserId: userId, ticker } },
+  });
   return Response.json({
     running: stock ? isAnalysisRunning(stock) : false,
     // lets a caller that watched this ticker stop running tell success

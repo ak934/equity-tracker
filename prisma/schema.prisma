@@ -9,7 +9,8 @@ datasource db {
 
 model Stock {
   id                  String      @id @default(cuid())
-  ticker              String      @unique
+  clerkUserId         String
+  ticker              String
   name                String
   status              String
   lastPrice           Float?
@@ -22,6 +23,9 @@ model Stock {
   analysisStartedAt   DateTime?
   targetPrice         Float?
   watchlists          Watchlist[] @relation("StockWatchlists")
+
+  @@unique([clerkUserId, ticker])
+  @@index([clerkUserId])
 }
 
 // A stock only carries this once it's marked status "watchlist" — these
@@ -29,14 +33,18 @@ model Stock {
 // organizing which companies they're considering, not the watchlist
 // status itself. A stock can belong to several, or none yet ("Unsorted").
 model Watchlist {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
-  stocks    Stock[]  @relation("StockWatchlists")
+  id          String   @id @default(cuid())
+  clerkUserId String
+  name        String
+  createdAt   DateTime @default(now())
+  stocks      Stock[]  @relation("StockWatchlists")
+
+  @@index([clerkUserId])
 }
 
 model Analysis {
   id             String   @id @default(cuid())
+  clerkUserId    String
   ticker         String
   date           DateTime @default(now())
   qualityScore   Int
@@ -45,7 +53,7 @@ model Analysis {
   fullText       String
   frameworkName  String   @default("Buffett")
 
-  @@index([ticker])
+  @@index([clerkUserId, ticker])
 }
 
 // A user's own analysis framework — freeform instructions substituted for

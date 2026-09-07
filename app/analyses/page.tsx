@@ -4,9 +4,9 @@ import { getUserTimezone } from "@/lib/user-timezone";
 import { WatchlistStockTable } from "@/components/WatchlistStockTable";
 
 export default async function AnalysesPage() {
-  await auth.protect();
+  const { userId } = await auth.protect();
 
-  const [rows, timeZone] = await Promise.all([getWatchlistRows({}), getUserTimezone()]);
+  const [rows, timeZone] = await Promise.all([getWatchlistRows(userId), getUserTimezone()]);
 
   const analyzed = rows.filter((row) => row.latestAnalysis !== null);
 
