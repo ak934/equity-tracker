@@ -58,7 +58,7 @@ export function TickerSearchInput({
       setResults(matches);
       setOpen(matches.length > 0);
       setHighlighted(0);
-    }, 300);
+    }, 450);
 
     return () => {
       cancelled = true;

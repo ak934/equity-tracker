@@ -68,29 +68,30 @@ const TICKER_SHAPE_RE = /^[A-Z]{1,6}(\.[A-Z]{1,2})?$/;
 export async function searchTickers(query: string): Promise<TickerSearchResult[]> {
   const normalizedQuery = query.trim().toUpperCase();
 
-  // The substring `search` param sorts alphabetically by ticker with no
-  // relevance ranking, so a common substring can bury the real match past
-  // the fetch limit entirely regardless of local re-ranking below — e.g.
-  // searching "META" returns 25+ unrelated "X METALS" penny stocks before
-  // ever reaching the real ticker "META" alphabetically. Querying the exact
-  // ticker directly sidesteps that for the most common case: the user
-  // typing a real ticker. It's best-effort — if it fails, the substring
-  // search below still runs normally.
-  const [exactMatches, substringMatches] = await Promise.all([
-    TICKER_SHAPE_RE.test(normalizedQuery)
-      ? fetchTickers({ ticker: normalizedQuery, active: "true", market: "stocks" }).catch(() => [])
-      : Promise.resolve([]),
-    fetchTickers({
-      search: query,
-      active: "true",
-      market: "stocks",
-      limit: String(FETCH_LIMIT),
-    }),
-  ]);
+  const substringMatches = await fetchTickers({
+    search: query,
+    active: "true",
+    market: "stocks",
+    limit: String(FETCH_LIMIT),
+  });
 
   const ranked = substringMatches
     .filter((r): r is TickerRaw & { name: string } => Boolean(r.name))
     .sort((a, b) => rank(a, normalizedQuery) - rank(b, normalizedQuery));
+
+  // The substring `search` param sorts alphabetically by ticker with no
+  // relevance ranking, so a common ticker can bury the real match past the
+  // fetch limit entirely regardless of the local re-ranking above — e.g.
+  // searching "META" returns 25+ unrelated "X METALS" penny stocks before
+  // ever reaching the real ticker "META" alphabetically. Only fall back to
+  // a second, exact-ticker lookup when that's actually happened — this API
+  // is rate-limited tightly enough that doubling every request (as the
+  // common case doesn't need) exhausts the quota within a few keystrokes.
+  const hasExactMatch = ranked.some((r) => r.ticker.toUpperCase() === normalizedQuery);
+  const exactMatches =
+    !hasExactMatch && TICKER_SHAPE_RE.test(normalizedQuery)
+      ? await fetchTickers({ ticker: normalizedQuery, active: "true", market: "stocks" }).catch(() => [])
+      : [];
 
   const seen = new Set<string>();
   const merged: TickerSearchResult[] = [];
