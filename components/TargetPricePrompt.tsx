@@ -43,7 +43,7 @@ export function TargetPricePrompt({
 
   if (targetPrice != null && !isEditing) {
     return (
-      <div className="mt-6 flex flex-wrap items-center gap-3 rounded-lg border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning">
+      <div className="flex flex-wrap items-center gap-3 rounded-lg border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning">
         <span>
           🔔 We&apos;ll email you when this hits <strong className="font-mono">${targetPrice.toFixed(2)}</strong>.
         </span>
@@ -60,7 +60,7 @@ export function TargetPricePrompt({
   if (dismissed) return null;
 
   return (
-    <div className="mt-6 rounded-lg border border-border px-4 py-3">
+    <div className="rounded-lg border border-border px-4 py-3">
       <p className="text-sm text-muted-foreground">
         Want to set a target price to buy this stock at? We&apos;ll email you when it hits.
       </p>

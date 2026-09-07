@@ -9,6 +9,7 @@ import { isAnalysisRunning } from "@/lib/analysis-status";
 import { formatAnalysisDate } from "@/lib/format-analysis-date";
 import { getUserTimezone } from "@/lib/user-timezone";
 import { TargetPricePrompt } from "@/components/TargetPricePrompt";
+import { StockWatchlistMenu } from "@/components/StockWatchlistMenu";
 
 export default async function StockPage({
   params,
@@ -19,15 +20,22 @@ export default async function StockPage({
 
   const { ticker } = await params;
 
-  const [stock, analyses, timeZone, frameworks] = await Promise.all([
-    prisma.stock.findUnique({ where: { ticker } }),
+  const [stock, analyses, timeZone, frameworks, watchlists] = await Promise.all([
+    prisma.stock.findUnique({
+      where: { ticker },
+      include: { watchlists: { select: { id: true } } },
+    }),
     prisma.analysis.findMany({ where: { ticker }, orderBy: { date: "desc" } }),
     getUserTimezone(),
     prisma.analysisFramework.findMany({
       where: { clerkUserId: userId },
       orderBy: { createdAt: "asc" },
     }),
+    prisma.watchlist.findMany({ orderBy: { createdAt: "asc" } }),
   ]);
+
+  const allWatchlists = watchlists.map((w) => ({ id: w.id, name: w.name }));
+  const memberIds = stock?.watchlists.map((w) => w.id) ?? [];
 
   const analyzing = stock ? isAnalysisRunning(stock) : false;
   const needsReanalysis = stock?.needsReanalysis ?? false;
@@ -52,6 +60,33 @@ export default async function StockPage({
           <AnalysisRunner ticker={ticker} initialAnalyzing={analyzing} frameworks={frameworks} />
         ) : null}
       </div>
+
+      {stock && (
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-card px-5 py-4 shadow-sm">
+          <div className="flex flex-wrap items-center gap-6">
+            <div>
+              <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Current Price
+              </div>
+              <div className="font-mono text-xl font-semibold text-foreground">
+                {stock.lastPrice != null ? `$${stock.lastPrice.toFixed(2)}` : "—"}
+              </div>
+            </div>
+            <div>
+              <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Target Price
+              </div>
+              <div className="font-mono text-xl font-semibold text-foreground">
+                {stock.targetPrice != null ? `$${stock.targetPrice.toFixed(2)}` : "—"}
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <StockWatchlistMenu stockId={stock.id} allWatchlists={allWatchlists} memberIds={memberIds} />
+            <TargetPricePrompt stockId={stock.id} targetPrice={stock.targetPrice} />
+          </div>
+        </div>
+      )}
 
       {needsReanalysis ? (
         <p className="mt-4 text-sm text-muted-foreground">
@@ -84,10 +119,6 @@ export default async function StockPage({
         </div>
       ) : (
         <p className="mt-4 text-sm text-muted-foreground">No analysis yet.</p>
-      )}
-
-      {latest && stock && (
-        <TargetPricePrompt stockId={stock.id} targetPrice={stock.targetPrice} />
       )}
 
       {history.length > 0 && (
