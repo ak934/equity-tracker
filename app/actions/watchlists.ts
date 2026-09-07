@@ -147,4 +147,5 @@ export async function setStockWatchlistMembership(formData: FormData) {
 
   revalidatePath("/watchlist");
   revalidatePath("/watchlist/[id]", "page");
+  revalidatePath("/stocks/[ticker]", "page");
 }

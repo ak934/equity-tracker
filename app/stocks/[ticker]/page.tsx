@@ -9,7 +9,7 @@ import { isAnalysisRunning } from "@/lib/analysis-status";
 import { formatAnalysisDate } from "@/lib/format-analysis-date";
 import { getUserTimezone } from "@/lib/user-timezone";
 import { TargetPricePrompt } from "@/components/TargetPricePrompt";
-import { StockWatchlistMenu } from "@/components/StockWatchlistMenu";
+import { StockWatchlistStatus } from "@/components/StockWatchlistStatus";
 
 export default async function StockPage({
   params,
@@ -82,7 +82,7 @@ export default async function StockPage({
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <StockWatchlistMenu stockId={stock.id} allWatchlists={allWatchlists} memberIds={memberIds} />
+            <StockWatchlistStatus stockId={stock.id} allWatchlists={allWatchlists} memberIds={memberIds} />
             <TargetPricePrompt stockId={stock.id} targetPrice={stock.targetPrice} />
           </div>
         </div>
