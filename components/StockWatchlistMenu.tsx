@@ -2,12 +2,13 @@
 
 import { ListPlus } from "lucide-react";
 import { useTransition } from "react";
-import { setStockWatchlistMembership } from "@/app/actions/watchlists";
+import { moveStockToWatchlist, setStockWatchlistMembership } from "@/app/actions/watchlists";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -33,6 +34,17 @@ export function StockWatchlistMenu({
       await setStockWatchlistMembership(formData);
     });
   }
+
+  function moveTo(watchlistId: string) {
+    const formData = new FormData();
+    formData.set("stockId", stockId);
+    formData.set("watchlistId", watchlistId);
+    startTransition(async () => {
+      await moveStockToWatchlist(formData);
+    });
+  }
+
+  const moveTargets = allWatchlists.filter((w) => !memberIds.includes(w.id));
 
   return (
     <DropdownMenu>
@@ -60,6 +72,17 @@ export function StockWatchlistMenu({
               {watchlist.name}
             </DropdownMenuCheckboxItem>
           ))
+        )}
+        {memberIds.length > 0 && moveTargets.length > 0 && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel>Move to</DropdownMenuLabel>
+            {moveTargets.map((watchlist) => (
+              <DropdownMenuItem key={watchlist.id} onSelect={() => moveTo(watchlist.id)}>
+                {watchlist.name}
+              </DropdownMenuItem>
+            ))}
+          </>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

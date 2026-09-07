@@ -151,3 +151,28 @@ export async function setStockWatchlistMembership(formData: FormData) {
   revalidatePath("/watchlist/[id]", "page");
   revalidatePath("/stocks/[ticker]", "page");
 }
+
+// Replaces a stock's entire watchlist membership with a single target list
+// — the one-click "move" a user reaches for instead of unchecking the old
+// list and checking the new one separately.
+export async function moveStockToWatchlist(formData: FormData) {
+  await auth.protect();
+  const stockId = String(formData.get("stockId") ?? "");
+  const watchlistId = String(formData.get("watchlistId") ?? "");
+
+  if (!stockId || !watchlistId) {
+    throw new Error("Stock id and watchlist id are required");
+  }
+
+  await prisma.stock.update({
+    where: { id: stockId },
+    data: {
+      status: "watchlist",
+      watchlists: { set: [{ id: watchlistId }] },
+    },
+  });
+
+  revalidatePath("/watchlist");
+  revalidatePath("/watchlist/[id]", "page");
+  revalidatePath("/stocks/[ticker]", "page");
+}

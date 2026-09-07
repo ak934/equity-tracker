@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { createWatchlist, setStockWatchlistMembership } from "@/app/actions/watchlists";
+import {
+  createWatchlist,
+  moveStockToWatchlist,
+  setStockWatchlistMembership,
+} from "@/app/actions/watchlists";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,7 +19,8 @@ import {
 // Unlike StockWatchlistMenu (the compact per-row control in the watchlist
 // table), a stock's analysis page only needs to answer one question at a
 // glance: is this already being tracked? So membership renders as plain
-// text, and the add control only shows up when there's a decision to make.
+// text, with a one-click "Move" control alongside it rather than the
+// checkbox-toggle-per-list approach the table uses.
 export function StockWatchlistStatus({
   stockId,
   allWatchlists,
@@ -31,6 +36,7 @@ export function StockWatchlistStatus({
   const memberNames = allWatchlists
     .filter((w) => memberIds.includes(w.id))
     .map((w) => w.name);
+  const isMember = memberNames.length > 0;
 
   async function addToWatchlist(watchlistId: string) {
     const formData = new FormData();
@@ -40,31 +46,32 @@ export function StockWatchlistStatus({
     await setStockWatchlistMembership(formData);
   }
 
+  async function moveToWatchlist(watchlistId: string) {
+    const formData = new FormData();
+    formData.set("stockId", stockId);
+    formData.set("watchlistId", watchlistId);
+    await moveStockToWatchlist(formData);
+  }
+
   function addTo(watchlistId: string) {
     startTransition(() => addToWatchlist(watchlistId));
   }
 
-  function createAndAdd() {
+  function moveTo(watchlistId: string) {
+    startTransition(() => moveToWatchlist(watchlistId));
+  }
+
+  function createAndAssign() {
     const name = newName.trim();
     if (!name) return;
     startTransition(async () => {
       const formData = new FormData();
       formData.set("name", name);
       const watchlist = await createWatchlist(formData);
-      await addToWatchlist(watchlist.id);
+      await (isMember ? moveToWatchlist(watchlist.id) : addToWatchlist(watchlist.id));
       setCreating(false);
       setNewName("");
     });
-  }
-
-  if (memberNames.length > 0) {
-    return (
-      <span className="text-sm text-muted-foreground">
-        Currently in your{" "}
-        <span className="font-medium text-foreground">{memberNames.join(", ")}</span>{" "}
-        watchlist{memberNames.length > 1 ? "s" : ""}
-      </span>
-    );
   }
 
   if (creating) {
@@ -72,7 +79,7 @@ export function StockWatchlistStatus({
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          createAndAdd();
+          createAndAssign();
         }}
         className="flex items-center gap-2"
       >
@@ -100,6 +107,37 @@ export function StockWatchlistStatus({
           Cancel
         </Button>
       </form>
+    );
+  }
+
+  if (isMember) {
+    const moveTargets = allWatchlists.filter((w) => !memberIds.includes(w.id));
+    return (
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-muted-foreground">
+          Currently in your{" "}
+          <span className="font-medium text-foreground">{memberNames.join(", ")}</span>{" "}
+          watchlist{memberNames.length > 1 ? "s" : ""}
+        </span>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" disabled={isPending}>
+              Move
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {moveTargets.map((watchlist) => (
+              <DropdownMenuItem key={watchlist.id} onSelect={() => moveTo(watchlist.id)}>
+                {watchlist.name}
+              </DropdownMenuItem>
+            ))}
+            {moveTargets.length > 0 && <DropdownMenuSeparator />}
+            <DropdownMenuItem onSelect={() => setCreating(true)}>
+              + New watchlist
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     );
   }
 
