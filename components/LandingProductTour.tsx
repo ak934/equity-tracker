@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { StockLogo } from "@/components/StockLogo";
 import { cn } from "@/lib/utils";
 
 function Reveal({
@@ -104,7 +105,8 @@ export function LandingProductTour() {
                 </Button>
               </div>
               <div className="mt-1 overflow-hidden rounded-lg border border-border">
-                <div className="flex items-center justify-between gap-3 bg-accent px-2.5 py-1.5 text-sm">
+                <div className="flex items-center gap-2 bg-accent px-2.5 py-1.5 text-sm">
+                  <StockLogo ticker="DASH" domain="doordash.com" size={18} />
                   <span className="font-medium">DASH</span>
                   <span className="text-muted-foreground">DOORDASH</span>
                 </div>
@@ -120,9 +122,7 @@ export function LandingProductTour() {
             <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-secondary text-[0.65rem] font-semibold text-secondary-foreground">
-                    DASH
-                  </span>
+                  <StockLogo ticker="DASH" domain="doordash.com" size={36} />
                   <div>
                     <p className="font-medium">DASH</p>
                     <p className="text-xs text-muted-foreground">DoorDash, Inc.</p>

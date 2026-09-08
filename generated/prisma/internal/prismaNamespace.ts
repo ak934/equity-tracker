@@ -401,6 +401,7 @@ export const ModelName = {
   Watchlist: 'Watchlist',
   Analysis: 'Analysis',
   AnalysisFramework: 'AnalysisFramework',
+  TickerDomain: 'TickerDomain',
   SearchHistory: 'SearchHistory'
 } as const
 
@@ -417,7 +418,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "stock" | "watchlist" | "analysis" | "analysisFramework" | "searchHistory"
+    modelProps: "stock" | "watchlist" | "analysis" | "analysisFramework" | "tickerDomain" | "searchHistory"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -717,6 +718,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    TickerDomain: {
+      payload: Prisma.$TickerDomainPayload<ExtArgs>
+      fields: Prisma.TickerDomainFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TickerDomainFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TickerDomainFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload>
+        }
+        findFirst: {
+          args: Prisma.TickerDomainFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TickerDomainFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload>
+        }
+        findMany: {
+          args: Prisma.TickerDomainFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload>[]
+        }
+        create: {
+          args: Prisma.TickerDomainCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload>
+        }
+        createMany: {
+          args: Prisma.TickerDomainCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TickerDomainCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload>[]
+        }
+        delete: {
+          args: Prisma.TickerDomainDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload>
+        }
+        update: {
+          args: Prisma.TickerDomainUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload>
+        }
+        deleteMany: {
+          args: Prisma.TickerDomainDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TickerDomainUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TickerDomainUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload>[]
+        }
+        upsert: {
+          args: Prisma.TickerDomainUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload>
+        }
+        aggregate: {
+          args: Prisma.TickerDomainAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTickerDomain>
+        }
+        groupBy: {
+          args: Prisma.TickerDomainGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TickerDomainGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TickerDomainCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TickerDomainCountAggregateOutputType> | number
+        }
+      }
+    }
     SearchHistory: {
       payload: Prisma.$SearchHistoryPayload<ExtArgs>
       fields: Prisma.SearchHistoryFieldRefs
@@ -884,6 +959,15 @@ export const AnalysisFrameworkScalarFieldEnum = {
 } as const
 
 export type AnalysisFrameworkScalarFieldEnum = (typeof AnalysisFrameworkScalarFieldEnum)[keyof typeof AnalysisFrameworkScalarFieldEnum]
+
+
+export const TickerDomainScalarFieldEnum = {
+  ticker: 'ticker',
+  domain: 'domain',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TickerDomainScalarFieldEnum = (typeof TickerDomainScalarFieldEnum)[keyof typeof TickerDomainScalarFieldEnum]
 
 
 export const SearchHistoryScalarFieldEnum = {
@@ -1144,6 +1228,7 @@ export type GlobalOmitConfig = {
   watchlist?: Prisma.WatchlistOmit
   analysis?: Prisma.AnalysisOmit
   analysisFramework?: Prisma.AnalysisFrameworkOmit
+  tickerDomain?: Prisma.TickerDomainOmit
   searchHistory?: Prisma.SearchHistoryOmit
 }
 

@@ -3,10 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { logTickerSearch, searchStockTickers } from "@/app/actions/stocks";
 import { Input } from "@/components/ui/input";
+import { StockLogo } from "@/components/StockLogo";
 
 export type TickerResult = {
   ticker: string;
   name: string;
+  domain: string | null;
 };
 
 const MIN_QUERY_LENGTH = 2;
@@ -134,7 +136,10 @@ export function TickerSearchInput({
           onClick={clearSelection}
           className="flex h-8 w-full items-center justify-between gap-3 rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm"
         >
-          <span className="font-medium">{selected.ticker}</span>
+          <span className="flex items-center gap-2">
+            <StockLogo ticker={selected.ticker} domain={selected.domain} size={18} />
+            <span className="font-medium">{selected.ticker}</span>
+          </span>
           <span className="text-muted-foreground">{displayName(selected.name)}</span>
         </button>
       ) : (
@@ -170,7 +175,10 @@ export function TickerSearchInput({
               }}
               onMouseEnter={() => setHighlighted(i)}
             >
-              <span className="font-medium">{r.ticker}</span>
+              <span className="flex items-center gap-2">
+                <StockLogo ticker={r.ticker} domain={r.domain} size={18} />
+                <span className="font-medium">{r.ticker}</span>
+              </span>
               <span className="text-muted-foreground">{displayName(r.name)}</span>
             </li>
           ))}

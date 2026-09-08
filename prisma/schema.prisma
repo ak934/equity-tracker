@@ -70,6 +70,19 @@ model AnalysisFramework {
   @@index([clerkUserId])
 }
 
+// Global (not per-user) cache of a ticker's homepage domain, used to build
+// a favicon-based company logo. A company's domain never changes day to
+// day, so each ticker is resolved against the price API's ticker-details
+// endpoint at most once ever — that API's free tier is tightly rate
+// limited (see lib/prices.ts), so this cache is load-bearing, not just an
+// optimization. domain is null when the lookup ran but found nothing (a
+// ticker with no homepage_url), so it isn't retried forever.
+model TickerDomain {
+  ticker    String   @id
+  domain    String?
+  updatedAt DateTime @updatedAt
+}
+
 // One row per ticker a user has looked up in the ticker search box,
 // whether or not they went on to add it — powers the "Recently Searched"
 // tab. Re-searching an already-logged ticker bumps searchedAt instead of

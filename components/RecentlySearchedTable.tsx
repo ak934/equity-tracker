@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/table";
 import { StockWatchlistStatus } from "@/components/StockWatchlistStatus";
 import { AddSearchResultToWatchlist } from "@/components/AddSearchResultToWatchlist";
+import { StockLogo } from "@/components/StockLogo";
+import { getLogoDomains } from "@/lib/logos";
 
 export type RecentSearchRow = {
   ticker: string;
@@ -18,7 +20,7 @@ export type RecentSearchRow = {
   memberIds: string[];
 };
 
-export function RecentlySearchedTable({
+export async function RecentlySearchedTable({
   rows,
   allWatchlists,
   timeZone,
@@ -27,6 +29,8 @@ export function RecentlySearchedTable({
   allWatchlists: { id: string; name: string }[];
   timeZone: string;
 }) {
+  const domains = await getLogoDomains(rows.map((r) => r.ticker));
+
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
       <Table>
@@ -42,7 +46,11 @@ export function RecentlySearchedTable({
           {rows.map((row) => (
             <TableRow key={row.ticker}>
               <TableCell className="font-medium">
-                <Link href={`/stocks/${row.ticker}`} className="hover:text-primary">
+                <Link
+                  href={`/stocks/${row.ticker}`}
+                  className="flex items-center gap-2 hover:text-primary"
+                >
+                  <StockLogo ticker={row.ticker} domain={domains.get(row.ticker) ?? null} size={20} />
                   {row.ticker}
                 </Link>
               </TableCell>

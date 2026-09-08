@@ -10,6 +10,8 @@ import { formatAnalysisDate } from "@/lib/format-analysis-date";
 import { getUserTimezone } from "@/lib/user-timezone";
 import { TargetPricePrompt } from "@/components/TargetPricePrompt";
 import { StockWatchlistStatus } from "@/components/StockWatchlistStatus";
+import { StockLogo } from "@/components/StockLogo";
+import { getLogoDomains } from "@/lib/logos";
 
 export default async function StockPage({
   params,
@@ -20,7 +22,7 @@ export default async function StockPage({
 
   const { ticker } = await params;
 
-  const [stock, analyses, timeZone, frameworks, watchlists] = await Promise.all([
+  const [stock, analyses, timeZone, frameworks, watchlists, domains] = await Promise.all([
     prisma.stock.findUnique({
       where: { clerkUserId_ticker: { clerkUserId: userId, ticker } },
       include: { watchlists: { select: { id: true } } },
@@ -38,6 +40,7 @@ export default async function StockPage({
       where: { clerkUserId: userId },
       orderBy: { createdAt: "asc" },
     }),
+    getLogoDomains([ticker]),
   ]);
 
   const allWatchlists = watchlists.map((w) => ({ id: w.id, name: w.name }));
@@ -55,7 +58,10 @@ export default async function StockPage({
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight">{ticker}</h1>
+        <div className="flex items-center gap-3">
+          <StockLogo ticker={ticker} domain={domains.get(ticker) ?? null} size={32} />
+          <h1 className="text-2xl font-semibold tracking-tight">{ticker}</h1>
+        </div>
         {needsReanalysis ? (
           analyzing ? (
             <AnalyzingIndicator ticker={ticker} />

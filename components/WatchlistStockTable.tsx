@@ -10,14 +10,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge, actionBadgeVariant } from "@/components/ui/badge";
 import { StockWatchlistMenu } from "@/components/StockWatchlistMenu";
+import { StockLogo } from "@/components/StockLogo";
 import { flagForReanalysis } from "@/app/actions/stocks";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
 import { AnalyzingIndicator } from "@/components/analyzing-indicator";
 import { isAnalysisRunning } from "@/lib/analysis-status";
 import { formatAnalysisDate } from "@/lib/format-analysis-date";
+import { getLogoDomains } from "@/lib/logos";
 import type { WatchlistRow } from "@/lib/watchlist-rows";
 
-export function WatchlistStockTable({
+export async function WatchlistStockTable({
   rows,
   allWatchlists,
   timeZone,
@@ -28,6 +30,8 @@ export function WatchlistStockTable({
   timeZone: string;
   showManagementColumns?: boolean;
 }) {
+  const domains = await getLogoDomains(rows.map((r) => r.stock.ticker));
+
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
       <Table>
@@ -48,7 +52,11 @@ export function WatchlistStockTable({
           {rows.map(({ stock, latestAnalysis, analysisDates, watchlistIds }) => (
             <TableRow key={stock.id}>
               <TableCell className="font-medium">
-                <Link href={`/stocks/${stock.ticker}`} className="hover:text-primary">
+                <Link
+                  href={`/stocks/${stock.ticker}`}
+                  className="flex items-center gap-2 hover:text-primary"
+                >
+                  <StockLogo ticker={stock.ticker} domain={domains.get(stock.ticker) ?? null} size={20} />
                   {stock.ticker}
                 </Link>
               </TableCell>

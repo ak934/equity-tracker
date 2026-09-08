@@ -55,6 +55,7 @@ export const ModelName = {
   Watchlist: 'Watchlist',
   Analysis: 'Analysis',
   AnalysisFramework: 'AnalysisFramework',
+  TickerDomain: 'TickerDomain',
   SearchHistory: 'SearchHistory'
 } as const
 
@@ -128,6 +129,15 @@ export const AnalysisFrameworkScalarFieldEnum = {
 } as const
 
 export type AnalysisFrameworkScalarFieldEnum = (typeof AnalysisFrameworkScalarFieldEnum)[keyof typeof AnalysisFrameworkScalarFieldEnum]
+
+
+export const TickerDomainScalarFieldEnum = {
+  ticker: 'ticker',
+  domain: 'domain',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TickerDomainScalarFieldEnum = (typeof TickerDomainScalarFieldEnum)[keyof typeof TickerDomainScalarFieldEnum]
 
 
 export const SearchHistoryScalarFieldEnum = {

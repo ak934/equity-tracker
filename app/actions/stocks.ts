@@ -2,11 +2,12 @@
 
 import { prisma } from "@/lib/prisma";
 import { searchTickers, TickerSearchError, type TickerSearchResult } from "@/lib/prices";
+import { getLogoDomains } from "@/lib/logos";
 import { revalidatePath } from "next/cache";
 import { auth } from "@clerk/nextjs/server";
 
 export type TickerSearchResponse = {
-  results: TickerSearchResult[];
+  results: (TickerSearchResult & { domain: string | null })[];
   rateLimited: boolean;
 };
 
@@ -20,7 +21,14 @@ export async function searchStockTickers(query: string): Promise<TickerSearchRes
 
   try {
     const results = await searchTickers(trimmed);
-    return { results, rateLimited: false };
+    // Only reads whatever's already cached — a ticker searched for the
+    // first time ever shows the fallback badge here and picks up its logo
+    // on a later search once lib/logos.ts has resolved it in the background.
+    const domains = await getLogoDomains(results.map((r) => r.ticker));
+    return {
+      results: results.map((r) => ({ ...r, domain: domains.get(r.ticker) ?? null })),
+      rateLimited: false,
+    };
   } catch (err) {
     const rateLimited = err instanceof TickerSearchError && err.status === 429;
     if (!rateLimited) {
@@ -42,6 +50,10 @@ export async function logTickerSearch(ticker: string, name: string) {
     create: { clerkUserId: userId, ticker: trimmedTicker, name: trimmedName },
     update: { name: trimmedName, searchedAt: new Date() },
   });
+
+  // Kicks off the (cached, once-ever) logo lookup for this ticker in case
+  // it wasn't already resolved from being shown in the search dropdown.
+  await getLogoDomains([trimmedTicker]);
 
   revalidatePath("/watchlist");
 }
