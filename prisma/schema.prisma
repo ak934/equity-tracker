@@ -70,16 +70,18 @@ model AnalysisFramework {
   @@index([clerkUserId])
 }
 
-// Global (not per-user) cache of a ticker's homepage domain, used to build
-// a favicon-based company logo. A company's domain never changes day to
-// day, so each ticker is resolved against the price API's ticker-details
-// endpoint at most once ever — that API's free tier is tightly rate
-// limited (see lib/prices.ts), so this cache is load-bearing, not just an
-// optimization. domain is null when the lookup ran but found nothing (a
-// ticker with no homepage_url), so it isn't retried forever.
-model TickerDomain {
+// Global (not per-user) cache of a ticker's company logo image, sourced
+// from the price API's own ticker-details endpoint (branding.icon_url) —
+// the actual company logo, not a favicon guessed from a domain name. A
+// company's logo never changes day to day, so each ticker is resolved at
+// most once ever — that API's free tier is tightly rate limited (see
+// lib/prices.ts), so this cache is load-bearing, not just an optimization.
+// logoUrl is null when the lookup ran but found nothing, so it isn't
+// retried forever. The URL itself requires the API key to fetch (see
+// app/api/logo/[ticker]/route.ts), so it's only ever used server-side.
+model TickerLogo {
   ticker    String   @id
-  domain    String?
+  logoUrl   String?
   updatedAt DateTime @updatedAt
 }
 

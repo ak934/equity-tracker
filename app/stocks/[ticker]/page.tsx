@@ -11,7 +11,7 @@ import { getUserTimezone } from "@/lib/user-timezone";
 import { TargetPricePrompt } from "@/components/TargetPricePrompt";
 import { StockWatchlistStatus } from "@/components/StockWatchlistStatus";
 import { StockLogo } from "@/components/StockLogo";
-import { getLogoDomains } from "@/lib/logos";
+import { getLogoAvailability } from "@/lib/logos";
 
 export default async function StockPage({
   params,
@@ -40,7 +40,7 @@ export default async function StockPage({
       where: { clerkUserId: userId },
       orderBy: { createdAt: "asc" },
     }),
-    getLogoDomains([ticker]),
+    getLogoAvailability([ticker]),
   ]);
 
   const allWatchlists = watchlists.map((w) => ({ id: w.id, name: w.name }));
@@ -59,7 +59,7 @@ export default async function StockPage({
     <div className="mx-auto max-w-3xl px-4 py-10">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <StockLogo ticker={ticker} domain={domains.get(ticker) ?? null} size={32} />
+          <StockLogo ticker={ticker} hasLogo={domains.get(ticker) ?? false} size={32} />
           <h1 className="text-2xl font-semibold tracking-tight">{ticker}</h1>
         </div>
         {needsReanalysis ? (

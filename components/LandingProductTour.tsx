@@ -106,7 +106,7 @@ export function LandingProductTour() {
               </div>
               <div className="mt-1 overflow-hidden rounded-lg border border-border">
                 <div className="flex items-center gap-2 bg-accent px-2.5 py-1.5 text-sm">
-                  <StockLogo ticker="DASH" domain="doordash.com" size={18} />
+                  <StockLogo ticker="DASH" hasLogo size={18} />
                   <span className="font-medium">DASH</span>
                   <span className="text-muted-foreground">DOORDASH</span>
                 </div>
@@ -122,7 +122,7 @@ export function LandingProductTour() {
             <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
-                  <StockLogo ticker="DASH" domain="doordash.com" size={36} />
+                  <StockLogo ticker="DASH" hasLogo size={36} />
                   <div>
                     <p className="font-medium">DASH</p>
                     <p className="text-xs text-muted-foreground">DoorDash, Inc.</p>

@@ -8,7 +8,7 @@ import { StockLogo } from "@/components/StockLogo";
 export type TickerResult = {
   ticker: string;
   name: string;
-  domain: string | null;
+  hasLogo: boolean;
 };
 
 const MIN_QUERY_LENGTH = 2;
@@ -137,7 +137,7 @@ export function TickerSearchInput({
           className="flex h-8 w-full items-center justify-between gap-3 rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm"
         >
           <span className="flex items-center gap-2">
-            <StockLogo ticker={selected.ticker} domain={selected.domain} size={18} />
+            <StockLogo ticker={selected.ticker} hasLogo={selected.hasLogo} size={18} />
             <span className="font-medium">{selected.ticker}</span>
           </span>
           <span className="text-muted-foreground">{displayName(selected.name)}</span>
@@ -176,7 +176,7 @@ export function TickerSearchInput({
               onMouseEnter={() => setHighlighted(i)}
             >
               <span className="flex items-center gap-2">
-                <StockLogo ticker={r.ticker} domain={r.domain} size={18} />
+                <StockLogo ticker={r.ticker} hasLogo={r.hasLogo} size={18} />
                 <span className="font-medium">{r.ticker}</span>
               </span>
               <span className="text-muted-foreground">{displayName(r.name)}</span>

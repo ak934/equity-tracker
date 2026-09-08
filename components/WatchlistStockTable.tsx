@@ -16,7 +16,7 @@ import { RunAnalysisButton } from "@/components/run-analysis-button";
 import { AnalyzingIndicator } from "@/components/analyzing-indicator";
 import { isAnalysisRunning } from "@/lib/analysis-status";
 import { formatAnalysisDate } from "@/lib/format-analysis-date";
-import { getLogoDomains } from "@/lib/logos";
+import { getLogoAvailability } from "@/lib/logos";
 import type { WatchlistRow } from "@/lib/watchlist-rows";
 
 export async function WatchlistStockTable({
@@ -30,7 +30,7 @@ export async function WatchlistStockTable({
   timeZone: string;
   showManagementColumns?: boolean;
 }) {
-  const domains = await getLogoDomains(rows.map((r) => r.stock.ticker));
+  const domains = await getLogoAvailability(rows.map((r) => r.stock.ticker));
 
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
@@ -56,7 +56,7 @@ export async function WatchlistStockTable({
                   href={`/stocks/${stock.ticker}`}
                   className="flex items-center gap-2 hover:text-primary"
                 >
-                  <StockLogo ticker={stock.ticker} domain={domains.get(stock.ticker) ?? null} size={20} />
+                  <StockLogo ticker={stock.ticker} hasLogo={domains.get(stock.ticker) ?? false} size={20} />
                   {stock.ticker}
                 </Link>
               </TableCell>

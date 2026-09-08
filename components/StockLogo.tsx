@@ -2,26 +2,20 @@
 
 import { useState } from "react";
 
-// Deliberately not imported from lib/logos.ts — that module pulls in
-// next/server's after(), which can't be bundled into a client component.
-function faviconUrl(domain: string): string {
-  return `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(domain)}`;
-}
-
 export function StockLogo({
   ticker,
-  domain,
+  hasLogo,
   size = 24,
   className = "",
 }: {
   ticker: string;
-  domain?: string | null;
+  hasLogo?: boolean;
   size?: number;
   className?: string;
 }) {
   const [failed, setFailed] = useState(false);
 
-  if (!domain || failed) {
+  if (!hasLogo || failed) {
     return (
       <span
         className={`flex shrink-0 items-center justify-center rounded-full bg-secondary text-[0.55rem] font-semibold text-secondary-foreground ${className}`}
@@ -35,7 +29,7 @@ export function StockLogo({
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={faviconUrl(domain)}
+      src={`/api/logo/${encodeURIComponent(ticker)}`}
       alt=""
       width={size}
       height={size}

@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { setTargetPrice } from "@/app/actions/stocks";
 import { hasHitTargetPrice } from "@/lib/target-price";
 import { StockLogo } from "@/components/StockLogo";
-import { getLogoDomains } from "@/lib/logos";
+import { getLogoAvailability } from "@/lib/logos";
 
 export default async function AlertsPage() {
   const { userId } = await auth.protect();
@@ -24,7 +24,7 @@ export default async function AlertsPage() {
     orderBy: { ticker: "asc" },
   });
 
-  const domains = await getLogoDomains(stocks.map((s) => s.ticker));
+  const domains = await getLogoAvailability(stocks.map((s) => s.ticker));
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
@@ -67,7 +67,7 @@ export default async function AlertsPage() {
                       href={`/stocks/${stock.ticker}`}
                       className="flex items-center gap-2 hover:text-primary"
                     >
-                      <StockLogo ticker={stock.ticker} domain={domains.get(stock.ticker) ?? null} size={20} />
+                      <StockLogo ticker={stock.ticker} hasLogo={domains.get(stock.ticker) ?? false} size={20} />
                       {stock.ticker}
                     </Link>
                   </TableCell>

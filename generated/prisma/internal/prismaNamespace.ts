@@ -401,7 +401,7 @@ export const ModelName = {
   Watchlist: 'Watchlist',
   Analysis: 'Analysis',
   AnalysisFramework: 'AnalysisFramework',
-  TickerDomain: 'TickerDomain',
+  TickerLogo: 'TickerLogo',
   SearchHistory: 'SearchHistory'
 } as const
 
@@ -418,7 +418,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "stock" | "watchlist" | "analysis" | "analysisFramework" | "tickerDomain" | "searchHistory"
+    modelProps: "stock" | "watchlist" | "analysis" | "analysisFramework" | "tickerLogo" | "searchHistory"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -718,77 +718,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    TickerDomain: {
-      payload: Prisma.$TickerDomainPayload<ExtArgs>
-      fields: Prisma.TickerDomainFieldRefs
+    TickerLogo: {
+      payload: Prisma.$TickerLogoPayload<ExtArgs>
+      fields: Prisma.TickerLogoFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.TickerDomainFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload> | null
+          args: Prisma.TickerLogoFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerLogoPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.TickerDomainFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload>
+          args: Prisma.TickerLogoFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerLogoPayload>
         }
         findFirst: {
-          args: Prisma.TickerDomainFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload> | null
+          args: Prisma.TickerLogoFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerLogoPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.TickerDomainFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload>
+          args: Prisma.TickerLogoFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerLogoPayload>
         }
         findMany: {
-          args: Prisma.TickerDomainFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload>[]
+          args: Prisma.TickerLogoFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerLogoPayload>[]
         }
         create: {
-          args: Prisma.TickerDomainCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload>
+          args: Prisma.TickerLogoCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerLogoPayload>
         }
         createMany: {
-          args: Prisma.TickerDomainCreateManyArgs<ExtArgs>
+          args: Prisma.TickerLogoCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.TickerDomainCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload>[]
+          args: Prisma.TickerLogoCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerLogoPayload>[]
         }
         delete: {
-          args: Prisma.TickerDomainDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload>
+          args: Prisma.TickerLogoDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerLogoPayload>
         }
         update: {
-          args: Prisma.TickerDomainUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload>
+          args: Prisma.TickerLogoUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerLogoPayload>
         }
         deleteMany: {
-          args: Prisma.TickerDomainDeleteManyArgs<ExtArgs>
+          args: Prisma.TickerLogoDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.TickerDomainUpdateManyArgs<ExtArgs>
+          args: Prisma.TickerLogoUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.TickerDomainUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload>[]
+          args: Prisma.TickerLogoUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerLogoPayload>[]
         }
         upsert: {
-          args: Prisma.TickerDomainUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerDomainPayload>
+          args: Prisma.TickerLogoUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TickerLogoPayload>
         }
         aggregate: {
-          args: Prisma.TickerDomainAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateTickerDomain>
+          args: Prisma.TickerLogoAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTickerLogo>
         }
         groupBy: {
-          args: Prisma.TickerDomainGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.TickerDomainGroupByOutputType>[]
+          args: Prisma.TickerLogoGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TickerLogoGroupByOutputType>[]
         }
         count: {
-          args: Prisma.TickerDomainCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.TickerDomainCountAggregateOutputType> | number
+          args: Prisma.TickerLogoCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TickerLogoCountAggregateOutputType> | number
         }
       }
     }
@@ -961,13 +961,13 @@ export const AnalysisFrameworkScalarFieldEnum = {
 export type AnalysisFrameworkScalarFieldEnum = (typeof AnalysisFrameworkScalarFieldEnum)[keyof typeof AnalysisFrameworkScalarFieldEnum]
 
 
-export const TickerDomainScalarFieldEnum = {
+export const TickerLogoScalarFieldEnum = {
   ticker: 'ticker',
-  domain: 'domain',
+  logoUrl: 'logoUrl',
   updatedAt: 'updatedAt'
 } as const
 
-export type TickerDomainScalarFieldEnum = (typeof TickerDomainScalarFieldEnum)[keyof typeof TickerDomainScalarFieldEnum]
+export type TickerLogoScalarFieldEnum = (typeof TickerLogoScalarFieldEnum)[keyof typeof TickerLogoScalarFieldEnum]
 
 
 export const SearchHistoryScalarFieldEnum = {
@@ -1228,7 +1228,7 @@ export type GlobalOmitConfig = {
   watchlist?: Prisma.WatchlistOmit
   analysis?: Prisma.AnalysisOmit
   analysisFramework?: Prisma.AnalysisFrameworkOmit
-  tickerDomain?: Prisma.TickerDomainOmit
+  tickerLogo?: Prisma.TickerLogoOmit
   searchHistory?: Prisma.SearchHistoryOmit
 }
 

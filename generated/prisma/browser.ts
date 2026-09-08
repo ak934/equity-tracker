@@ -38,10 +38,10 @@ export type Analysis = Prisma.AnalysisModel
  */
 export type AnalysisFramework = Prisma.AnalysisFrameworkModel
 /**
- * Model TickerDomain
+ * Model TickerLogo
  * 
  */
-export type TickerDomain = Prisma.TickerDomainModel
+export type TickerLogo = Prisma.TickerLogoModel
 /**
  * Model SearchHistory
  * 
