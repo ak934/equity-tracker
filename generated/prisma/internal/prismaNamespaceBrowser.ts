@@ -134,6 +134,8 @@ export type AnalysisFrameworkScalarFieldEnum = (typeof AnalysisFrameworkScalarFi
 export const TickerLogoScalarFieldEnum = {
   ticker: 'ticker',
   logoUrl: 'logoUrl',
+  imageData: 'imageData',
+  contentType: 'contentType',
   updatedAt: 'updatedAt'
 } as const
 

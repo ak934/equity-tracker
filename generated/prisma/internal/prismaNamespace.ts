@@ -964,6 +964,8 @@ export type AnalysisFrameworkScalarFieldEnum = (typeof AnalysisFrameworkScalarFi
 export const TickerLogoScalarFieldEnum = {
   ticker: 'ticker',
   logoUrl: 'logoUrl',
+  imageData: 'imageData',
+  contentType: 'contentType',
   updatedAt: 'updatedAt'
 } as const
 
@@ -1071,6 +1073,20 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Bytes'
+ */
+export type BytesFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Bytes'>
+    
+
+
+/**
+ * Reference to a field of type 'Bytes[]'
+ */
+export type ListBytesFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Bytes[]'>
     
 
 /**

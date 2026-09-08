@@ -27,18 +27,24 @@ export type AggregateTickerLogo = {
 export type TickerLogoMinAggregateOutputType = {
   ticker: string | null
   logoUrl: string | null
+  imageData: runtime.Bytes | null
+  contentType: string | null
   updatedAt: Date | null
 }
 
 export type TickerLogoMaxAggregateOutputType = {
   ticker: string | null
   logoUrl: string | null
+  imageData: runtime.Bytes | null
+  contentType: string | null
   updatedAt: Date | null
 }
 
 export type TickerLogoCountAggregateOutputType = {
   ticker: number
   logoUrl: number
+  imageData: number
+  contentType: number
   updatedAt: number
   _all: number
 }
@@ -47,18 +53,24 @@ export type TickerLogoCountAggregateOutputType = {
 export type TickerLogoMinAggregateInputType = {
   ticker?: true
   logoUrl?: true
+  imageData?: true
+  contentType?: true
   updatedAt?: true
 }
 
 export type TickerLogoMaxAggregateInputType = {
   ticker?: true
   logoUrl?: true
+  imageData?: true
+  contentType?: true
   updatedAt?: true
 }
 
 export type TickerLogoCountAggregateInputType = {
   ticker?: true
   logoUrl?: true
+  imageData?: true
+  contentType?: true
   updatedAt?: true
   _all?: true
 }
@@ -138,6 +150,8 @@ export type TickerLogoGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
 export type TickerLogoGroupByOutputType = {
   ticker: string
   logoUrl: string | null
+  imageData: runtime.Bytes | null
+  contentType: string | null
   updatedAt: Date
   _count: TickerLogoCountAggregateOutputType | null
   _min: TickerLogoMinAggregateOutputType | null
@@ -165,12 +179,16 @@ export type TickerLogoWhereInput = {
   NOT?: Prisma.TickerLogoWhereInput | Prisma.TickerLogoWhereInput[]
   ticker?: Prisma.StringFilter<"TickerLogo"> | string
   logoUrl?: Prisma.StringNullableFilter<"TickerLogo"> | string | null
+  imageData?: Prisma.BytesNullableFilter<"TickerLogo"> | runtime.Bytes | null
+  contentType?: Prisma.StringNullableFilter<"TickerLogo"> | string | null
   updatedAt?: Prisma.DateTimeFilter<"TickerLogo"> | Date | string
 }
 
 export type TickerLogoOrderByWithRelationInput = {
   ticker?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  imageData?: Prisma.SortOrderInput | Prisma.SortOrder
+  contentType?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -180,12 +198,16 @@ export type TickerLogoWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.TickerLogoWhereInput[]
   NOT?: Prisma.TickerLogoWhereInput | Prisma.TickerLogoWhereInput[]
   logoUrl?: Prisma.StringNullableFilter<"TickerLogo"> | string | null
+  imageData?: Prisma.BytesNullableFilter<"TickerLogo"> | runtime.Bytes | null
+  contentType?: Prisma.StringNullableFilter<"TickerLogo"> | string | null
   updatedAt?: Prisma.DateTimeFilter<"TickerLogo"> | Date | string
 }, "ticker">
 
 export type TickerLogoOrderByWithAggregationInput = {
   ticker?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  imageData?: Prisma.SortOrderInput | Prisma.SortOrder
+  contentType?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.TickerLogoCountOrderByAggregateInput
   _max?: Prisma.TickerLogoMaxOrderByAggregateInput
@@ -198,67 +220,93 @@ export type TickerLogoScalarWhereWithAggregatesInput = {
   NOT?: Prisma.TickerLogoScalarWhereWithAggregatesInput | Prisma.TickerLogoScalarWhereWithAggregatesInput[]
   ticker?: Prisma.StringWithAggregatesFilter<"TickerLogo"> | string
   logoUrl?: Prisma.StringNullableWithAggregatesFilter<"TickerLogo"> | string | null
+  imageData?: Prisma.BytesNullableWithAggregatesFilter<"TickerLogo"> | runtime.Bytes | null
+  contentType?: Prisma.StringNullableWithAggregatesFilter<"TickerLogo"> | string | null
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"TickerLogo"> | Date | string
 }
 
 export type TickerLogoCreateInput = {
   ticker: string
   logoUrl?: string | null
+  imageData?: runtime.Bytes | null
+  contentType?: string | null
   updatedAt?: Date | string
 }
 
 export type TickerLogoUncheckedCreateInput = {
   ticker: string
   logoUrl?: string | null
+  imageData?: runtime.Bytes | null
+  contentType?: string | null
   updatedAt?: Date | string
 }
 
 export type TickerLogoUpdateInput = {
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageData?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  contentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type TickerLogoUncheckedUpdateInput = {
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageData?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  contentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type TickerLogoCreateManyInput = {
   ticker: string
   logoUrl?: string | null
+  imageData?: runtime.Bytes | null
+  contentType?: string | null
   updatedAt?: Date | string
 }
 
 export type TickerLogoUpdateManyMutationInput = {
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageData?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  contentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type TickerLogoUncheckedUpdateManyInput = {
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageData?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  contentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type TickerLogoCountOrderByAggregateInput = {
   ticker?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrder
+  imageData?: Prisma.SortOrder
+  contentType?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type TickerLogoMaxOrderByAggregateInput = {
   ticker?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrder
+  imageData?: Prisma.SortOrder
+  contentType?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type TickerLogoMinOrderByAggregateInput = {
   ticker?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrder
+  imageData?: Prisma.SortOrder
+  contentType?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type NullableBytesFieldUpdateOperationsInput = {
+  set?: runtime.Bytes | null
 }
 
 
@@ -266,28 +314,36 @@ export type TickerLogoMinOrderByAggregateInput = {
 export type TickerLogoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   ticker?: boolean
   logoUrl?: boolean
+  imageData?: boolean
+  contentType?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["tickerLogo"]>
 
 export type TickerLogoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   ticker?: boolean
   logoUrl?: boolean
+  imageData?: boolean
+  contentType?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["tickerLogo"]>
 
 export type TickerLogoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   ticker?: boolean
   logoUrl?: boolean
+  imageData?: boolean
+  contentType?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["tickerLogo"]>
 
 export type TickerLogoSelectScalar = {
   ticker?: boolean
   logoUrl?: boolean
+  imageData?: boolean
+  contentType?: boolean
   updatedAt?: boolean
 }
 
-export type TickerLogoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"ticker" | "logoUrl" | "updatedAt", ExtArgs["result"]["tickerLogo"]>
+export type TickerLogoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"ticker" | "logoUrl" | "imageData" | "contentType" | "updatedAt", ExtArgs["result"]["tickerLogo"]>
 
 export type $TickerLogoPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "TickerLogo"
@@ -295,6 +351,8 @@ export type $TickerLogoPayload<ExtArgs extends runtime.Types.Extensions.Internal
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     ticker: string
     logoUrl: string | null
+    imageData: runtime.Bytes | null
+    contentType: string | null
     updatedAt: Date
   }, ExtArgs["result"]["tickerLogo"]>
   composites: {}
@@ -721,6 +779,8 @@ export interface Prisma__TickerLogoClient<T, Null = never, ExtArgs extends runti
 export interface TickerLogoFieldRefs {
   readonly ticker: Prisma.FieldRef<"TickerLogo", 'String'>
   readonly logoUrl: Prisma.FieldRef<"TickerLogo", 'String'>
+  readonly imageData: Prisma.FieldRef<"TickerLogo", 'Bytes'>
+  readonly contentType: Prisma.FieldRef<"TickerLogo", 'String'>
   readonly updatedAt: Prisma.FieldRef<"TickerLogo", 'DateTime'>
 }
     

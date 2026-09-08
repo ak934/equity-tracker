@@ -70,19 +70,21 @@ model AnalysisFramework {
   @@index([clerkUserId])
 }
 
-// Global (not per-user) cache of a ticker's company logo image, sourced
-// from the price API's own ticker-details endpoint (branding.icon_url) —
-// the actual company logo, not a favicon guessed from a domain name. A
-// company's logo never changes day to day, so each ticker is resolved at
-// most once ever — that API's free tier is tightly rate limited (see
-// lib/prices.ts), so this cache is load-bearing, not just an optimization.
-// logoUrl is null when the lookup ran but found nothing, so it isn't
-// retried forever. The URL itself requires the API key to fetch (see
-// app/api/logo/[ticker]/route.ts), so it's only ever used server-side.
+// Global (not per-user) cache of a ticker's company logo, sourced from the
+// price API's own ticker-details endpoint (branding.icon_url) — the actual
+// company logo, not a favicon guessed from a domain name. The image bytes
+// themselves are cached here (not just the upstream URL), so a page with
+// several stocks never re-fetches from that tightly rate-limited API (see
+// lib/prices.ts) on every view — only once, ever, per ticker. logoUrl is
+// kept for debugging; imageData null means the lookup ran and genuinely
+// found nothing, so it isn't retried forever (a failed *lookup*, as
+// opposed to a failed fetch, leaves no row at all — see lib/logos.ts).
 model TickerLogo {
-  ticker    String   @id
-  logoUrl   String?
-  updatedAt DateTime @updatedAt
+  ticker      String   @id
+  logoUrl     String?
+  imageData   Bytes?
+  contentType String?
+  updatedAt   DateTime @updatedAt
 }
 
 // One row per ticker a user has looked up in the ticker search box,
