@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { CreateWatchlistForm } from "@/components/CreateWatchlistForm";
 import { AddStockForm } from "@/components/AddStockForm";
 import { RecentlySearchedTable, type RecentSearchRow } from "@/components/RecentlySearchedTable";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { deleteWatchlist } from "@/app/actions/watchlists";
 
 const RECENT_SEARCH_LIMIT = 25;
@@ -44,7 +43,7 @@ export default async function WatchlistIndexPage() {
   const stockByTicker = new Map(matchingStocks.map((s) => [s.ticker, s]));
 
   // Unsorted stocks (tracked but not filed into any watchlist yet) live in
-  // the Recently Searched tab rather than a separate "Unsorted" section —
+  // the Recently Searched section rather than a separate "Unsorted" section —
   // there's nothing to distinguish them from a ticker someone just looked
   // up. Search-history rows take priority; a stock without one (e.g.
   // seeded before this feature existed) falls back to its createdAt.
@@ -80,68 +79,61 @@ export default async function WatchlistIndexPage() {
     <main className="mx-auto max-w-5xl px-4 py-10">
       <h1 className="text-2xl font-semibold tracking-tight">My Watchlists</h1>
 
-      <Tabs defaultValue="watchlists" className="mt-6">
-        <TabsList>
-          <TabsTrigger value="watchlists">Watchlists</TabsTrigger>
-          <TabsTrigger value="recent">Recently Searched</TabsTrigger>
-        </TabsList>
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex-1">
+          <AddStockForm />
+        </div>
+        <CreateWatchlistForm />
+      </div>
 
-        <TabsContent value="watchlists" className="mt-4">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex-1">
-              <AddStockForm />
-            </div>
-            <CreateWatchlistForm />
-          </div>
-
-          {watchlists.length === 0 ? (
-            <div className="mt-6 rounded-xl border border-dashed border-border px-6 py-12 text-center">
-              <p className="text-sm text-muted-foreground">
-                No watchlists yet — create one above to start organizing.
-              </p>
-            </div>
-          ) : (
-            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {watchlists.map((w) => (
-                <div
-                  key={w.id}
-                  className="flex items-start justify-between gap-3 rounded-xl border border-border bg-card p-4 shadow-sm transition-colors hover:border-primary/40"
+      {watchlists.length === 0 ? (
+        <div className="mt-6 rounded-xl border border-dashed border-border px-6 py-12 text-center">
+          <p className="text-sm text-muted-foreground">
+            No watchlists yet — create one above to start organizing.
+          </p>
+        </div>
+      ) : (
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {watchlists.map((w) => (
+            <div
+              key={w.id}
+              className="flex items-start justify-between gap-3 rounded-xl border border-border bg-card p-4 shadow-sm transition-colors hover:border-primary/40"
+            >
+              <Link href={`/watchlist/${w.id}`} className="flex-1">
+                <p className="font-medium">{w.name}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {w._count.stocks} stock{w._count.stocks === 1 ? "" : "s"}
+                </p>
+              </Link>
+              <form action={deleteWatchlist}>
+                <input type="hidden" name="id" value={w.id} />
+                <Button
+                  type="submit"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={`Delete ${w.name}`}
                 >
-                  <Link href={`/watchlist/${w.id}`} className="flex-1">
-                    <p className="font-medium">{w.name}</p>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {w._count.stocks} stock{w._count.stocks === 1 ? "" : "s"}
-                    </p>
-                  </Link>
-                  <form action={deleteWatchlist}>
-                    <input type="hidden" name="id" value={w.id} />
-                    <Button
-                      type="submit"
-                      variant="ghost"
-                      size="icon-sm"
-                      aria-label={`Delete ${w.name}`}
-                    >
-                      <Trash2 className="size-4" />
-                    </Button>
-                  </form>
-                </div>
-              ))}
+                  <Trash2 className="size-4" />
+                </Button>
+              </form>
             </div>
-          )}
-        </TabsContent>
+          ))}
+        </div>
+      )}
 
-        <TabsContent value="recent" className="mt-4">
-          {recentRows.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border px-6 py-12 text-center">
-              <p className="text-sm text-muted-foreground">
-                Tickers you look up in the search box will show up here.
-              </p>
-            </div>
-          ) : (
-            <RecentlySearchedTable rows={recentRows} allWatchlists={allWatchlists} timeZone={timeZone} />
-          )}
-        </TabsContent>
-      </Tabs>
+      <h2 className="mt-10 text-lg font-semibold tracking-tight">Recently Searched</h2>
+
+      {recentRows.length === 0 ? (
+        <div className="mt-4 rounded-xl border border-dashed border-border px-6 py-12 text-center">
+          <p className="text-sm text-muted-foreground">
+            Tickers you look up in the search box will show up here.
+          </p>
+        </div>
+      ) : (
+        <div className="mt-4">
+          <RecentlySearchedTable rows={recentRows} allWatchlists={allWatchlists} timeZone={timeZone} />
+        </div>
+      )}
     </main>
   );
 }
