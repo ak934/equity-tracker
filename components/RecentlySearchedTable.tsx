@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Trash2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -7,10 +8,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { StockWatchlistStatus } from "@/components/StockWatchlistStatus";
 import { AddSearchResultToWatchlist } from "@/components/AddSearchResultToWatchlist";
 import { StockLogo } from "@/components/StockLogo";
 import { getLogoAvailability } from "@/lib/logos";
+import { deleteRecentSearch } from "@/app/actions/stocks";
 
 export type RecentSearchRow = {
   ticker: string;
@@ -40,6 +43,7 @@ export async function RecentlySearchedTable({
             <TableHead>Name</TableHead>
             <TableHead>Searched</TableHead>
             <TableHead className="text-right">Watchlist</TableHead>
+            <TableHead className="w-0" />
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -72,6 +76,19 @@ export async function RecentlySearchedTable({
                     allWatchlists={allWatchlists}
                   />
                 )}
+              </TableCell>
+              <TableCell className="text-right">
+                <form action={deleteRecentSearch}>
+                  <input type="hidden" name="ticker" value={row.ticker} />
+                  <Button
+                    type="submit"
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label={`Delete ${row.ticker}`}
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
+                </form>
               </TableCell>
             </TableRow>
           ))}

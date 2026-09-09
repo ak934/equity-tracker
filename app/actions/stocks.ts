@@ -92,9 +92,23 @@ export async function removeFromQueue(formData: FormData) {
   revalidatePath("/queue");
 }
 
+// Removes a ticker from the user's tracking entirely — the Stock row (if
+// one was ever created) and its SearchHistory row, so it doesn't reappear
+// under Recently Searched.
+async function purgeTicker(userId: string, ticker: string) {
+  await prisma.$transaction([
+    prisma.stock.deleteMany({ where: { clerkUserId: userId, ticker } }),
+    prisma.searchHistory.deleteMany({ where: { clerkUserId: userId, ticker } }),
+  ]);
+
+  revalidatePath("/watchlist");
+  revalidatePath("/watchlist/[id]", "page");
+  revalidatePath("/analyses");
+  revalidatePath("/queue");
+}
+
 // Fully removes a stock from the user's tracking — not just its watchlist
-// membership. Also purges the SearchHistory row for the ticker so it
-// doesn't reappear under Recently Searched.
+// membership.
 export async function deleteStock(formData: FormData) {
   const { userId } = await auth.protect();
   const id = String(formData.get("id") ?? "");
@@ -108,15 +122,21 @@ export async function deleteStock(formData: FormData) {
     throw new Error("Stock not found");
   }
 
-  await prisma.$transaction([
-    prisma.stock.delete({ where: { id } }),
-    prisma.searchHistory.deleteMany({ where: { clerkUserId: userId, ticker: stock.ticker } }),
-  ]);
+  await purgeTicker(userId, stock.ticker);
+}
 
-  revalidatePath("/watchlist");
-  revalidatePath("/watchlist/[id]", "page");
-  revalidatePath("/analyses");
-  revalidatePath("/queue");
+// Removes a Recently Searched row — covers both a ticker that was only ever
+// looked up (no Stock row exists yet) and one that was also added to a
+// watchlist/Unsorted.
+export async function deleteRecentSearch(formData: FormData) {
+  const { userId } = await auth.protect();
+  const ticker = String(formData.get("ticker") ?? "").trim().toUpperCase();
+
+  if (!ticker) {
+    throw new Error("Ticker is required");
+  }
+
+  await purgeTicker(userId, ticker);
 }
 
 export async function setTargetPrice(formData: FormData) {
