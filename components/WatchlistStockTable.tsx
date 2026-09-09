@@ -12,8 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Badge, actionBadgeVariant } from "@/components/ui/badge";
 import { StockWatchlistMenu } from "@/components/StockWatchlistMenu";
 import { StockLogo } from "@/components/StockLogo";
-import { flagForReanalysis } from "@/app/actions/stocks";
-import { setStockWatchlistMembership } from "@/app/actions/watchlists";
+import { flagForReanalysis, deleteStock } from "@/app/actions/stocks";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
 import { AnalyzingIndicator } from "@/components/analyzing-indicator";
 import { isAnalysisRunning } from "@/lib/analysis-status";
@@ -130,15 +129,13 @@ export async function WatchlistStockTable({
               )}
               {watchlistId && (
                 <TableCell className="text-right">
-                  <form action={setStockWatchlistMembership}>
-                    <input type="hidden" name="stockId" value={stock.id} />
-                    <input type="hidden" name="watchlistId" value={watchlistId} />
-                    <input type="hidden" name="member" value="false" />
+                  <form action={deleteStock}>
+                    <input type="hidden" name="id" value={stock.id} />
                     <Button
                       type="submit"
                       variant="ghost"
                       size="icon-sm"
-                      aria-label={`Remove ${stock.ticker} from this watchlist`}
+                      aria-label={`Delete ${stock.ticker}`}
                     >
                       <Trash2 className="size-4" />
                     </Button>

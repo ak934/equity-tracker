@@ -92,6 +92,33 @@ export async function removeFromQueue(formData: FormData) {
   revalidatePath("/queue");
 }
 
+// Fully removes a stock from the user's tracking — not just its watchlist
+// membership. Also purges the SearchHistory row for the ticker so it
+// doesn't reappear under Recently Searched.
+export async function deleteStock(formData: FormData) {
+  const { userId } = await auth.protect();
+  const id = String(formData.get("id") ?? "");
+
+  if (!id) {
+    throw new Error("Stock id is required");
+  }
+
+  const stock = await prisma.stock.findFirst({ where: { id, clerkUserId: userId } });
+  if (!stock) {
+    throw new Error("Stock not found");
+  }
+
+  await prisma.$transaction([
+    prisma.stock.delete({ where: { id } }),
+    prisma.searchHistory.deleteMany({ where: { clerkUserId: userId, ticker: stock.ticker } }),
+  ]);
+
+  revalidatePath("/watchlist");
+  revalidatePath("/watchlist/[id]", "page");
+  revalidatePath("/analyses");
+  revalidatePath("/queue");
+}
+
 export async function setTargetPrice(formData: FormData) {
   const { userId } = await auth.protect();
   const id = String(formData.get("id") ?? "");
