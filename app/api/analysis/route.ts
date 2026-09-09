@@ -47,9 +47,12 @@ export async function POST(request: Request) {
   // analysisStartedAt lets isAnalysisRunning recognize a flag left behind by
   // a process that died mid-run (dev server restart, deploy, crash) as
   // stale, since nothing else could ever clear it in that case.
+  // needsReanalysis is also set here (mirroring flagForReanalysis) so the
+  // stock shows up in the Queue for the whole run, not just once something
+  // else has already flagged it.
   await prisma.stock.updateMany({
     where: { ticker, clerkUserId: userId },
-    data: { analysisRunning: true, analysisStartedAt: new Date() },
+    data: { analysisRunning: true, analysisStartedAt: new Date(), needsReanalysis: true, reanalysisReason: "manual" },
   });
 
   revalidateAll(ticker);
