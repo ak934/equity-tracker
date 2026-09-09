@@ -64,7 +64,12 @@ export default async function WatchlistDetailPage({
         </div>
       ) : (
         <div className="mt-6">
-          <WatchlistStockTable rows={rows} allWatchlists={allWatchlistsRaw} timeZone={timeZone} />
+          <WatchlistStockTable
+            rows={rows}
+            allWatchlists={allWatchlistsRaw}
+            timeZone={timeZone}
+            watchlistId={watchlist.id}
+          />
         </div>
       )}
     </main>
