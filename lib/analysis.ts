@@ -105,59 +105,6 @@ After Part C, on its own line, output ONLY this fenced JSON block with no extra 
 Map BUY→buy, WATCH→hold, PASS→avoid.`;
 }
 
-export type EarningsWatchResult = {
-  nextEarningsDate: string | null;
-  hasMaterialNews: boolean;
-  newsSummary: string | null;
-};
-
-function buildEarningsWatchPrompt(ticker: string, lastAnalysisDate: Date | null) {
-  return `You're monitoring ${ticker} on behalf of an investor who already has an analysis on file${
-    lastAnalysisDate ? ` from ${lastAnalysisDate.toISOString().split("T")[0]}` : ""
-  } and wants to know if anything has changed enough to warrant a fresh look.
-
-Search for:
-1. The next confirmed earnings report date, from investor relations, exchange filings, or reliable financial news. If no confirmed date is publicly available, say so rather than guessing.
-2. Material company news since ${
-    lastAnalysisDate ? "that date" : "recently"
-  } — M&A activity, major guidance changes, executive departures, regulatory or legal action, credit rating changes, or other developments a value investor would want to react to. Routine daily price movement or generic market commentary does NOT count as material.
-
-After your research, output ONLY this fenced JSON block with no other text:
-\`\`\`json
-{"nextEarningsDate": "<YYYY-MM-DD or null>", "hasMaterialNews": <true|false>, "newsSummary": "<one sentence, or null>"}
-\`\`\``;
-}
-
-export async function checkEarningsAndNews(
-  ticker: string,
-  lastAnalysisDate: Date | null
-): Promise<EarningsWatchResult> {
-  const response = await getClient().messages.create({
-    model: "claude-sonnet-4-6",
-    max_tokens: 1024,
-    tools: [{ type: "web_search_20250305", name: "web_search" }],
-    messages: [{ role: "user", content: buildEarningsWatchPrompt(ticker, lastAnalysisDate) }],
-  });
-
-  const fullOutput = response.content
-    .filter((block): block is Anthropic.TextBlock => block.type === "text")
-    .map((block) => block.text)
-    .join("\n");
-
-  const jsonMatch = fullOutput.match(/```json\s*([\s\S]*?)```/);
-  if (!jsonMatch) {
-    throw new Error("Model response did not include the expected JSON block");
-  }
-
-  const parsed = JSON.parse(jsonMatch[1]);
-
-  return {
-    nextEarningsDate: parsed.nextEarningsDate ?? null,
-    hasMaterialNews: Boolean(parsed.hasMaterialNews),
-    newsSummary: parsed.newsSummary ?? null,
-  };
-}
-
 export async function generateAnalysis(
   ticker: string,
   price: number | null,

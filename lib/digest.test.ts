@@ -2,10 +2,10 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import {
   findStaleAnalyses,
   computeReanalysisFlagUpdates,
-  computeEarningsWatchReason,
+  computeDueScheduledAnalyses,
   type AnalysisStockInput,
   type ReanalysisFlagStockInput,
-  type EarningsWatchStockInput,
+  type ScheduledAnalysisStockInput,
 } from "./digest";
 
 describe("findStaleAnalyses", () => {
@@ -104,86 +104,41 @@ describe("computeReanalysisFlagUpdates", () => {
   });
 });
 
-describe("computeEarningsWatchReason", () => {
+describe("computeDueScheduledAnalyses", () => {
   const now = new Date("2026-07-28T00:00:00.000Z");
 
-  it("flags 'earnings' when the next earnings date is today", () => {
-    const stock: EarningsWatchStockInput = {
-      ticker: "AAA",
-      needsReanalysis: false,
-      nextEarningsDate: now,
-      hasMaterialNews: false,
-    };
-    expect(computeEarningsWatchReason(stock, now)).toBe("earnings");
+  it("includes a stock whose scheduled date is today", () => {
+    const stocks: ScheduledAnalysisStockInput[] = [
+      { id: "1", needsReanalysis: false, nextAnalysisDate: now },
+    ];
+    expect(computeDueScheduledAnalyses(stocks, now)).toEqual(["1"]);
   });
 
-  it("flags 'earnings' when the next earnings date is within the 5-day window", () => {
-    const stock: EarningsWatchStockInput = {
-      ticker: "BBB",
-      needsReanalysis: false,
-      nextEarningsDate: new Date(now.getTime() + 4 * 24 * 60 * 60 * 1000),
-      hasMaterialNews: false,
-    };
-    expect(computeEarningsWatchReason(stock, now)).toBe("earnings");
+  it("includes a stock whose scheduled date is in the past", () => {
+    const stocks: ScheduledAnalysisStockInput[] = [
+      { id: "2", needsReanalysis: false, nextAnalysisDate: new Date(now.getTime() - 24 * 60 * 60 * 1000) },
+    ];
+    expect(computeDueScheduledAnalyses(stocks, now)).toEqual(["2"]);
   });
 
-  it("does not flag when the next earnings date is beyond the window", () => {
-    const stock: EarningsWatchStockInput = {
-      ticker: "CCC",
-      needsReanalysis: false,
-      nextEarningsDate: new Date(now.getTime() + 6 * 24 * 60 * 60 * 1000),
-      hasMaterialNews: false,
-    };
-    expect(computeEarningsWatchReason(stock, now)).toBeNull();
+  it("excludes a stock whose scheduled date is still in the future", () => {
+    const stocks: ScheduledAnalysisStockInput[] = [
+      { id: "3", needsReanalysis: false, nextAnalysisDate: new Date(now.getTime() + 24 * 60 * 60 * 1000) },
+    ];
+    expect(computeDueScheduledAnalyses(stocks, now)).toEqual([]);
   });
 
-  it("does not flag when the next earnings date is in the past", () => {
-    const stock: EarningsWatchStockInput = {
-      ticker: "DDD",
-      needsReanalysis: false,
-      nextEarningsDate: new Date(now.getTime() - 24 * 60 * 60 * 1000),
-      hasMaterialNews: false,
-    };
-    expect(computeEarningsWatchReason(stock, now)).toBeNull();
+  it("excludes a stock with no scheduled date", () => {
+    const stocks: ScheduledAnalysisStockInput[] = [
+      { id: "4", needsReanalysis: false, nextAnalysisDate: null },
+    ];
+    expect(computeDueScheduledAnalyses(stocks, now)).toEqual([]);
   });
 
-  it("flags 'news' when there's material news and no near-term earnings date", () => {
-    const stock: EarningsWatchStockInput = {
-      ticker: "EEE",
-      needsReanalysis: false,
-      nextEarningsDate: null,
-      hasMaterialNews: true,
-    };
-    expect(computeEarningsWatchReason(stock, now)).toBe("news");
-  });
-
-  it("prefers 'earnings' over 'news' when both apply", () => {
-    const stock: EarningsWatchStockInput = {
-      ticker: "FFF",
-      needsReanalysis: false,
-      nextEarningsDate: new Date(now.getTime() + 1 * 24 * 60 * 60 * 1000),
-      hasMaterialNews: true,
-    };
-    expect(computeEarningsWatchReason(stock, now)).toBe("earnings");
-  });
-
-  it("returns null when neither an upcoming earnings date nor material news exist", () => {
-    const stock: EarningsWatchStockInput = {
-      ticker: "GGG",
-      needsReanalysis: false,
-      nextEarningsDate: null,
-      hasMaterialNews: false,
-    };
-    expect(computeEarningsWatchReason(stock, now)).toBeNull();
-  });
-
-  it("leaves an already-flagged stock alone even if it's within the earnings window", () => {
-    const stock: EarningsWatchStockInput = {
-      ticker: "HHH",
-      needsReanalysis: true,
-      nextEarningsDate: now,
-      hasMaterialNews: true,
-    };
-    expect(computeEarningsWatchReason(stock, now)).toBeNull();
+  it("excludes an already-flagged stock even if its scheduled date has passed", () => {
+    const stocks: ScheduledAnalysisStockInput[] = [
+      { id: "5", needsReanalysis: true, nextAnalysisDate: now },
+    ];
+    expect(computeDueScheduledAnalyses(stocks, now)).toEqual([]);
   });
 });

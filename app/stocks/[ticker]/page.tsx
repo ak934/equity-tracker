@@ -9,7 +9,6 @@ import { isAnalysisRunning } from "@/lib/analysis-status";
 import { formatAnalysisDate } from "@/lib/format-analysis-date";
 import { getUserTimezone } from "@/lib/user-timezone";
 import { TargetPricePrompt } from "@/components/TargetPricePrompt";
-import { EarningsWatchToggle } from "@/components/EarningsWatchToggle";
 import { StockWatchlistStatus } from "@/components/StockWatchlistStatus";
 import { StockLogo } from "@/components/StockLogo";
 import { getLogoAvailability } from "@/lib/logos";
@@ -103,17 +102,6 @@ export default async function StockPage({
             <StockWatchlistStatus stockId={stock.id} allWatchlists={allWatchlists} memberIds={memberIds} />
             <TargetPricePrompt stockId={stock.id} targetPrice={stock.targetPrice} />
           </div>
-        </div>
-      )}
-
-      {stock && (
-        <div className="mt-4">
-          <EarningsWatchToggle
-            stockId={stock.id}
-            watching={stock.watchForEarnings}
-            nextEarningsDate={stock.nextEarningsDate}
-            earningsCheckedAt={stock.earningsCheckedAt}
-          />
         </div>
       )}
 

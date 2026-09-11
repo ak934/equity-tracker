@@ -17,8 +17,7 @@ export function isAnalysisRunning(stock: {
 const REANALYSIS_REASON_LABELS: Record<string, string> = {
   manual: "Manually flagged",
   stale: "Stale analysis",
-  earnings: "Upcoming earnings",
-  news: "Material news",
+  scheduled: "Scheduled analysis",
 };
 
 export function reanalysisReasonLabel(reason: string | null): string {

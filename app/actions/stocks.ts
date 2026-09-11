@@ -58,22 +58,27 @@ export async function logTickerSearch(ticker: string, name: string) {
   revalidatePath("/watchlist");
 }
 
-export async function setEarningsWatch(formData: FormData) {
+export async function setNextAnalysisDate(formData: FormData) {
   const { userId } = await auth.protect();
   const id = String(formData.get("id") ?? "");
-  const enabled = formData.get("enabled") === "true";
+  const dateRaw = String(formData.get("nextAnalysisDate") ?? "").trim();
 
   if (!id) {
     throw new Error("Stock id is required");
   }
 
+  const nextAnalysisDate = dateRaw ? new Date(dateRaw) : null;
+  if (nextAnalysisDate && Number.isNaN(nextAnalysisDate.getTime())) {
+    throw new Error("Next analysis date must be a valid date");
+  }
+
   await prisma.stock.updateMany({
     where: { id, clerkUserId: userId },
-    data: enabled
-      ? { watchForEarnings: true }
-      : { watchForEarnings: false, nextEarningsDate: null, earningsCheckedAt: null },
+    data: { nextAnalysisDate },
   });
 
+  revalidatePath("/alerts");
+  revalidatePath("/watchlist");
   revalidatePath("/stocks/[ticker]", "page");
 }
 
@@ -85,9 +90,21 @@ export async function removeFromQueue(formData: FormData) {
     throw new Error("Stock id is required");
   }
 
+  const stock = await prisma.stock.findFirst({ where: { id, clerkUserId: userId } });
+
+  // A schedule that's already due would otherwise get re-flagged the very
+  // next time the daily cron runs — clear it here too, same as a completed
+  // analysis does, since dismissing the queue entry means "not now."
+  const dueSchedule =
+    stock?.nextAnalysisDate && stock.nextAnalysisDate.getTime() <= Date.now();
+
   await prisma.stock.updateMany({
     where: { id, clerkUserId: userId },
-    data: { needsReanalysis: false, reanalysisReason: null },
+    data: {
+      needsReanalysis: false,
+      reanalysisReason: null,
+      ...(dueSchedule ? { nextAnalysisDate: null } : {}),
+    },
   });
 
   revalidatePath("/watchlist");

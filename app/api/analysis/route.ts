@@ -81,8 +81,13 @@ export async function POST(request: Request) {
         },
       });
 
-      // a fresh analysis just ran, so whatever flagged this stock (manual or
-      // stale) is resolved
+      // a fresh analysis just ran, so whatever flagged this stock (manual,
+      // stale, or a due schedule) is resolved. A schedule that was already
+      // due when this run started is cleared too — a future one the user set
+      // in the meantime is left alone.
+      const dueSchedule =
+        stock?.nextAnalysisDate && stock.nextAnalysisDate.getTime() <= Date.now();
+
       await prisma.stock.updateMany({
         where: { ticker, clerkUserId: userId },
         data: {
@@ -90,6 +95,7 @@ export async function POST(request: Request) {
           reanalysisReason: null,
           analysisRunning: false,
           analysisStartedAt: null,
+          ...(dueSchedule ? { nextAnalysisDate: null } : {}),
         },
       });
 

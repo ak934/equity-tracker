@@ -1,11 +1,10 @@
 import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
 import { refreshPricesAndNotify } from "@/lib/refresh-prices";
-import { checkEarningsAndNews } from "@/lib/analysis";
 import {
   findStaleAnalyses,
   computeReanalysisFlagUpdates,
-  computeEarningsWatchReason,
+  computeDueScheduledAnalyses,
   buildDigestEmailHtml,
 } from "@/lib/digest";
 
@@ -62,48 +61,19 @@ export async function GET(request: Request) {
     });
   }
 
-  // Opt-in only (Stock.watchForEarnings), so this list stays small — each
-  // entry is a real Claude + web-search call, run one at a time rather than
-  // in parallel.
-  const watchedStocks = await prisma.stock.findMany({ where: { watchForEarnings: true } });
-  const toFlagByReason: Record<"earnings" | "news", string[]> = { earnings: [], news: [] };
+  // User-picked "next analysis" dates (set from the Alerts page) that have
+  // now arrived get flagged the same way a stale analysis does.
+  const scheduledStocks = await prisma.stock.findMany({
+    where: { nextAnalysisDate: { not: null } },
+    select: { id: true, needsReanalysis: true, nextAnalysisDate: true },
+  });
+  const dueScheduleIds = computeDueScheduledAnalyses(scheduledStocks);
 
-  for (const stock of watchedStocks) {
-    try {
-      const latestForTicker = await prisma.analysis.findFirst({
-        where: { clerkUserId: stock.clerkUserId, ticker: stock.ticker },
-        orderBy: { date: "desc" },
-      });
-
-      const result = await checkEarningsAndNews(stock.ticker, latestForTicker?.date ?? null);
-      const nextEarningsDate = result.nextEarningsDate ? new Date(result.nextEarningsDate) : null;
-
-      await prisma.stock.update({
-        where: { id: stock.id },
-        data: { nextEarningsDate, earningsCheckedAt: new Date() },
-      });
-
-      const reason = computeEarningsWatchReason({
-        ticker: stock.ticker,
-        needsReanalysis: stock.needsReanalysis,
-        nextEarningsDate,
-        hasMaterialNews: result.hasMaterialNews,
-      });
-      if (reason) toFlagByReason[reason].push(stock.id);
-    } catch (err) {
-      // one ticker's lookup failing (bad search, transient API error)
-      // shouldn't abort the rest of the watched list or the digest below
-      console.error(`Earnings/news check failed for ${stock.ticker}:`, err);
-    }
-  }
-
-  for (const reason of ["earnings", "news"] as const) {
-    if (toFlagByReason[reason].length > 0) {
-      await prisma.stock.updateMany({
-        where: { id: { in: toFlagByReason[reason] } },
-        data: { needsReanalysis: true, reanalysisReason: reason },
-      });
-    }
+  if (dueScheduleIds.length > 0) {
+    await prisma.stock.updateMany({
+      where: { id: { in: dueScheduleIds } },
+      data: { needsReanalysis: true, reanalysisReason: "scheduled" },
+    });
   }
 
   let digestSent = false;

@@ -65,33 +65,25 @@ export function computeReanalysisFlagUpdates(
   return { newlyStale, toClear };
 }
 
-export interface EarningsWatchStockInput {
-  ticker: string;
+export interface ScheduledAnalysisStockInput {
+  id: string;
   needsReanalysis: boolean;
-  nextEarningsDate: Date | null;
-  hasMaterialNews: boolean;
+  nextAnalysisDate: Date | null;
 }
 
-const EARNINGS_WINDOW_DAYS = 5;
-
-// Reason to flag this stock for reanalysis, or null if it shouldn't be
-// flagged. A stock already flagged for anything (manual, stale, or a prior
-// earnings/news flag not yet acted on) is left alone — same "don't clobber
-// an existing flag" rule as computeReanalysisFlagUpdates.
-export function computeEarningsWatchReason(
-  stock: EarningsWatchStockInput,
+// Ids of stocks whose user-picked "next analysis" date has arrived. A stock
+// already flagged for anything else (manual, stale, or a previously-due
+// schedule not yet acted on) is left alone — same "don't clobber an
+// existing flag" rule as computeReanalysisFlagUpdates.
+export function computeDueScheduledAnalyses(
+  stocks: ScheduledAnalysisStockInput[],
   now = new Date()
-): "earnings" | "news" | null {
-  if (stock.needsReanalysis) return null;
-
-  if (stock.nextEarningsDate) {
-    const daysUntil = (stock.nextEarningsDate.getTime() - now.getTime()) / MS_PER_DAY;
-    if (daysUntil >= 0 && daysUntil <= EARNINGS_WINDOW_DAYS) return "earnings";
-  }
-
-  if (stock.hasMaterialNews) return "news";
-
-  return null;
+): string[] {
+  return stocks
+    .filter(
+      (s) => !s.needsReanalysis && s.nextAnalysisDate && s.nextAnalysisDate.getTime() <= now.getTime()
+    )
+    .map((s) => s.id);
 }
 
 export function buildDigestEmailHtml(staleAnalyses: DigestStaleAnalysis[]): string {

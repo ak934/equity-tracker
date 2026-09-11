@@ -51,9 +51,7 @@ export type StockMinAggregateOutputType = {
   analysisRunning: boolean | null
   analysisStartedAt: Date | null
   targetPrice: number | null
-  watchForEarnings: boolean | null
-  nextEarningsDate: Date | null
-  earningsCheckedAt: Date | null
+  nextAnalysisDate: Date | null
 }
 
 export type StockMaxAggregateOutputType = {
@@ -71,9 +69,7 @@ export type StockMaxAggregateOutputType = {
   analysisRunning: boolean | null
   analysisStartedAt: Date | null
   targetPrice: number | null
-  watchForEarnings: boolean | null
-  nextEarningsDate: Date | null
-  earningsCheckedAt: Date | null
+  nextAnalysisDate: Date | null
 }
 
 export type StockCountAggregateOutputType = {
@@ -91,9 +87,7 @@ export type StockCountAggregateOutputType = {
   analysisRunning: number
   analysisStartedAt: number
   targetPrice: number
-  watchForEarnings: number
-  nextEarningsDate: number
-  earningsCheckedAt: number
+  nextAnalysisDate: number
   _all: number
 }
 
@@ -123,9 +117,7 @@ export type StockMinAggregateInputType = {
   analysisRunning?: true
   analysisStartedAt?: true
   targetPrice?: true
-  watchForEarnings?: true
-  nextEarningsDate?: true
-  earningsCheckedAt?: true
+  nextAnalysisDate?: true
 }
 
 export type StockMaxAggregateInputType = {
@@ -143,9 +135,7 @@ export type StockMaxAggregateInputType = {
   analysisRunning?: true
   analysisStartedAt?: true
   targetPrice?: true
-  watchForEarnings?: true
-  nextEarningsDate?: true
-  earningsCheckedAt?: true
+  nextAnalysisDate?: true
 }
 
 export type StockCountAggregateInputType = {
@@ -163,9 +153,7 @@ export type StockCountAggregateInputType = {
   analysisRunning?: true
   analysisStartedAt?: true
   targetPrice?: true
-  watchForEarnings?: true
-  nextEarningsDate?: true
-  earningsCheckedAt?: true
+  nextAnalysisDate?: true
   _all?: true
 }
 
@@ -270,9 +258,7 @@ export type StockGroupByOutputType = {
   analysisRunning: boolean
   analysisStartedAt: Date | null
   targetPrice: number | null
-  watchForEarnings: boolean
-  nextEarningsDate: Date | null
-  earningsCheckedAt: Date | null
+  nextAnalysisDate: Date | null
   _count: StockCountAggregateOutputType | null
   _avg: StockAvgAggregateOutputType | null
   _sum: StockSumAggregateOutputType | null
@@ -313,9 +299,7 @@ export type StockWhereInput = {
   analysisRunning?: Prisma.BoolFilter<"Stock"> | boolean
   analysisStartedAt?: Prisma.DateTimeNullableFilter<"Stock"> | Date | string | null
   targetPrice?: Prisma.FloatNullableFilter<"Stock"> | number | null
-  watchForEarnings?: Prisma.BoolFilter<"Stock"> | boolean
-  nextEarningsDate?: Prisma.DateTimeNullableFilter<"Stock"> | Date | string | null
-  earningsCheckedAt?: Prisma.DateTimeNullableFilter<"Stock"> | Date | string | null
+  nextAnalysisDate?: Prisma.DateTimeNullableFilter<"Stock"> | Date | string | null
   watchlists?: Prisma.WatchlistListRelationFilter
 }
 
@@ -334,9 +318,7 @@ export type StockOrderByWithRelationInput = {
   analysisRunning?: Prisma.SortOrder
   analysisStartedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   targetPrice?: Prisma.SortOrderInput | Prisma.SortOrder
-  watchForEarnings?: Prisma.SortOrder
-  nextEarningsDate?: Prisma.SortOrderInput | Prisma.SortOrder
-  earningsCheckedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  nextAnalysisDate?: Prisma.SortOrderInput | Prisma.SortOrder
   watchlists?: Prisma.WatchlistOrderByRelationAggregateInput
 }
 
@@ -359,9 +341,7 @@ export type StockWhereUniqueInput = Prisma.AtLeast<{
   analysisRunning?: Prisma.BoolFilter<"Stock"> | boolean
   analysisStartedAt?: Prisma.DateTimeNullableFilter<"Stock"> | Date | string | null
   targetPrice?: Prisma.FloatNullableFilter<"Stock"> | number | null
-  watchForEarnings?: Prisma.BoolFilter<"Stock"> | boolean
-  nextEarningsDate?: Prisma.DateTimeNullableFilter<"Stock"> | Date | string | null
-  earningsCheckedAt?: Prisma.DateTimeNullableFilter<"Stock"> | Date | string | null
+  nextAnalysisDate?: Prisma.DateTimeNullableFilter<"Stock"> | Date | string | null
   watchlists?: Prisma.WatchlistListRelationFilter
 }, "id" | "clerkUserId_ticker">
 
@@ -380,9 +360,7 @@ export type StockOrderByWithAggregationInput = {
   analysisRunning?: Prisma.SortOrder
   analysisStartedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   targetPrice?: Prisma.SortOrderInput | Prisma.SortOrder
-  watchForEarnings?: Prisma.SortOrder
-  nextEarningsDate?: Prisma.SortOrderInput | Prisma.SortOrder
-  earningsCheckedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  nextAnalysisDate?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.StockCountOrderByAggregateInput
   _avg?: Prisma.StockAvgOrderByAggregateInput
   _max?: Prisma.StockMaxOrderByAggregateInput
@@ -408,9 +386,7 @@ export type StockScalarWhereWithAggregatesInput = {
   analysisRunning?: Prisma.BoolWithAggregatesFilter<"Stock"> | boolean
   analysisStartedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Stock"> | Date | string | null
   targetPrice?: Prisma.FloatNullableWithAggregatesFilter<"Stock"> | number | null
-  watchForEarnings?: Prisma.BoolWithAggregatesFilter<"Stock"> | boolean
-  nextEarningsDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Stock"> | Date | string | null
-  earningsCheckedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Stock"> | Date | string | null
+  nextAnalysisDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Stock"> | Date | string | null
 }
 
 export type StockCreateInput = {
@@ -428,9 +404,7 @@ export type StockCreateInput = {
   analysisRunning?: boolean
   analysisStartedAt?: Date | string | null
   targetPrice?: number | null
-  watchForEarnings?: boolean
-  nextEarningsDate?: Date | string | null
-  earningsCheckedAt?: Date | string | null
+  nextAnalysisDate?: Date | string | null
   watchlists?: Prisma.WatchlistCreateNestedManyWithoutStocksInput
 }
 
@@ -449,9 +423,7 @@ export type StockUncheckedCreateInput = {
   analysisRunning?: boolean
   analysisStartedAt?: Date | string | null
   targetPrice?: number | null
-  watchForEarnings?: boolean
-  nextEarningsDate?: Date | string | null
-  earningsCheckedAt?: Date | string | null
+  nextAnalysisDate?: Date | string | null
   watchlists?: Prisma.WatchlistUncheckedCreateNestedManyWithoutStocksInput
 }
 
@@ -470,9 +442,7 @@ export type StockUpdateInput = {
   analysisRunning?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analysisStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   targetPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  watchForEarnings?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  nextEarningsDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  earningsCheckedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextAnalysisDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   watchlists?: Prisma.WatchlistUpdateManyWithoutStocksNestedInput
 }
 
@@ -491,9 +461,7 @@ export type StockUncheckedUpdateInput = {
   analysisRunning?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analysisStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   targetPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  watchForEarnings?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  nextEarningsDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  earningsCheckedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextAnalysisDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   watchlists?: Prisma.WatchlistUncheckedUpdateManyWithoutStocksNestedInput
 }
 
@@ -512,9 +480,7 @@ export type StockCreateManyInput = {
   analysisRunning?: boolean
   analysisStartedAt?: Date | string | null
   targetPrice?: number | null
-  watchForEarnings?: boolean
-  nextEarningsDate?: Date | string | null
-  earningsCheckedAt?: Date | string | null
+  nextAnalysisDate?: Date | string | null
 }
 
 export type StockUpdateManyMutationInput = {
@@ -532,9 +498,7 @@ export type StockUpdateManyMutationInput = {
   analysisRunning?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analysisStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   targetPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  watchForEarnings?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  nextEarningsDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  earningsCheckedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextAnalysisDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type StockUncheckedUpdateManyInput = {
@@ -552,9 +516,7 @@ export type StockUncheckedUpdateManyInput = {
   analysisRunning?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analysisStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   targetPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  watchForEarnings?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  nextEarningsDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  earningsCheckedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextAnalysisDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type StockClerkUserIdTickerCompoundUniqueInput = {
@@ -577,9 +539,7 @@ export type StockCountOrderByAggregateInput = {
   analysisRunning?: Prisma.SortOrder
   analysisStartedAt?: Prisma.SortOrder
   targetPrice?: Prisma.SortOrder
-  watchForEarnings?: Prisma.SortOrder
-  nextEarningsDate?: Prisma.SortOrder
-  earningsCheckedAt?: Prisma.SortOrder
+  nextAnalysisDate?: Prisma.SortOrder
 }
 
 export type StockAvgOrderByAggregateInput = {
@@ -602,9 +562,7 @@ export type StockMaxOrderByAggregateInput = {
   analysisRunning?: Prisma.SortOrder
   analysisStartedAt?: Prisma.SortOrder
   targetPrice?: Prisma.SortOrder
-  watchForEarnings?: Prisma.SortOrder
-  nextEarningsDate?: Prisma.SortOrder
-  earningsCheckedAt?: Prisma.SortOrder
+  nextAnalysisDate?: Prisma.SortOrder
 }
 
 export type StockMinOrderByAggregateInput = {
@@ -622,9 +580,7 @@ export type StockMinOrderByAggregateInput = {
   analysisRunning?: Prisma.SortOrder
   analysisStartedAt?: Prisma.SortOrder
   targetPrice?: Prisma.SortOrder
-  watchForEarnings?: Prisma.SortOrder
-  nextEarningsDate?: Prisma.SortOrder
-  earningsCheckedAt?: Prisma.SortOrder
+  nextAnalysisDate?: Prisma.SortOrder
 }
 
 export type StockSumOrderByAggregateInput = {
@@ -723,9 +679,7 @@ export type StockCreateWithoutWatchlistsInput = {
   analysisRunning?: boolean
   analysisStartedAt?: Date | string | null
   targetPrice?: number | null
-  watchForEarnings?: boolean
-  nextEarningsDate?: Date | string | null
-  earningsCheckedAt?: Date | string | null
+  nextAnalysisDate?: Date | string | null
 }
 
 export type StockUncheckedCreateWithoutWatchlistsInput = {
@@ -743,9 +697,7 @@ export type StockUncheckedCreateWithoutWatchlistsInput = {
   analysisRunning?: boolean
   analysisStartedAt?: Date | string | null
   targetPrice?: number | null
-  watchForEarnings?: boolean
-  nextEarningsDate?: Date | string | null
-  earningsCheckedAt?: Date | string | null
+  nextAnalysisDate?: Date | string | null
 }
 
 export type StockCreateOrConnectWithoutWatchlistsInput = {
@@ -787,9 +739,7 @@ export type StockScalarWhereInput = {
   analysisRunning?: Prisma.BoolFilter<"Stock"> | boolean
   analysisStartedAt?: Prisma.DateTimeNullableFilter<"Stock"> | Date | string | null
   targetPrice?: Prisma.FloatNullableFilter<"Stock"> | number | null
-  watchForEarnings?: Prisma.BoolFilter<"Stock"> | boolean
-  nextEarningsDate?: Prisma.DateTimeNullableFilter<"Stock"> | Date | string | null
-  earningsCheckedAt?: Prisma.DateTimeNullableFilter<"Stock"> | Date | string | null
+  nextAnalysisDate?: Prisma.DateTimeNullableFilter<"Stock"> | Date | string | null
 }
 
 export type StockUpdateWithoutWatchlistsInput = {
@@ -807,9 +757,7 @@ export type StockUpdateWithoutWatchlistsInput = {
   analysisRunning?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analysisStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   targetPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  watchForEarnings?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  nextEarningsDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  earningsCheckedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextAnalysisDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type StockUncheckedUpdateWithoutWatchlistsInput = {
@@ -827,9 +775,7 @@ export type StockUncheckedUpdateWithoutWatchlistsInput = {
   analysisRunning?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analysisStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   targetPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  watchForEarnings?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  nextEarningsDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  earningsCheckedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextAnalysisDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type StockUncheckedUpdateManyWithoutWatchlistsInput = {
@@ -847,9 +793,7 @@ export type StockUncheckedUpdateManyWithoutWatchlistsInput = {
   analysisRunning?: Prisma.BoolFieldUpdateOperationsInput | boolean
   analysisStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   targetPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  watchForEarnings?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  nextEarningsDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  earningsCheckedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextAnalysisDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -898,9 +842,7 @@ export type StockSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   analysisRunning?: boolean
   analysisStartedAt?: boolean
   targetPrice?: boolean
-  watchForEarnings?: boolean
-  nextEarningsDate?: boolean
-  earningsCheckedAt?: boolean
+  nextAnalysisDate?: boolean
   watchlists?: boolean | Prisma.Stock$watchlistsArgs<ExtArgs>
   _count?: boolean | Prisma.StockCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["stock"]>
@@ -920,9 +862,7 @@ export type StockSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   analysisRunning?: boolean
   analysisStartedAt?: boolean
   targetPrice?: boolean
-  watchForEarnings?: boolean
-  nextEarningsDate?: boolean
-  earningsCheckedAt?: boolean
+  nextAnalysisDate?: boolean
 }, ExtArgs["result"]["stock"]>
 
 export type StockSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -940,9 +880,7 @@ export type StockSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   analysisRunning?: boolean
   analysisStartedAt?: boolean
   targetPrice?: boolean
-  watchForEarnings?: boolean
-  nextEarningsDate?: boolean
-  earningsCheckedAt?: boolean
+  nextAnalysisDate?: boolean
 }, ExtArgs["result"]["stock"]>
 
 export type StockSelectScalar = {
@@ -960,12 +898,10 @@ export type StockSelectScalar = {
   analysisRunning?: boolean
   analysisStartedAt?: boolean
   targetPrice?: boolean
-  watchForEarnings?: boolean
-  nextEarningsDate?: boolean
-  earningsCheckedAt?: boolean
+  nextAnalysisDate?: boolean
 }
 
-export type StockOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkUserId" | "ticker" | "name" | "status" | "lastPrice" | "createdAt" | "priceAsOf" | "hiddenFromDashboard" | "needsReanalysis" | "reanalysisReason" | "analysisRunning" | "analysisStartedAt" | "targetPrice" | "watchForEarnings" | "nextEarningsDate" | "earningsCheckedAt", ExtArgs["result"]["stock"]>
+export type StockOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkUserId" | "ticker" | "name" | "status" | "lastPrice" | "createdAt" | "priceAsOf" | "hiddenFromDashboard" | "needsReanalysis" | "reanalysisReason" | "analysisRunning" | "analysisStartedAt" | "targetPrice" | "nextAnalysisDate", ExtArgs["result"]["stock"]>
 export type StockInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   watchlists?: boolean | Prisma.Stock$watchlistsArgs<ExtArgs>
   _count?: boolean | Prisma.StockCountOutputTypeDefaultArgs<ExtArgs>
@@ -993,9 +929,7 @@ export type $StockPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     analysisRunning: boolean
     analysisStartedAt: Date | null
     targetPrice: number | null
-    watchForEarnings: boolean
-    nextEarningsDate: Date | null
-    earningsCheckedAt: Date | null
+    nextAnalysisDate: Date | null
   }, ExtArgs["result"]["stock"]>
   composites: {}
 }
@@ -1434,9 +1368,7 @@ export interface StockFieldRefs {
   readonly analysisRunning: Prisma.FieldRef<"Stock", 'Boolean'>
   readonly analysisStartedAt: Prisma.FieldRef<"Stock", 'DateTime'>
   readonly targetPrice: Prisma.FieldRef<"Stock", 'Float'>
-  readonly watchForEarnings: Prisma.FieldRef<"Stock", 'Boolean'>
-  readonly nextEarningsDate: Prisma.FieldRef<"Stock", 'DateTime'>
-  readonly earningsCheckedAt: Prisma.FieldRef<"Stock", 'DateTime'>
+  readonly nextAnalysisDate: Prisma.FieldRef<"Stock", 'DateTime'>
 }
     
 

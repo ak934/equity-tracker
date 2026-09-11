@@ -22,9 +22,7 @@ model Stock {
   analysisRunning     Boolean     @default(false)
   analysisStartedAt   DateTime?
   targetPrice         Float?
-  watchForEarnings    Boolean     @default(false)
-  nextEarningsDate    DateTime?
-  earningsCheckedAt   DateTime?
+  nextAnalysisDate    DateTime?
   watchlists          Watchlist[] @relation("StockWatchlists")
 
   @@unique([clerkUserId, ticker])

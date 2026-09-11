@@ -14,30 +14,32 @@ import { Badge } from "@/components/ui/badge";
 import { setTargetPrice } from "@/app/actions/stocks";
 import { hasHitTargetPrice } from "@/lib/target-price";
 import { StockLogo } from "@/components/StockLogo";
+import { ScheduleAnalysisCell } from "@/components/ScheduleAnalysisCell";
 import { getLogoAvailability } from "@/lib/logos";
 
 export default async function AlertsPage() {
   const { userId } = await auth.protect();
 
   const stocks = await prisma.stock.findMany({
-    where: { targetPrice: { not: null }, clerkUserId: userId },
+    where: { clerkUserId: userId, status: "watchlist" },
     orderBy: { ticker: "asc" },
   });
 
   const domains = await getLogoAvailability(stocks.map((s) => s.ticker));
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
+    <main className="mx-auto max-w-4xl px-4 py-10">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Alerts</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          We&apos;ll email you when a stock hits its target price.
+          We&apos;ll email you when a stock hits its target price. When would you like to schedule your
+          next analysis of each company?
         </p>
       </div>
       {stocks.length === 0 ? (
         <div className="mt-6 rounded-xl border border-dashed border-border px-6 py-12 text-center">
           <p className="text-sm text-muted-foreground">
-            No target prices set yet. Set one from a stock&apos;s analysis page and it&apos;ll show up here.
+            No stocks tracked yet. Add one from the Watchlist tab and it&apos;ll show up here.
           </p>
         </div>
       ) : (
@@ -49,6 +51,7 @@ export default async function AlertsPage() {
               <TableHead>Name</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>Target</TableHead>
+              <TableHead>Next Analysis</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -79,20 +82,27 @@ export default async function AlertsPage() {
                     {stock.targetPrice != null ? `$${stock.targetPrice.toFixed(2)}` : "—"}
                   </TableCell>
                   <TableCell>
-                    {hit ? (
+                    <ScheduleAnalysisCell stockId={stock.id} nextAnalysisDate={stock.nextAnalysisDate} />
+                  </TableCell>
+                  <TableCell>
+                    {stock.targetPrice == null ? (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    ) : hit ? (
                       <Badge variant="positive">🎯 Hit — buy now!</Badge>
                     ) : (
                       <span className="text-xs text-muted-foreground">Watching</span>
                     )}
                   </TableCell>
                   <TableCell className="text-right">
-                    <form action={setTargetPrice}>
-                      <input type="hidden" name="id" value={stock.id} />
-                      <input type="hidden" name="targetPrice" value="" />
-                      <Button type="submit" variant="ghost" size="sm">
-                        Clear
-                      </Button>
-                    </form>
+                    {stock.targetPrice != null && (
+                      <form action={setTargetPrice}>
+                        <input type="hidden" name="id" value={stock.id} />
+                        <input type="hidden" name="targetPrice" value="" />
+                        <Button type="submit" variant="ghost" size="sm">
+                          Clear Target
+                        </Button>
+                      </form>
+                    )}
                   </TableCell>
                 </TableRow>
               );
