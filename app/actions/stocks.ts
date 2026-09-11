@@ -58,23 +58,6 @@ export async function logTickerSearch(ticker: string, name: string) {
   revalidatePath("/watchlist");
 }
 
-export async function flagForReanalysis(formData: FormData) {
-  const { userId } = await auth.protect();
-  const id = String(formData.get("id") ?? "");
-
-  if (!id) {
-    throw new Error("Stock id is required");
-  }
-
-  await prisma.stock.updateMany({
-    where: { id, clerkUserId: userId },
-    data: { needsReanalysis: true, reanalysisReason: "manual" },
-  });
-
-  revalidatePath("/watchlist");
-  revalidatePath("/queue");
-}
-
 export async function removeFromQueue(formData: FormData) {
   const { userId } = await auth.protect();
   const id = String(formData.get("id") ?? "");

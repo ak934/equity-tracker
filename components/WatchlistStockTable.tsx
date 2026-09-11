@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Badge, actionBadgeVariant } from "@/components/ui/badge";
 import { StockWatchlistMenu } from "@/components/StockWatchlistMenu";
 import { StockLogo } from "@/components/StockLogo";
-import { flagForReanalysis, deleteStock } from "@/app/actions/stocks";
+import { deleteStock } from "@/app/actions/stocks";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
 import { AnalyzingIndicator } from "@/components/analyzing-indicator";
 import { isAnalysisRunning } from "@/lib/analysis-status";
@@ -78,19 +78,10 @@ export async function WatchlistStockTable({
                     />
                   )}
                   {latestAnalysis &&
-                    (stock.needsReanalysis ? (
-                      isAnalysisRunning(stock) ? (
-                        <AnalyzingIndicator ticker={stock.ticker} />
-                      ) : (
-                        <span className="text-xs text-warning">Company Added to Queue</span>
-                      )
+                    (isAnalysisRunning(stock) ? (
+                      <AnalyzingIndicator ticker={stock.ticker} />
                     ) : (
-                      <form action={flagForReanalysis}>
-                        <input type="hidden" name="id" value={stock.id} />
-                        <Button type="submit" variant="outline" size="sm">
-                          Flag for Reanalysis
-                        </Button>
-                      </form>
+                      <RunAnalysisButton ticker={stock.ticker} initialAnalyzing={false} />
                     ))}
                 </div>
               </TableCell>
