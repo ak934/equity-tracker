@@ -89,7 +89,10 @@ export const StockScalarFieldEnum = {
   reanalysisReason: 'reanalysisReason',
   analysisRunning: 'analysisRunning',
   analysisStartedAt: 'analysisStartedAt',
-  targetPrice: 'targetPrice'
+  targetPrice: 'targetPrice',
+  watchForEarnings: 'watchForEarnings',
+  nextEarningsDate: 'nextEarningsDate',
+  earningsCheckedAt: 'earningsCheckedAt'
 } as const
 
 export type StockScalarFieldEnum = (typeof StockScalarFieldEnum)[keyof typeof StockScalarFieldEnum]

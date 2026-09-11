@@ -2,8 +2,10 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import {
   findStaleAnalyses,
   computeReanalysisFlagUpdates,
+  computeEarningsWatchReason,
   type AnalysisStockInput,
   type ReanalysisFlagStockInput,
+  type EarningsWatchStockInput,
 } from "./digest";
 
 describe("findStaleAnalyses", () => {
@@ -99,5 +101,89 @@ describe("computeReanalysisFlagUpdates", () => {
       newlyStale: [],
       toClear: [],
     });
+  });
+});
+
+describe("computeEarningsWatchReason", () => {
+  const now = new Date("2026-07-28T00:00:00.000Z");
+
+  it("flags 'earnings' when the next earnings date is today", () => {
+    const stock: EarningsWatchStockInput = {
+      ticker: "AAA",
+      needsReanalysis: false,
+      nextEarningsDate: now,
+      hasMaterialNews: false,
+    };
+    expect(computeEarningsWatchReason(stock, now)).toBe("earnings");
+  });
+
+  it("flags 'earnings' when the next earnings date is within the 5-day window", () => {
+    const stock: EarningsWatchStockInput = {
+      ticker: "BBB",
+      needsReanalysis: false,
+      nextEarningsDate: new Date(now.getTime() + 4 * 24 * 60 * 60 * 1000),
+      hasMaterialNews: false,
+    };
+    expect(computeEarningsWatchReason(stock, now)).toBe("earnings");
+  });
+
+  it("does not flag when the next earnings date is beyond the window", () => {
+    const stock: EarningsWatchStockInput = {
+      ticker: "CCC",
+      needsReanalysis: false,
+      nextEarningsDate: new Date(now.getTime() + 6 * 24 * 60 * 60 * 1000),
+      hasMaterialNews: false,
+    };
+    expect(computeEarningsWatchReason(stock, now)).toBeNull();
+  });
+
+  it("does not flag when the next earnings date is in the past", () => {
+    const stock: EarningsWatchStockInput = {
+      ticker: "DDD",
+      needsReanalysis: false,
+      nextEarningsDate: new Date(now.getTime() - 24 * 60 * 60 * 1000),
+      hasMaterialNews: false,
+    };
+    expect(computeEarningsWatchReason(stock, now)).toBeNull();
+  });
+
+  it("flags 'news' when there's material news and no near-term earnings date", () => {
+    const stock: EarningsWatchStockInput = {
+      ticker: "EEE",
+      needsReanalysis: false,
+      nextEarningsDate: null,
+      hasMaterialNews: true,
+    };
+    expect(computeEarningsWatchReason(stock, now)).toBe("news");
+  });
+
+  it("prefers 'earnings' over 'news' when both apply", () => {
+    const stock: EarningsWatchStockInput = {
+      ticker: "FFF",
+      needsReanalysis: false,
+      nextEarningsDate: new Date(now.getTime() + 1 * 24 * 60 * 60 * 1000),
+      hasMaterialNews: true,
+    };
+    expect(computeEarningsWatchReason(stock, now)).toBe("earnings");
+  });
+
+  it("returns null when neither an upcoming earnings date nor material news exist", () => {
+    const stock: EarningsWatchStockInput = {
+      ticker: "GGG",
+      needsReanalysis: false,
+      nextEarningsDate: null,
+      hasMaterialNews: false,
+    };
+    expect(computeEarningsWatchReason(stock, now)).toBeNull();
+  });
+
+  it("leaves an already-flagged stock alone even if it's within the earnings window", () => {
+    const stock: EarningsWatchStockInput = {
+      ticker: "HHH",
+      needsReanalysis: true,
+      nextEarningsDate: now,
+      hasMaterialNews: true,
+    };
+    expect(computeEarningsWatchReason(stock, now)).toBeNull();
   });
 });

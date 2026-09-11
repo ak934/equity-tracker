@@ -65,6 +65,35 @@ export function computeReanalysisFlagUpdates(
   return { newlyStale, toClear };
 }
 
+export interface EarningsWatchStockInput {
+  ticker: string;
+  needsReanalysis: boolean;
+  nextEarningsDate: Date | null;
+  hasMaterialNews: boolean;
+}
+
+const EARNINGS_WINDOW_DAYS = 5;
+
+// Reason to flag this stock for reanalysis, or null if it shouldn't be
+// flagged. A stock already flagged for anything (manual, stale, or a prior
+// earnings/news flag not yet acted on) is left alone — same "don't clobber
+// an existing flag" rule as computeReanalysisFlagUpdates.
+export function computeEarningsWatchReason(
+  stock: EarningsWatchStockInput,
+  now = new Date()
+): "earnings" | "news" | null {
+  if (stock.needsReanalysis) return null;
+
+  if (stock.nextEarningsDate) {
+    const daysUntil = (stock.nextEarningsDate.getTime() - now.getTime()) / MS_PER_DAY;
+    if (daysUntil >= 0 && daysUntil <= EARNINGS_WINDOW_DAYS) return "earnings";
+  }
+
+  if (stock.hasMaterialNews) return "news";
+
+  return null;
+}
+
 export function buildDigestEmailHtml(staleAnalyses: DigestStaleAnalysis[]): string {
   const staleAnalysesSection = staleAnalyses.length
     ? `

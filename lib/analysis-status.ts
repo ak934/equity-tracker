@@ -13,3 +13,14 @@ export function isAnalysisRunning(stock: {
   if (!stock.analysisStartedAt) return true;
   return Date.now() - stock.analysisStartedAt.getTime() < STALE_AFTER_MS;
 }
+
+const REANALYSIS_REASON_LABELS: Record<string, string> = {
+  manual: "Manually flagged",
+  stale: "Stale analysis",
+  earnings: "Upcoming earnings",
+  news: "Material news",
+};
+
+export function reanalysisReasonLabel(reason: string | null): string {
+  return (reason && REANALYSIS_REASON_LABELS[reason]) || "Flagged for reanalysis";
+}

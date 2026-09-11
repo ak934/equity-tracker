@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
 import { removeFromQueue } from "@/app/actions/stocks";
-import { isAnalysisRunning } from "@/lib/analysis-status";
+import { isAnalysisRunning, reanalysisReasonLabel } from "@/lib/analysis-status";
 import { formatAnalysisDate } from "@/lib/format-analysis-date";
 import { getUserTimezone } from "@/lib/user-timezone";
 
@@ -52,6 +52,7 @@ export default async function QueuePage() {
               <TableHead>Ticker</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Last Analysis</TableHead>
+              <TableHead>Reason</TableHead>
               <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
@@ -76,6 +77,9 @@ export default async function QueuePage() {
                           timeZone
                         )
                       : "Never"}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {reanalysisReasonLabel(stock.reanalysisReason)}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">

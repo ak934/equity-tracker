@@ -58,6 +58,25 @@ export async function logTickerSearch(ticker: string, name: string) {
   revalidatePath("/watchlist");
 }
 
+export async function setEarningsWatch(formData: FormData) {
+  const { userId } = await auth.protect();
+  const id = String(formData.get("id") ?? "");
+  const enabled = formData.get("enabled") === "true";
+
+  if (!id) {
+    throw new Error("Stock id is required");
+  }
+
+  await prisma.stock.updateMany({
+    where: { id, clerkUserId: userId },
+    data: enabled
+      ? { watchForEarnings: true }
+      : { watchForEarnings: false, nextEarningsDate: null, earningsCheckedAt: null },
+  });
+
+  revalidatePath("/stocks/[ticker]", "page");
+}
+
 export async function removeFromQueue(formData: FormData) {
   const { userId } = await auth.protect();
   const id = String(formData.get("id") ?? "");

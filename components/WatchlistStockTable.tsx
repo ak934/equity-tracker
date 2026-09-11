@@ -15,7 +15,7 @@ import { StockLogo } from "@/components/StockLogo";
 import { deleteStock } from "@/app/actions/stocks";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
 import { AnalyzingIndicator } from "@/components/analyzing-indicator";
-import { isAnalysisRunning } from "@/lib/analysis-status";
+import { isAnalysisRunning, reanalysisReasonLabel } from "@/lib/analysis-status";
 import { formatAnalysisDate } from "@/lib/format-analysis-date";
 import { getLogoAvailability } from "@/lib/logos";
 import type { WatchlistRow } from "@/lib/watchlist-rows";
@@ -81,11 +81,18 @@ export async function WatchlistStockTable({
                     (isAnalysisRunning(stock) ? (
                       <AnalyzingIndicator ticker={stock.ticker} />
                     ) : (
-                      <RunAnalysisButton
-                        ticker={stock.ticker}
-                        initialAnalyzing={false}
-                        hasExistingAnalysis
-                      />
+                      <>
+                        <RunAnalysisButton
+                          ticker={stock.ticker}
+                          initialAnalyzing={false}
+                          hasExistingAnalysis
+                        />
+                        {stock.needsReanalysis && (
+                          <span className="text-xs text-muted-foreground">
+                            {reanalysisReasonLabel(stock.reanalysisReason)}
+                          </span>
+                        )}
+                      </>
                     ))}
                 </div>
               </TableCell>
