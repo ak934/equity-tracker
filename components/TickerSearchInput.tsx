@@ -8,8 +8,27 @@ import { StockLogo } from "@/components/StockLogo";
 export type TickerResult = {
   ticker: string;
   name: string;
+  cik: string | null;
+  exchange: string | null;
   hasLogo: boolean;
 };
+
+// Polygon MIC codes for the exchanges a user is actually likely to
+// recognize — anything else just shows the raw code, which still
+// distinguishes two same-tickered results even if it isn't pretty.
+const EXCHANGE_LABELS: Record<string, string> = {
+  XNAS: "NASDAQ",
+  XNYS: "NYSE",
+  XASE: "NYSE American",
+  ARCX: "NYSE Arca",
+  BATS: "Cboe BZX",
+  OTCM: "OTC",
+};
+
+function displayExchange(exchange: string | null): string | null {
+  if (!exchange) return null;
+  return EXCHANGE_LABELS[exchange] ?? exchange;
+}
 
 const MIN_QUERY_LENGTH = 2;
 const RATE_LIMIT_COOLDOWN_MS = 15_000;
@@ -83,7 +102,7 @@ export function TickerSearchInput({
     setResults([]);
     setOpen(false);
     onSelectionChange?.(result);
-    logTickerSearch(result.ticker, result.name).catch((err) => {
+    logTickerSearch(result.ticker, result.name, result.cik).catch((err) => {
       console.error(`Failed to log search for ${result.ticker}:`, err);
     });
   }
@@ -140,7 +159,12 @@ export function TickerSearchInput({
             <StockLogo ticker={selected.ticker} hasLogo={selected.hasLogo} size={18} />
             <span className="font-medium">{selected.ticker}</span>
           </span>
-          <span className="text-muted-foreground">{displayName(selected.name)}</span>
+          <span className="flex items-center gap-2 text-muted-foreground">
+            {displayName(selected.name)}
+            {displayExchange(selected.exchange) && (
+              <span className="text-xs">({displayExchange(selected.exchange)})</span>
+            )}
+          </span>
         </button>
       ) : (
         <Input
@@ -156,6 +180,7 @@ export function TickerSearchInput({
       )}
       <input type="hidden" name="ticker" value={selected?.ticker ?? ""} />
       <input type="hidden" name="name" value={selected?.name ?? ""} />
+      <input type="hidden" name="cik" value={selected?.cik ?? ""} />
       {rateLimited && (
         <p className="absolute mt-1 text-xs text-muted-foreground">
           Search is rate-limited — try again in a few seconds.
@@ -165,7 +190,7 @@ export function TickerSearchInput({
         <ul className="absolute z-10 mt-1 w-full max-h-60 overflow-auto rounded-lg border bg-background shadow-md">
           {results.map((r, i) => (
             <li
-              key={r.ticker}
+              key={`${r.ticker}-${r.cik ?? r.name}`}
               className={`flex items-center justify-between gap-3 cursor-pointer px-2.5 py-1.5 text-sm ${
                 i === highlighted ? "bg-accent" : ""
               }`}
@@ -179,7 +204,12 @@ export function TickerSearchInput({
                 <StockLogo ticker={r.ticker} hasLogo={r.hasLogo} size={18} />
                 <span className="font-medium">{r.ticker}</span>
               </span>
-              <span className="text-muted-foreground">{displayName(r.name)}</span>
+              <span className="flex items-center gap-2 text-muted-foreground">
+                {displayName(r.name)}
+                {displayExchange(r.exchange) && (
+                  <span className="text-xs">({displayExchange(r.exchange)})</span>
+                )}
+              </span>
             </li>
           ))}
         </ul>

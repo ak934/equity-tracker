@@ -3,7 +3,7 @@ loadEnvConfig(process.cwd());
 
 import { generateAnalysis } from "../lib/analysis";
 
-generateAnalysis("AAPL", 310.66)
+generateAnalysis("AAPL", 310.66, null, { name: "Apple Inc.", cik: null })
   .then((result) => {
     console.log("qualityScore:", result.qualityScore);
     console.log("valuationScore:", result.valuationScore);

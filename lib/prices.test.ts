@@ -1,5 +1,52 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
-import { getRecentTradingDate, getMostRecentPossibleTradingDate, toDateParam } from "./prices";
+import { getRecentTradingDate, getMostRecentPossibleTradingDate, toDateParam, searchTickers } from "./prices";
+
+function mockTickersResponse(results: unknown[]) {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ results }),
+    })
+  );
+}
+
+describe("searchTickers", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("keeps two different companies that share a ticker (different cik)", async () => {
+    mockTickersResponse([
+      { ticker: "DUP", name: "Old Reused Co", type: "CS", cik: "0000000001", primary_exchange: "XNAS" },
+      { ticker: "DUP", name: "New Reused Co", type: "CS", cik: "0000000002", primary_exchange: "XNYS" },
+    ]);
+
+    const results = await searchTickers("DUP");
+
+    expect(results).toEqual([
+      { ticker: "DUP", name: "Old Reused Co", cik: "0000000001", exchange: "XNAS" },
+      { ticker: "DUP", name: "New Reused Co", cik: "0000000002", exchange: "XNYS" },
+    ]);
+  });
+
+  it("collapses duplicate listing rows for the same company (same cik)", async () => {
+    mockTickersResponse([
+      { ticker: "DUP", name: "Same Co", type: "CS", cik: "0000000001", primary_exchange: "XNAS" },
+      { ticker: "DUP", name: "Same Co (alt row)", type: "CS", cik: "0000000001", primary_exchange: "XNAS" },
+    ]);
+
+    const results = await searchTickers("DUP");
+
+    expect(results).toHaveLength(1);
+    expect(results[0]).toEqual({
+      ticker: "DUP",
+      name: "Same Co",
+      cik: "0000000001",
+      exchange: "XNAS",
+    });
+  });
+});
 
 describe("getRecentTradingDate", () => {
   afterEach(() => {

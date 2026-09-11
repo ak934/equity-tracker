@@ -12,6 +12,12 @@ model Stock {
   clerkUserId         String
   ticker              String
   name                String
+  // The specific company's SEC filer id, from the price API's ticker search —
+  // the same ticker string can be reused by unrelated companies (different
+  // exchanges, or a delisted ticker reassigned later), so this is what
+  // analysis is anchored to, not the bare ticker. Null for stocks added
+  // before this existed.
+  cik                 String?
   status              String
   lastPrice           Float?
   createdAt           DateTime    @default(now())
@@ -97,6 +103,7 @@ model SearchHistory {
   clerkUserId String
   ticker      String
   name        String
+  cik         String?
   searchedAt  DateTime @default(now())
 
   @@unique([clerkUserId, ticker])

@@ -66,6 +66,7 @@ export default async function WatchlistIndexPage() {
     recentRowsByTicker.set(h.ticker, {
       ticker: h.ticker,
       name: h.name,
+      cik: stock?.cik ?? h.cik,
       searchedAt: h.searchedAt,
       stockId: stock?.id ?? null,
       memberIds: stock?.watchlists.map((w) => w.id) ?? [],
@@ -80,6 +81,7 @@ export default async function WatchlistIndexPage() {
     recentRowsByTicker.set(row.stock.ticker, {
       ticker: row.stock.ticker,
       name: row.stock.name,
+      cik: row.stock.cik,
       searchedAt: row.stock.createdAt,
       stockId: row.stock.id,
       memberIds: row.watchlistIds,

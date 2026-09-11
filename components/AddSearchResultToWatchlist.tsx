@@ -19,10 +19,12 @@ import {
 export function AddSearchResultToWatchlist({
   ticker,
   name,
+  cik = null,
   allWatchlists,
 }: {
   ticker: string;
   name: string;
+  cik?: string | null;
   allWatchlists: { id: string; name: string }[];
 }) {
   const [isPending, startTransition] = useTransition();
@@ -34,6 +36,7 @@ export function AddSearchResultToWatchlist({
     formData.set("watchlistId", watchlistId);
     formData.set("ticker", ticker);
     formData.set("name", name);
+    formData.set("cik", cik ?? "");
     await addStockToWatchlist(formData);
   }
 

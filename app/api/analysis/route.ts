@@ -66,7 +66,8 @@ export async function POST(request: Request) {
       const result = await generateAnalysis(
         ticker,
         stock?.lastPrice ?? null,
-        framework ? { name: framework.name, instructions: framework.instructions } : null
+        framework ? { name: framework.name, instructions: framework.instructions } : null,
+        { name: stock?.name ?? ticker, cik: stock?.cik ?? null }
       );
 
       await prisma.analysis.create({

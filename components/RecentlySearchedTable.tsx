@@ -21,6 +21,7 @@ import { deleteRecentSearch } from "@/app/actions/stocks";
 export type RecentSearchRow = {
   ticker: string;
   name: string;
+  cik: string | null;
   searchedAt: Date;
   stockId: string | null;
   memberIds: string[];
@@ -94,6 +95,7 @@ export async function RecentlySearchedTable({
                   <AddSearchResultToWatchlist
                     ticker={row.ticker}
                     name={row.name}
+                    cik={row.cik}
                     allWatchlists={allWatchlists}
                   />
                 )}

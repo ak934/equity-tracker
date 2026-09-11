@@ -20,14 +20,31 @@ export type CustomFramework = {
   instructions: string;
 };
 
+export type CompanyIdentity = {
+  name: string;
+  // SEC filer id, when known — the same ticker string can be shared by more
+  // than one unrelated company (a reused/reassigned symbol, or a
+  // cross-exchange collision), so this is what pins the research to the
+  // right one instead of leaving it to the ticker alone.
+  cik: string | null;
+};
+
+// Every prompt opens by naming the specific company (and cik, if known)
+// this run is about, and tells the model not to substitute a different one
+// that happens to share the ticker — the ticker alone is not a reliable
+// identifier.
+function identityIntro(ticker: string, company: CompanyIdentity, price: number | null): string {
+  const identity = company.cik ? `${company.name}, SEC CIK ${company.cik}` : company.name;
+  const priceNote = price ? ` Last known price in our system: $${price}.` : "";
+  return `Analyze ${ticker} — ${identity} — as an investment.${priceNote} The ticker ${ticker} may be shared by more than one company (reused or reassigned symbols, or cross-exchange collisions); confirm every source you use (10-K, earnings call, proxy, news) is actually about ${identity}, not a different company that happens to share this ticker.`;
+}
+
 const BUFFETT_SYSTEM_PROMPT = `You are Warren Buffett, the value investor from Omaha. You speak plainly, use folksy analogies (See's Candies, Coca-Cola, railroads), think in decades not quarters, and are deeply skeptical of hype. You always ask: "Would I be happy owning this for 10 years if the market closed tomorrow?"
 
 Never use Wall Street jargon like "EBITDA" or "multiple expansion." Be honest about uncertainty, but give a clear opinion rather than hedging into mush.`;
 
-function buildPrompt(ticker: string, price: number | null) {
-  return `Analyze ${ticker} as an investment. ${
-    price ? `Last known price in our system: $${price}.` : ""
-  }
+function buildPrompt(ticker: string, price: number | null, company: CompanyIdentity) {
+  return `${identityIntro(ticker, company, price)}
 
 ## Step 1 — Research primary sources first
 Before forming an opinion, search for and read (in order): the latest 10-K (revenue breakdown, margins, risk factors, MD&A), the latest earnings call transcript (management tone, how they handle tough questions), and the latest proxy/DEF 14A (insider ownership, share pledging, related-party deals — don't score management without it). Then fill gaps with web searches for current price, market cap, revenue/earnings trend (3-5yr), profit margins, debt levels, industry growth CAGR (compare the company's growth to its industry, not just its own prior year), and recent news. Don't rely on memory for numbers — they change. Briefly note in Part A which sources you could and couldn't find.
@@ -69,10 +86,13 @@ The user's framework:
 ${framework.instructions}`;
 }
 
-function buildCustomPrompt(ticker: string, price: number | null, framework: CustomFramework) {
-  return `Analyze ${ticker} as an investment. ${
-    price ? `Last known price in our system: $${price}.` : ""
-  }
+function buildCustomPrompt(
+  ticker: string,
+  price: number | null,
+  framework: CustomFramework,
+  company: CompanyIdentity
+) {
+  return `${identityIntro(ticker, company, price)}
 
 ## Step 1 — Research primary sources first
 Before forming an opinion, search for and read (in order): the latest 10-K (revenue breakdown, margins, risk factors, MD&A), the latest earnings call transcript (management tone, how they handle tough questions), and the latest proxy/DEF 14A (insider ownership, share pledging, related-party deals). Then fill gaps with web searches for current price, market cap, revenue/earnings trend (3-5yr), profit margins, debt levels, industry growth, and recent news. Don't rely on memory for numbers — they change. Briefly note in Part A which sources you could and couldn't find.
@@ -108,10 +128,13 @@ Map BUY→buy, WATCH→hold, PASS→avoid.`;
 export async function generateAnalysis(
   ticker: string,
   price: number | null,
-  framework?: CustomFramework | null
+  framework: CustomFramework | null | undefined,
+  company: CompanyIdentity
 ): Promise<AnalysisResult> {
   const system = framework ? customSystemPrompt(framework) : BUFFETT_SYSTEM_PROMPT;
-  const prompt = framework ? buildCustomPrompt(ticker, price, framework) : buildPrompt(ticker, price);
+  const prompt = framework
+    ? buildCustomPrompt(ticker, price, framework, company)
+    : buildPrompt(ticker, price, company);
 
   const response = await getClient().messages.create({
     model: "claude-sonnet-4-6",

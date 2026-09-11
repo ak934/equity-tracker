@@ -15,6 +15,12 @@ export type RefreshAllPricesResult = {
 export type TickerSearchResult = {
   ticker: string;
   name: string;
+  // SEC filer id — the same ticker string can belong to more than one
+  // (unrelated) company over time or across exchanges, so this is what
+  // disambiguates one from another. exchange is shown alongside the name so
+  // a user picking between two same-tickered results can tell them apart.
+  cik: string | null;
+  exchange: string | null;
 };
 
 export class TickerSearchError extends Error {
@@ -44,7 +50,7 @@ function rank(r: { ticker: string; type?: string }, normalizedQuery: string): nu
   return 3;
 }
 
-type TickerRaw = { ticker: string; name?: string; type?: string };
+type TickerRaw = { ticker: string; name?: string; type?: string; cik?: string; primary_exchange?: string };
 
 async function fetchTickers(params: Record<string, string>): Promise<TickerRaw[]> {
   const apiKey = process.env.MASSIVE_API_KEY;
@@ -93,12 +99,24 @@ export async function searchTickers(query: string): Promise<TickerSearchResult[]
       ? await fetchTickers({ ticker: normalizedQuery, active: "true", market: "stocks" }).catch(() => [])
       : [];
 
+  // Dedupe by company identity (cik), not by bare ticker — the same ticker
+  // string can be shared by genuinely different, unrelated companies (a
+  // reused/reassigned symbol, or a cross-exchange collision), and collapsing
+  // on ticker alone would silently drop one of them before the user ever
+  // sees it. Rows without a cik (shouldn't normally happen) fall back to
+  // ticker so they still get deduped against literal repeats.
   const seen = new Set<string>();
   const merged: TickerSearchResult[] = [];
   for (const r of [...exactMatches, ...ranked]) {
-    if (r.name && !seen.has(r.ticker)) {
-      seen.add(r.ticker);
-      merged.push({ ticker: r.ticker, name: r.name });
+    const identity = r.cik ?? r.ticker;
+    if (r.name && !seen.has(identity)) {
+      seen.add(identity);
+      merged.push({
+        ticker: r.ticker,
+        name: r.name,
+        cik: r.cik ?? null,
+        exchange: r.primary_exchange ?? null,
+      });
     }
   }
 

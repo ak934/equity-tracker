@@ -80,6 +80,7 @@ export const StockScalarFieldEnum = {
   clerkUserId: 'clerkUserId',
   ticker: 'ticker',
   name: 'name',
+  cik: 'cik',
   status: 'status',
   lastPrice: 'lastPrice',
   createdAt: 'createdAt',
@@ -148,6 +149,7 @@ export const SearchHistoryScalarFieldEnum = {
   clerkUserId: 'clerkUserId',
   ticker: 'ticker',
   name: 'name',
+  cik: 'cik',
   searchedAt: 'searchedAt'
 } as const
 

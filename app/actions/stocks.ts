@@ -38,7 +38,7 @@ export async function searchStockTickers(query: string): Promise<TickerSearchRes
   }
 }
 
-export async function logTickerSearch(ticker: string, name: string) {
+export async function logTickerSearch(ticker: string, name: string, cik: string | null = null) {
   const { userId } = await auth.protect();
   const trimmedTicker = ticker.trim().toUpperCase();
   const trimmedName = name.trim();
@@ -47,8 +47,8 @@ export async function logTickerSearch(ticker: string, name: string) {
 
   await prisma.searchHistory.upsert({
     where: { clerkUserId_ticker: { clerkUserId: userId, ticker: trimmedTicker } },
-    create: { clerkUserId: userId, ticker: trimmedTicker, name: trimmedName },
-    update: { name: trimmedName, searchedAt: new Date() },
+    create: { clerkUserId: userId, ticker: trimmedTicker, name: trimmedName, cik },
+    update: { name: trimmedName, cik, searchedAt: new Date() },
   });
 
   // Kicks off the (cached, once-ever) logo lookup for this ticker in case

@@ -61,6 +61,7 @@ export async function addStockToWatchlist(formData: FormData) {
   const watchlistId = String(formData.get("watchlistId") ?? "");
   const ticker = String(formData.get("ticker") ?? "").trim().toUpperCase();
   const name = String(formData.get("name") ?? "").trim();
+  const cik = String(formData.get("cik") ?? "").trim() || null;
 
   if (!watchlistId || !ticker || !name) {
     throw new Error("Watchlist, ticker, and name are required");
@@ -89,6 +90,7 @@ export async function addStockToWatchlist(formData: FormData) {
       clerkUserId: userId,
       ticker,
       name,
+      cik,
       status: "watchlist",
       lastPrice,
       priceAsOf,
@@ -96,6 +98,7 @@ export async function addStockToWatchlist(formData: FormData) {
     },
     update: {
       name,
+      cik,
       status: "watchlist",
       watchlists: { connect: { id: watchlistId } },
     },
@@ -111,6 +114,7 @@ export async function addStock(formData: FormData) {
   const { userId } = await auth.protect();
   const ticker = String(formData.get("ticker") ?? "").trim().toUpperCase();
   const name = String(formData.get("name") ?? "").trim();
+  const cik = String(formData.get("cik") ?? "").trim() || null;
 
   if (!ticker || !name) {
     throw new Error("Ticker and name are required");
@@ -128,8 +132,8 @@ export async function addStock(formData: FormData) {
 
   await prisma.stock.upsert({
     where: { clerkUserId_ticker: { clerkUserId: userId, ticker } },
-    create: { clerkUserId: userId, ticker, name, status: "watchlist", lastPrice, priceAsOf },
-    update: { name, status: "watchlist" },
+    create: { clerkUserId: userId, ticker, name, cik, status: "watchlist", lastPrice, priceAsOf },
+    update: { name, cik, status: "watchlist" },
   });
 
   revalidatePath("/watchlist");

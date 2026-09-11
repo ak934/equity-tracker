@@ -29,6 +29,7 @@ export type SearchHistoryMinAggregateOutputType = {
   clerkUserId: string | null
   ticker: string | null
   name: string | null
+  cik: string | null
   searchedAt: Date | null
 }
 
@@ -37,6 +38,7 @@ export type SearchHistoryMaxAggregateOutputType = {
   clerkUserId: string | null
   ticker: string | null
   name: string | null
+  cik: string | null
   searchedAt: Date | null
 }
 
@@ -45,6 +47,7 @@ export type SearchHistoryCountAggregateOutputType = {
   clerkUserId: number
   ticker: number
   name: number
+  cik: number
   searchedAt: number
   _all: number
 }
@@ -55,6 +58,7 @@ export type SearchHistoryMinAggregateInputType = {
   clerkUserId?: true
   ticker?: true
   name?: true
+  cik?: true
   searchedAt?: true
 }
 
@@ -63,6 +67,7 @@ export type SearchHistoryMaxAggregateInputType = {
   clerkUserId?: true
   ticker?: true
   name?: true
+  cik?: true
   searchedAt?: true
 }
 
@@ -71,6 +76,7 @@ export type SearchHistoryCountAggregateInputType = {
   clerkUserId?: true
   ticker?: true
   name?: true
+  cik?: true
   searchedAt?: true
   _all?: true
 }
@@ -152,6 +158,7 @@ export type SearchHistoryGroupByOutputType = {
   clerkUserId: string
   ticker: string
   name: string
+  cik: string | null
   searchedAt: Date
   _count: SearchHistoryCountAggregateOutputType | null
   _min: SearchHistoryMinAggregateOutputType | null
@@ -181,6 +188,7 @@ export type SearchHistoryWhereInput = {
   clerkUserId?: Prisma.StringFilter<"SearchHistory"> | string
   ticker?: Prisma.StringFilter<"SearchHistory"> | string
   name?: Prisma.StringFilter<"SearchHistory"> | string
+  cik?: Prisma.StringNullableFilter<"SearchHistory"> | string | null
   searchedAt?: Prisma.DateTimeFilter<"SearchHistory"> | Date | string
 }
 
@@ -189,6 +197,7 @@ export type SearchHistoryOrderByWithRelationInput = {
   clerkUserId?: Prisma.SortOrder
   ticker?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  cik?: Prisma.SortOrderInput | Prisma.SortOrder
   searchedAt?: Prisma.SortOrder
 }
 
@@ -201,6 +210,7 @@ export type SearchHistoryWhereUniqueInput = Prisma.AtLeast<{
   clerkUserId?: Prisma.StringFilter<"SearchHistory"> | string
   ticker?: Prisma.StringFilter<"SearchHistory"> | string
   name?: Prisma.StringFilter<"SearchHistory"> | string
+  cik?: Prisma.StringNullableFilter<"SearchHistory"> | string | null
   searchedAt?: Prisma.DateTimeFilter<"SearchHistory"> | Date | string
 }, "id" | "clerkUserId_ticker">
 
@@ -209,6 +219,7 @@ export type SearchHistoryOrderByWithAggregationInput = {
   clerkUserId?: Prisma.SortOrder
   ticker?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  cik?: Prisma.SortOrderInput | Prisma.SortOrder
   searchedAt?: Prisma.SortOrder
   _count?: Prisma.SearchHistoryCountOrderByAggregateInput
   _max?: Prisma.SearchHistoryMaxOrderByAggregateInput
@@ -223,6 +234,7 @@ export type SearchHistoryScalarWhereWithAggregatesInput = {
   clerkUserId?: Prisma.StringWithAggregatesFilter<"SearchHistory"> | string
   ticker?: Prisma.StringWithAggregatesFilter<"SearchHistory"> | string
   name?: Prisma.StringWithAggregatesFilter<"SearchHistory"> | string
+  cik?: Prisma.StringNullableWithAggregatesFilter<"SearchHistory"> | string | null
   searchedAt?: Prisma.DateTimeWithAggregatesFilter<"SearchHistory"> | Date | string
 }
 
@@ -231,6 +243,7 @@ export type SearchHistoryCreateInput = {
   clerkUserId: string
   ticker: string
   name: string
+  cik?: string | null
   searchedAt?: Date | string
 }
 
@@ -239,6 +252,7 @@ export type SearchHistoryUncheckedCreateInput = {
   clerkUserId: string
   ticker: string
   name: string
+  cik?: string | null
   searchedAt?: Date | string
 }
 
@@ -247,6 +261,7 @@ export type SearchHistoryUpdateInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  cik?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   searchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -255,6 +270,7 @@ export type SearchHistoryUncheckedUpdateInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  cik?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   searchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -263,6 +279,7 @@ export type SearchHistoryCreateManyInput = {
   clerkUserId: string
   ticker: string
   name: string
+  cik?: string | null
   searchedAt?: Date | string
 }
 
@@ -271,6 +288,7 @@ export type SearchHistoryUpdateManyMutationInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  cik?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   searchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -279,6 +297,7 @@ export type SearchHistoryUncheckedUpdateManyInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   ticker?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  cik?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   searchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -292,6 +311,7 @@ export type SearchHistoryCountOrderByAggregateInput = {
   clerkUserId?: Prisma.SortOrder
   ticker?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  cik?: Prisma.SortOrder
   searchedAt?: Prisma.SortOrder
 }
 
@@ -300,6 +320,7 @@ export type SearchHistoryMaxOrderByAggregateInput = {
   clerkUserId?: Prisma.SortOrder
   ticker?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  cik?: Prisma.SortOrder
   searchedAt?: Prisma.SortOrder
 }
 
@@ -308,6 +329,7 @@ export type SearchHistoryMinOrderByAggregateInput = {
   clerkUserId?: Prisma.SortOrder
   ticker?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  cik?: Prisma.SortOrder
   searchedAt?: Prisma.SortOrder
 }
 
@@ -318,6 +340,7 @@ export type SearchHistorySelect<ExtArgs extends runtime.Types.Extensions.Interna
   clerkUserId?: boolean
   ticker?: boolean
   name?: boolean
+  cik?: boolean
   searchedAt?: boolean
 }, ExtArgs["result"]["searchHistory"]>
 
@@ -326,6 +349,7 @@ export type SearchHistorySelectCreateManyAndReturn<ExtArgs extends runtime.Types
   clerkUserId?: boolean
   ticker?: boolean
   name?: boolean
+  cik?: boolean
   searchedAt?: boolean
 }, ExtArgs["result"]["searchHistory"]>
 
@@ -334,6 +358,7 @@ export type SearchHistorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   clerkUserId?: boolean
   ticker?: boolean
   name?: boolean
+  cik?: boolean
   searchedAt?: boolean
 }, ExtArgs["result"]["searchHistory"]>
 
@@ -342,10 +367,11 @@ export type SearchHistorySelectScalar = {
   clerkUserId?: boolean
   ticker?: boolean
   name?: boolean
+  cik?: boolean
   searchedAt?: boolean
 }
 
-export type SearchHistoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkUserId" | "ticker" | "name" | "searchedAt", ExtArgs["result"]["searchHistory"]>
+export type SearchHistoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkUserId" | "ticker" | "name" | "cik" | "searchedAt", ExtArgs["result"]["searchHistory"]>
 
 export type $SearchHistoryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "SearchHistory"
@@ -355,6 +381,7 @@ export type $SearchHistoryPayload<ExtArgs extends runtime.Types.Extensions.Inter
     clerkUserId: string
     ticker: string
     name: string
+    cik: string | null
     searchedAt: Date
   }, ExtArgs["result"]["searchHistory"]>
   composites: {}
@@ -783,6 +810,7 @@ export interface SearchHistoryFieldRefs {
   readonly clerkUserId: Prisma.FieldRef<"SearchHistory", 'String'>
   readonly ticker: Prisma.FieldRef<"SearchHistory", 'String'>
   readonly name: Prisma.FieldRef<"SearchHistory", 'String'>
+  readonly cik: Prisma.FieldRef<"SearchHistory", 'String'>
   readonly searchedAt: Prisma.FieldRef<"SearchHistory", 'DateTime'>
 }
     
