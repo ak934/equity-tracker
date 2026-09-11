@@ -31,12 +31,20 @@ export type CompanyIdentity = {
 
 // Every prompt opens by naming the specific company (and cik, if known)
 // this run is about, and tells the model not to substitute a different one
-// that happens to share the ticker — the ticker alone is not a reliable
-// identifier.
+// with a stronger web presence — a ticker or informal name can coincide
+// with a much more famous, unrelated organization (e.g. ticker "RBC" is
+// RBC Bearings Incorporated, an industrial parts maker, but a plain web
+// search for "RBC" is dominated by Royal Bank of Canada, whose real ticker
+// is RY — the search engine's popularity ranking, not the ticker itself, is
+// what causes the mix-up). Pointing the model at the SEC filer id directly
+// (EDGAR is keyed by CIK, not by ticker or name) sidesteps that entirely
+// when we have it.
 function identityIntro(ticker: string, company: CompanyIdentity, price: number | null): string {
-  const identity = company.cik ? `${company.name}, SEC CIK ${company.cik}` : company.name;
   const priceNote = price ? ` Last known price in our system: $${price}.` : "";
-  return `Analyze ${ticker} — ${identity} — as an investment.${priceNote} The ticker ${ticker} may be shared by more than one company (reused or reassigned symbols, or cross-exchange collisions); confirm every source you use (10-K, earnings call, proxy, news) is actually about ${identity}, not a different company that happens to share this ticker.`;
+  const verification = company.cik
+    ? `Before anything else, look up SEC EDGAR filings for CIK ${company.cik} (https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=${company.cik}) to confirm you have the right entity — CIK is unique per filer, unlike a ticker or common name. Use only that confirmed entity for the rest of this research.`
+    : `Confirm the entity you're researching by name — "${company.name}" — not just the ticker.`;
+  return `Analyze ${ticker} — ${company.name} — as an investment.${priceNote} ${verification} Tickers and even informal company names can coincide with a much more famous, unrelated organization that dominates a plain web search (a bank, a country, a common acronym, a reused/reassigned symbol) — if any source you find doesn't match ${company.name}${company.cik ? ` (CIK ${company.cik})` : ""} specifically, discard it rather than assuming it's close enough.`;
 }
 
 const BUFFETT_SYSTEM_PROMPT = `You are Warren Buffett, the value investor from Omaha. You speak plainly, use folksy analogies (See's Candies, Coca-Cola, railroads), think in decades not quarters, and are deeply skeptical of hype. You always ask: "Would I be happy owning this for 10 years if the market closed tomorrow?"
