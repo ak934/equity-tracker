@@ -12,6 +12,9 @@ import { Button } from "@/components/ui/button";
 import { StockWatchlistStatus } from "@/components/StockWatchlistStatus";
 import { AddSearchResultToWatchlist } from "@/components/AddSearchResultToWatchlist";
 import { StockLogo } from "@/components/StockLogo";
+import { RunAnalysisButton } from "@/components/run-analysis-button";
+import { AnalyzingIndicator } from "@/components/analyzing-indicator";
+import { isAnalysisRunning } from "@/lib/analysis-status";
 import { getLogoAvailability } from "@/lib/logos";
 import { deleteRecentSearch } from "@/app/actions/stocks";
 
@@ -21,6 +24,9 @@ export type RecentSearchRow = {
   searchedAt: Date;
   stockId: string | null;
   memberIds: string[];
+  analysisRunning: boolean;
+  analysisStartedAt: Date | null;
+  hasAnalysis: boolean;
 };
 
 export async function RecentlySearchedTable({
@@ -42,6 +48,7 @@ export async function RecentlySearchedTable({
             <TableHead>Ticker</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Searched</TableHead>
+            <TableHead>Analysis</TableHead>
             <TableHead className="text-right">Watchlist</TableHead>
             <TableHead className="w-0" />
           </TableRow>
@@ -61,6 +68,20 @@ export async function RecentlySearchedTable({
               <TableCell className="text-muted-foreground">{row.name}</TableCell>
               <TableCell className="text-muted-foreground">
                 {row.searchedAt.toLocaleDateString(undefined, { timeZone })}
+              </TableCell>
+              <TableCell>
+                {row.stockId ? (
+                  isAnalysisRunning({
+                    analysisRunning: row.analysisRunning,
+                    analysisStartedAt: row.analysisStartedAt,
+                  }) ? (
+                    <AnalyzingIndicator ticker={row.ticker} />
+                  ) : (
+                    <RunAnalysisButton ticker={row.ticker} hasExistingAnalysis={row.hasAnalysis} />
+                  )
+                ) : (
+                  <span className="text-muted-foreground">—</span>
+                )}
               </TableCell>
               <TableCell className="text-right">
                 {row.stockId ? (

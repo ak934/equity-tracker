@@ -8,11 +8,13 @@ export function AnalysisRunner({
   initialAnalyzing,
   navigateAfter,
   frameworks,
+  hasExistingAnalysis = false,
 }: {
   ticker: string;
   initialAnalyzing?: boolean;
   navigateAfter?: string;
   frameworks: { id: string; name: string }[];
+  hasExistingAnalysis?: boolean;
 }) {
   const [frameworkId, setFrameworkId] = useState("");
 
@@ -38,6 +40,7 @@ export function AnalysisRunner({
         initialAnalyzing={initialAnalyzing}
         navigateAfter={navigateAfter}
         frameworkId={frameworkId || undefined}
+        hasExistingAnalysis={hasExistingAnalysis}
       />
     </div>
   );

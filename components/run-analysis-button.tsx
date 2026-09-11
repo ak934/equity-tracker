@@ -10,11 +10,13 @@ export function RunAnalysisButton({
   navigateAfter,
   initialAnalyzing = false,
   frameworkId,
+  hasExistingAnalysis = false,
 }: {
   ticker: string;
   navigateAfter?: string;
   initialAnalyzing?: boolean;
   frameworkId?: string;
+  hasExistingAnalysis?: boolean;
 }) {
   const [isAnalyzing, setIsAnalyzing] = useState(initialAnalyzing);
   const [prevInitialAnalyzing, setPrevInitialAnalyzing] = useState(initialAnalyzing);
@@ -69,7 +71,7 @@ export function RunAnalysisButton({
       }}
       disabled={isAnalyzing}
     >
-      {isAnalyzing ? "Analyzing..." : "Run Analysis"}
+      {isAnalyzing ? "Analyzing..." : hasExistingAnalysis ? "Reanalyze" : "Run Analysis"}
     </Button>
   );
 }

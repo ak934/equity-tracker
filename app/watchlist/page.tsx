@@ -42,6 +42,18 @@ export default async function WatchlistIndexPage() {
   });
   const stockByTicker = new Map(matchingStocks.map((s) => [s.ticker, s]));
 
+  // Only needed for search-history rows — unsorted rows already carry their
+  // latestAnalysis via getWatchlistRows below.
+  const searchTickers = searchHistory.map((h) => h.ticker);
+  const analyzedSearchTickers = searchTickers.length
+    ? await prisma.analysis.findMany({
+        where: { clerkUserId: userId, ticker: { in: searchTickers } },
+        select: { ticker: true },
+        distinct: ["ticker"],
+      })
+    : [];
+  const searchTickersWithAnalysis = new Set(analyzedSearchTickers.map((a) => a.ticker));
+
   // Unsorted stocks (tracked but not filed into any watchlist yet) live in
   // the Recently Searched section rather than a separate "Unsorted" section —
   // there's nothing to distinguish them from a ticker someone just looked
@@ -57,6 +69,9 @@ export default async function WatchlistIndexPage() {
       searchedAt: h.searchedAt,
       stockId: stock?.id ?? null,
       memberIds: stock?.watchlists.map((w) => w.id) ?? [],
+      analysisRunning: stock?.analysisRunning ?? false,
+      analysisStartedAt: stock?.analysisStartedAt ?? null,
+      hasAnalysis: searchTickersWithAnalysis.has(h.ticker),
     });
   }
 
@@ -68,6 +83,9 @@ export default async function WatchlistIndexPage() {
       searchedAt: row.stock.createdAt,
       stockId: row.stock.id,
       memberIds: row.watchlistIds,
+      analysisRunning: row.stock.analysisRunning,
+      analysisStartedAt: row.stock.analysisStartedAt,
+      hasAnalysis: row.latestAnalysis !== null,
     });
   }
 

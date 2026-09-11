@@ -85,6 +85,7 @@ export default async function QueuePage() {
                           stocks.length === 1 ? `/stocks/${stock.ticker}` : undefined
                         }
                         initialAnalyzing={isAnalysisRunning(stock)}
+                        hasExistingAnalysis={tickerAnalyses.length > 0}
                       />
                       <form action={removeFromQueue}>
                         <input type="hidden" name="id" value={stock.id} />

@@ -66,7 +66,12 @@ export default async function StockPage({
           analyzing ? (
             <AnalyzingIndicator ticker={ticker} />
           ) : (
-            <AnalysisRunner ticker={ticker} initialAnalyzing={analyzing} frameworks={frameworks} />
+            <AnalysisRunner
+              ticker={ticker}
+              initialAnalyzing={analyzing}
+              frameworks={frameworks}
+              hasExistingAnalysis={analyses.length > 0}
+            />
           )
         ) : !latest ? (
           <AnalysisRunner ticker={ticker} initialAnalyzing={analyzing} frameworks={frameworks} />

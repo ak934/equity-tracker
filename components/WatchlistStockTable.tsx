@@ -81,7 +81,11 @@ export async function WatchlistStockTable({
                     (isAnalysisRunning(stock) ? (
                       <AnalyzingIndicator ticker={stock.ticker} />
                     ) : (
-                      <RunAnalysisButton ticker={stock.ticker} initialAnalyzing={false} />
+                      <RunAnalysisButton
+                        ticker={stock.ticker}
+                        initialAnalyzing={false}
+                        hasExistingAnalysis
+                      />
                     ))}
                 </div>
               </TableCell>
