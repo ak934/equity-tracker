@@ -12,6 +12,8 @@ import { TargetPricePrompt } from "@/components/TargetPricePrompt";
 import { StockWatchlistStatus } from "@/components/StockWatchlistStatus";
 import { StockLogo } from "@/components/StockLogo";
 import { getLogoAvailability } from "@/lib/logos";
+import { ScheduleAnalysisCell } from "@/components/ScheduleAnalysisCell";
+import { suggestNextAnalysisDate } from "@/lib/digest";
 
 export default async function StockPage({
   params,
@@ -119,17 +121,30 @@ export default async function StockPage({
             </Badge>
             <span className="text-sm text-muted-foreground">
               Analyzed {formatAnalysisDate(latest.date, analyses.map((a) => a.date), timeZone)} ·{" "}
-              {latest.frameworkName}
+              {latest.frameworkName} ·{" "}
+              <span className="text-foreground">
+                Quality <span className="font-mono font-semibold">{latest.qualityScore}/100</span>
+              </span>{" "}
+              ·{" "}
+              <span className="text-foreground">
+                Valuation <span className="font-mono font-semibold">{latest.valuationScore}/100</span>
+              </span>
             </span>
-            <div className="ml-auto flex gap-4 text-sm">
-              <span className="text-muted-foreground">
-                Quality <span className="font-mono font-semibold text-foreground">{latest.qualityScore}/100</span>
-              </span>
-              <span className="text-muted-foreground">
-                Valuation <span className="font-mono font-semibold text-foreground">{latest.valuationScore}/100</span>
-              </span>
-            </div>
           </div>
+          {stock && (
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-3">
+              <span className="text-sm text-muted-foreground">
+                {stock.nextAnalysisDate
+                  ? "Next analysis scheduled"
+                  : `Suggested next analysis: ${suggestNextAnalysisDate(latest.date).toLocaleDateString()}`}
+              </span>
+              <ScheduleAnalysisCell
+                stockId={stock.id}
+                nextAnalysisDate={stock.nextAnalysisDate}
+                suggestedDate={suggestNextAnalysisDate(latest.date)}
+              />
+            </div>
+          )}
           <div className="prose prose-neutral dark:prose-invert prose-sm sm:prose-base max-w-none px-5 py-5">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{latest.fullText}</ReactMarkdown>
           </div>

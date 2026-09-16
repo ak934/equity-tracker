@@ -53,6 +53,7 @@ export default async function QueuePage() {
               <TableHead>Name</TableHead>
               <TableHead>Last Analysis</TableHead>
               <TableHead>Reason</TableHead>
+              <TableHead>Scheduled</TableHead>
               <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
@@ -80,6 +81,9 @@ export default async function QueuePage() {
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {reanalysisReasonLabel(stock.reanalysisReason)}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {stock.nextAnalysisDate ? stock.nextAnalysisDate.toLocaleDateString() : "—"}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">

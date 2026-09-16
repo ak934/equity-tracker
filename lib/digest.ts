@@ -11,12 +11,21 @@ export interface DigestStaleAnalysis {
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
+// Same cadence the daily stale-check uses (see findStaleAnalyses below), so
+// a suggested date lines up with when the system would flag the analysis
+// stale on its own.
+export const DEFAULT_STALE_DAYS = 60;
+
+export function suggestNextAnalysisDate(from: Date, daysAhead = DEFAULT_STALE_DAYS): Date {
+  return new Date(from.getTime() + daysAhead * MS_PER_DAY);
+}
+
 // A stock exactly `daysThreshold` days old is treated as stale (>=, not >),
 // so the digest surfaces analyses the moment they cross the threshold
 // rather than waiting an extra day.
 export function findStaleAnalyses<T extends AnalysisStockInput>(
   stocks: T[],
-  daysThreshold = 60
+  daysThreshold = DEFAULT_STALE_DAYS
 ): T[] {
   const now = Date.now();
 

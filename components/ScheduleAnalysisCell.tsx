@@ -11,13 +11,15 @@ import { setNextAnalysisDate } from "@/app/actions/stocks";
 export function ScheduleAnalysisCell({
   stockId,
   nextAnalysisDate,
+  suggestedDate,
 }: {
   stockId: string;
   nextAnalysisDate: Date | null;
+  suggestedDate?: Date | null;
 }) {
   const toDateInputValue = (d: Date | null) => (d ? d.toISOString().split("T")[0] : "");
 
-  const [value, setValue] = useState(toDateInputValue(nextAnalysisDate));
+  const [value, setValue] = useState(toDateInputValue(nextAnalysisDate ?? suggestedDate ?? null));
   const [isEditing, setIsEditing] = useState(false);
   const [isPending, startTransition] = useTransition();
 
