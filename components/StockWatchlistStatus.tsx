@@ -115,8 +115,7 @@ export function StockWatchlistStatus({
     return (
       <div className="flex items-center gap-2">
         <span className="text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">{memberNames.join(", ")}</span>{" "}
-          watchlist{memberNames.length > 1 ? "s" : ""}
+          <span className="font-medium text-foreground">{memberNames.join(", ")}</span>
         </span>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
