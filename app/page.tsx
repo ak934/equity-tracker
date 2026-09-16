@@ -16,11 +16,11 @@ export default async function Home() {
             <LineChart className="size-7" />
           </span>
           <h1 className="mt-6 max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">
-            The app that tracks your finances and helps you make investment decisions.
+            Know whether to buy, hold, or walk away — for every stock on your list.
           </h1>
           <p className="mt-4 max-w-xl text-muted-foreground">
-            Follow the stocks you care about, get AI-backed buy/hold/avoid analysis, and get
-            notified the moment a price hits your target.
+            Track the companies you care about, get AI-backed analysis grounded in a real investing
+            framework, and get notified the moment a price hits your target.
           </p>
           <div className="mt-8">
             <SignUpButton>

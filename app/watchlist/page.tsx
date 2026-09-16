@@ -97,7 +97,7 @@ export default async function WatchlistIndexPage() {
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10">
-      <h1 className="text-2xl font-semibold tracking-tight">My Watchlists</h1>
+      <h1 className="text-2xl font-semibold tracking-tight">Watchlists</h1>
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
         <div className="flex-1">

@@ -46,8 +46,8 @@ export async function WatchlistStockTable({
             <TableHead>Price</TableHead>
             <TableHead>As of</TableHead>
             <TableHead>Last Analyzed</TableHead>
-            <TableHead>Q-Score</TableHead>
-            <TableHead>V-Score</TableHead>
+            <TableHead>Quality</TableHead>
+            <TableHead>Valuation</TableHead>
             {showManagementColumns && <TableHead className="text-right">Lists</TableHead>}
             {watchlistId && <TableHead className="w-0" />}
           </TableRow>

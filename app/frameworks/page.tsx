@@ -16,7 +16,7 @@ export default async function FrameworksPage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">My Frameworks</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Frameworks</h1>
       </div>
 
       <div className="mt-6 rounded-xl border border-border bg-card p-4 shadow-sm">
