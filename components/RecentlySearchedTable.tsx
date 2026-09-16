@@ -15,6 +15,7 @@ import { StockLogo } from "@/components/StockLogo";
 import { RunAnalysisButton } from "@/components/run-analysis-button";
 import { AnalyzingIndicator } from "@/components/analyzing-indicator";
 import { isAnalysisRunning } from "@/lib/analysis-status";
+import { formatAnalysisDate } from "@/lib/format-analysis-date";
 import { getLogoAvailability } from "@/lib/logos";
 import { deleteRecentSearch } from "@/app/actions/stocks";
 
@@ -23,6 +24,8 @@ export type RecentSearchRow = {
   name: string;
   cik: string | null;
   searchedAt: Date;
+  lastAnalyzedAt: Date | null;
+  analysisDates: Date[];
   stockId: string | null;
   memberIds: string[];
   analysisRunning: boolean;
@@ -48,7 +51,7 @@ export async function RecentlySearchedTable({
           <TableRow>
             <TableHead>Ticker</TableHead>
             <TableHead>Name</TableHead>
-            <TableHead>Searched</TableHead>
+            <TableHead>Last Analyzed</TableHead>
             <TableHead>Analysis</TableHead>
             <TableHead className="text-right">Watchlist</TableHead>
             <TableHead className="w-0" />
@@ -68,7 +71,9 @@ export async function RecentlySearchedTable({
               </TableCell>
               <TableCell className="text-muted-foreground">{row.name}</TableCell>
               <TableCell className="text-muted-foreground">
-                {row.searchedAt.toLocaleDateString(undefined, { timeZone })}
+                {row.lastAnalyzedAt
+                  ? formatAnalysisDate(row.lastAnalyzedAt, row.analysisDates, timeZone)
+                  : "—"}
               </TableCell>
               <TableCell>
                 {row.stockId ? (

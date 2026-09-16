@@ -45,14 +45,20 @@ export default async function WatchlistIndexPage() {
   // Only needed for search-history rows — unsorted rows already carry their
   // latestAnalysis via getWatchlistRows below.
   const searchTickers = searchHistory.map((h) => h.ticker);
-  const analyzedSearchTickers = searchTickers.length
+  const searchAnalyses = searchTickers.length
     ? await prisma.analysis.findMany({
         where: { clerkUserId: userId, ticker: { in: searchTickers } },
-        select: { ticker: true },
-        distinct: ["ticker"],
+        orderBy: [{ ticker: "asc" }, { date: "desc" }],
+        select: { ticker: true, date: true },
       })
     : [];
-  const searchTickersWithAnalysis = new Set(analyzedSearchTickers.map((a) => a.ticker));
+  const searchAnalysisDatesByTicker = new Map<string, Date[]>();
+  for (const a of searchAnalyses) {
+    searchAnalysisDatesByTicker.set(a.ticker, [
+      ...(searchAnalysisDatesByTicker.get(a.ticker) ?? []),
+      a.date,
+    ]);
+  }
 
   // Unsorted stocks (tracked but not filed into any watchlist yet) live in
   // the Recently Searched section rather than a separate "Unsorted" section —
@@ -63,16 +69,19 @@ export default async function WatchlistIndexPage() {
 
   for (const h of searchHistory) {
     const stock = stockByTicker.get(h.ticker);
+    const analysisDates = searchAnalysisDatesByTicker.get(h.ticker) ?? [];
     recentRowsByTicker.set(h.ticker, {
       ticker: h.ticker,
       name: h.name,
       cik: stock?.cik ?? h.cik,
       searchedAt: h.searchedAt,
+      lastAnalyzedAt: analysisDates[0] ?? null,
+      analysisDates,
       stockId: stock?.id ?? null,
       memberIds: stock?.watchlists.map((w) => w.id) ?? [],
       analysisRunning: stock?.analysisRunning ?? false,
       analysisStartedAt: stock?.analysisStartedAt ?? null,
-      hasAnalysis: searchTickersWithAnalysis.has(h.ticker),
+      hasAnalysis: analysisDates.length > 0,
     });
   }
 
@@ -83,6 +92,8 @@ export default async function WatchlistIndexPage() {
       name: row.stock.name,
       cik: row.stock.cik,
       searchedAt: row.stock.createdAt,
+      lastAnalyzedAt: row.latestAnalysis?.date ?? null,
+      analysisDates: row.analysisDates,
       stockId: row.stock.id,
       memberIds: row.watchlistIds,
       analysisRunning: row.stock.analysisRunning,
