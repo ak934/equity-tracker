@@ -13,6 +13,11 @@ export type AnalysisResult = {
   valuationScore: number;
   action: string;
   fullText: string;
+  // The price today that a 15%-annualized (IRR) buyer would pay, back-solved
+  // from the model's own 5-year fair-value estimate. Null when the model
+  // couldn't form a reasonable fair-value estimate to anchor it to (e.g. a
+  // pre-revenue company) rather than a guessed number.
+  targetPrice: number | null;
 };
 
 export type CustomFramework = {
@@ -70,10 +75,13 @@ Run three full passes on both the Quality score (criteria 1-4 composite) and the
 - **Pass 2 (steel-man):** argue the opposite lean on every pillar; if Pass 1 leaned bullish, steel-man the bear case (and vice versa). Check what you anchored on without sourcing, whether you compared to industry CAGR, and whether you actually used the proxy/MD&A/transcript. Re-score.
 - **Pass 3 (devil's advocate, mandatory):** argue for the OPPOSITE action of wherever Pass 2 landed (if leaning BUY/WATCH, argue AVOID/PASS, and vice versa) to stress-test the weakest point in the current verdict. Re-score. The score after Pass 3 is final, not an average of the three passes.
 
+## Step 2B: Target price (15% IRR)
+Using the 5-year fair-value estimate from criterion 5 above, back-solve a target/buy price: the price today that would earn an investor a 15% annualized return (IRR) if the price simply converges to that 5-year fair value on schedule. That's targetPrice = fiveYearFairValue ÷ 1.15^5 (1.15^5 ≈ 2.011, i.e. roughly half the 5-year estimate). Show both numbers (the 5-year fair-value estimate and the resulting target price) in Part B. If the business is too unpredictable to form a reasonable fair-value estimate (pre-revenue, no consistent earnings, etc.), say so and omit targetPrice from the JSON block below rather than guessing.
+
 ## Step 3: Deliver the output
 **Part A**:3 to 5 paragraphs in your voice (plain language, folksy analogies like See's Candies/Coca-Cola/railroads, decades-not-quarters framing), ending with a clear verdict: "I would own this business," "I'd sit this one out," or "I'd watch and wait for a better price." Note which sources you could/couldn't find. End with one line noting this is education, not financial advice.
 
-**Part B**:a markdown scorecard table: the 5 criteria, their ✅/⚠️/❌ score, and a one-line reason each, plus an **Overall Verdict** of BUY, WATCH, or PASS.
+**Part B**:a markdown scorecard table: the 5 criteria, their ✅/⚠️/❌ score, and a one-line reason each, plus an **Overall Verdict** of BUY, WATCH, or PASS, followed by the 5-year fair-value estimate and the resulting 15%-IRR target price from Step 2B.
 
 **Part C**:a short delta block showing only the pass-1-to-final movement, not the full pass-by-pass history:
 > **Quality Score: __/100** (v1: __ → final __; what moved: ____)
@@ -82,7 +90,7 @@ Run three full passes on both the Quality score (criteria 1-4 composite) and the
 
 After Part C, on its own line, output ONLY this fenced JSON block with no extra commentary:
 \`\`\`json
-{"qualityScore": <0-100, the final Quality Score from Part C>, "valuationScore": <0-100, the final Valuation Score from Part C>, "action": "<buy|hold|avoid>"}
+{"qualityScore": <0-100, the final Quality Score from Part C>, "valuationScore": <0-100, the final Valuation Score from Part C>, "action": "<buy|hold|avoid>", "targetPrice": <the 15%-IRR target price from Step 2B, rounded to the nearest cent, or null if it couldn't be formed>}
 \`\`\`
 Map BUY→buy, WATCH→hold, PASS→avoid.`;
 }
@@ -116,10 +124,13 @@ Run three full passes on both the Quality score and the Valuation score before f
 - **Pass 2 (steel-man):** argue the opposite lean on every point; if Pass 1 leaned bullish, steel-man the bear case (and vice versa). Re-score.
 - **Pass 3 (devil's advocate, mandatory):** argue for the OPPOSITE action of wherever Pass 2 landed, to stress-test the weakest point in the current verdict. Re-score. The score after Pass 3 is final, not an average of the three passes.
 
+## Step 2B: Target price (15% IRR)
+Independent of the framework above, form your own fair-value-per-share estimate for this business on whatever horizon is reasonable for it (default to 5 years if nothing in the framework suggests otherwise). Then back-solve a target/buy price: the price today that would earn an investor a 15% annualized return (IRR) if the price simply converges to that fair-value estimate on schedule. Over 5 years that's targetPrice = fairValue ÷ 1.15^5 (1.15^5 ≈ 2.011, i.e. roughly half the fair-value estimate); for a different horizon of N years, divide by 1.15^N instead. Show both numbers (the fair-value estimate, with its horizon, and the resulting target price) in Part B. If the business is too unpredictable to form a reasonable fair-value estimate (pre-revenue, no consistent earnings, etc.), say so and omit targetPrice from the JSON block below rather than guessing.
+
 ## Step 3: Deliver the output
 **Part A**:3 to 5 paragraphs applying the framework above in plain language, ending with a clear verdict: buy, hold, or avoid, and why. Note which sources you could/couldn't find. End with one line noting this is education, not financial advice.
 
-**Part B**:a markdown scorecard table covering the key points from the framework above, each with a one-line reason, plus an **Overall Verdict** of BUY, WATCH, or PASS.
+**Part B**:a markdown scorecard table covering the key points from the framework above, each with a one-line reason, plus an **Overall Verdict** of BUY, WATCH, or PASS, followed by the fair-value estimate and the resulting 15%-IRR target price from Step 2B.
 
 **Part C**:a short delta block showing only the pass-1-to-final movement, not the full pass-by-pass history:
 > **Quality Score: __/100** (v1: __ → final __; what moved: ____)
@@ -128,7 +139,7 @@ Run three full passes on both the Quality score and the Valuation score before f
 
 After Part C, on its own line, output ONLY this fenced JSON block with no extra commentary:
 \`\`\`json
-{"qualityScore": <0-100, the final Quality Score from Part C>, "valuationScore": <0-100, the final Valuation Score from Part C>, "action": "<buy|hold|avoid>"}
+{"qualityScore": <0-100, the final Quality Score from Part C>, "valuationScore": <0-100, the final Valuation Score from Part C>, "action": "<buy|hold|avoid>", "targetPrice": <the 15%-IRR target price from Step 2B, rounded to the nearest cent, or null if it couldn't be formed>}
 \`\`\`
 Map BUY→buy, WATCH→hold, PASS→avoid.`;
 }
@@ -178,5 +189,8 @@ export async function generateAnalysis(
     valuationScore: parsed.valuationScore,
     action: parsed.action,
     fullText,
+    targetPrice: typeof parsed.targetPrice === "number" && Number.isFinite(parsed.targetPrice)
+      ? parsed.targetPrice
+      : null,
   };
 }

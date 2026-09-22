@@ -79,6 +79,7 @@ export async function POST(request: Request) {
           action: result.action,
           fullText: result.fullText,
           frameworkName: framework?.name ?? "Buffett",
+          suggestedTargetPrice: result.targetPrice,
         },
       });
 

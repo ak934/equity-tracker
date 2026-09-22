@@ -116,7 +116,8 @@ export const AnalysisScalarFieldEnum = {
   valuationScore: 'valuationScore',
   action: 'action',
   fullText: 'fullText',
-  frameworkName: 'frameworkName'
+  frameworkName: 'frameworkName',
+  suggestedTargetPrice: 'suggestedTargetPrice'
 } as const
 
 export type AnalysisScalarFieldEnum = (typeof AnalysisScalarFieldEnum)[keyof typeof AnalysisScalarFieldEnum]

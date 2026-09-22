@@ -59,6 +59,13 @@ model Analysis {
   action         String
   fullText       String
   frameworkName  String   @default("Buffett")
+  // The price today that a 15%-annualized (IRR) buyer would pay, back-solved
+  // from this run's own 5-year fair-value estimate: fairValue / 1.15^5. Null
+  // for older analyses generated before this existed, or if the model's
+  // response didn't include one (e.g. no fair-value estimate was possible).
+  // Distinct from Stock.targetPrice, which is the user's own alert
+  // threshold; this is only ever a suggestion offered toward setting it.
+  suggestedTargetPrice Float?
 
   @@index([clerkUserId, ticker])
 }

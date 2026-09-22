@@ -102,7 +102,11 @@ export default async function StockPage({
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <StockWatchlistStatus stockId={stock.id} allWatchlists={allWatchlists} memberIds={memberIds} />
-            <TargetPricePrompt stockId={stock.id} targetPrice={stock.targetPrice} />
+            <TargetPricePrompt
+              stockId={stock.id}
+              targetPrice={stock.targetPrice}
+              suggestedTargetPrice={latest?.suggestedTargetPrice ?? null}
+            />
           </div>
         </div>
       )}

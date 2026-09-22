@@ -86,7 +86,12 @@ export async function RecentlySearchedTable({
                     <RunAnalysisButton ticker={row.ticker} hasExistingAnalysis={row.hasAnalysis} />
                   )
                 ) : (
-                  <span className="text-muted-foreground">-</span>
+                  <RunAnalysisButton
+                    ticker={row.ticker}
+                    name={row.name}
+                    cik={row.cik}
+                    hasExistingAnalysis={row.hasAnalysis}
+                  />
                 )}
               </TableCell>
               <TableCell className="text-right">

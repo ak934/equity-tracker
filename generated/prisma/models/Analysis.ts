@@ -29,11 +29,13 @@ export type AggregateAnalysis = {
 export type AnalysisAvgAggregateOutputType = {
   qualityScore: number | null
   valuationScore: number | null
+  suggestedTargetPrice: number | null
 }
 
 export type AnalysisSumAggregateOutputType = {
   qualityScore: number | null
   valuationScore: number | null
+  suggestedTargetPrice: number | null
 }
 
 export type AnalysisMinAggregateOutputType = {
@@ -46,6 +48,7 @@ export type AnalysisMinAggregateOutputType = {
   action: string | null
   fullText: string | null
   frameworkName: string | null
+  suggestedTargetPrice: number | null
 }
 
 export type AnalysisMaxAggregateOutputType = {
@@ -58,6 +61,7 @@ export type AnalysisMaxAggregateOutputType = {
   action: string | null
   fullText: string | null
   frameworkName: string | null
+  suggestedTargetPrice: number | null
 }
 
 export type AnalysisCountAggregateOutputType = {
@@ -70,6 +74,7 @@ export type AnalysisCountAggregateOutputType = {
   action: number
   fullText: number
   frameworkName: number
+  suggestedTargetPrice: number
   _all: number
 }
 
@@ -77,11 +82,13 @@ export type AnalysisCountAggregateOutputType = {
 export type AnalysisAvgAggregateInputType = {
   qualityScore?: true
   valuationScore?: true
+  suggestedTargetPrice?: true
 }
 
 export type AnalysisSumAggregateInputType = {
   qualityScore?: true
   valuationScore?: true
+  suggestedTargetPrice?: true
 }
 
 export type AnalysisMinAggregateInputType = {
@@ -94,6 +101,7 @@ export type AnalysisMinAggregateInputType = {
   action?: true
   fullText?: true
   frameworkName?: true
+  suggestedTargetPrice?: true
 }
 
 export type AnalysisMaxAggregateInputType = {
@@ -106,6 +114,7 @@ export type AnalysisMaxAggregateInputType = {
   action?: true
   fullText?: true
   frameworkName?: true
+  suggestedTargetPrice?: true
 }
 
 export type AnalysisCountAggregateInputType = {
@@ -118,6 +127,7 @@ export type AnalysisCountAggregateInputType = {
   action?: true
   fullText?: true
   frameworkName?: true
+  suggestedTargetPrice?: true
   _all?: true
 }
 
@@ -217,6 +227,7 @@ export type AnalysisGroupByOutputType = {
   action: string
   fullText: string
   frameworkName: string
+  suggestedTargetPrice: number | null
   _count: AnalysisCountAggregateOutputType | null
   _avg: AnalysisAvgAggregateOutputType | null
   _sum: AnalysisSumAggregateOutputType | null
@@ -252,6 +263,7 @@ export type AnalysisWhereInput = {
   action?: Prisma.StringFilter<"Analysis"> | string
   fullText?: Prisma.StringFilter<"Analysis"> | string
   frameworkName?: Prisma.StringFilter<"Analysis"> | string
+  suggestedTargetPrice?: Prisma.FloatNullableFilter<"Analysis"> | number | null
 }
 
 export type AnalysisOrderByWithRelationInput = {
@@ -264,6 +276,7 @@ export type AnalysisOrderByWithRelationInput = {
   action?: Prisma.SortOrder
   fullText?: Prisma.SortOrder
   frameworkName?: Prisma.SortOrder
+  suggestedTargetPrice?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type AnalysisWhereUniqueInput = Prisma.AtLeast<{
@@ -279,6 +292,7 @@ export type AnalysisWhereUniqueInput = Prisma.AtLeast<{
   action?: Prisma.StringFilter<"Analysis"> | string
   fullText?: Prisma.StringFilter<"Analysis"> | string
   frameworkName?: Prisma.StringFilter<"Analysis"> | string
+  suggestedTargetPrice?: Prisma.FloatNullableFilter<"Analysis"> | number | null
 }, "id">
 
 export type AnalysisOrderByWithAggregationInput = {
@@ -291,6 +305,7 @@ export type AnalysisOrderByWithAggregationInput = {
   action?: Prisma.SortOrder
   fullText?: Prisma.SortOrder
   frameworkName?: Prisma.SortOrder
+  suggestedTargetPrice?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.AnalysisCountOrderByAggregateInput
   _avg?: Prisma.AnalysisAvgOrderByAggregateInput
   _max?: Prisma.AnalysisMaxOrderByAggregateInput
@@ -311,6 +326,7 @@ export type AnalysisScalarWhereWithAggregatesInput = {
   action?: Prisma.StringWithAggregatesFilter<"Analysis"> | string
   fullText?: Prisma.StringWithAggregatesFilter<"Analysis"> | string
   frameworkName?: Prisma.StringWithAggregatesFilter<"Analysis"> | string
+  suggestedTargetPrice?: Prisma.FloatNullableWithAggregatesFilter<"Analysis"> | number | null
 }
 
 export type AnalysisCreateInput = {
@@ -323,6 +339,7 @@ export type AnalysisCreateInput = {
   action: string
   fullText: string
   frameworkName?: string
+  suggestedTargetPrice?: number | null
 }
 
 export type AnalysisUncheckedCreateInput = {
@@ -335,6 +352,7 @@ export type AnalysisUncheckedCreateInput = {
   action: string
   fullText: string
   frameworkName?: string
+  suggestedTargetPrice?: number | null
 }
 
 export type AnalysisUpdateInput = {
@@ -347,6 +365,7 @@ export type AnalysisUpdateInput = {
   action?: Prisma.StringFieldUpdateOperationsInput | string
   fullText?: Prisma.StringFieldUpdateOperationsInput | string
   frameworkName?: Prisma.StringFieldUpdateOperationsInput | string
+  suggestedTargetPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type AnalysisUncheckedUpdateInput = {
@@ -359,6 +378,7 @@ export type AnalysisUncheckedUpdateInput = {
   action?: Prisma.StringFieldUpdateOperationsInput | string
   fullText?: Prisma.StringFieldUpdateOperationsInput | string
   frameworkName?: Prisma.StringFieldUpdateOperationsInput | string
+  suggestedTargetPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type AnalysisCreateManyInput = {
@@ -371,6 +391,7 @@ export type AnalysisCreateManyInput = {
   action: string
   fullText: string
   frameworkName?: string
+  suggestedTargetPrice?: number | null
 }
 
 export type AnalysisUpdateManyMutationInput = {
@@ -383,6 +404,7 @@ export type AnalysisUpdateManyMutationInput = {
   action?: Prisma.StringFieldUpdateOperationsInput | string
   fullText?: Prisma.StringFieldUpdateOperationsInput | string
   frameworkName?: Prisma.StringFieldUpdateOperationsInput | string
+  suggestedTargetPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type AnalysisUncheckedUpdateManyInput = {
@@ -395,6 +417,7 @@ export type AnalysisUncheckedUpdateManyInput = {
   action?: Prisma.StringFieldUpdateOperationsInput | string
   fullText?: Prisma.StringFieldUpdateOperationsInput | string
   frameworkName?: Prisma.StringFieldUpdateOperationsInput | string
+  suggestedTargetPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type AnalysisCountOrderByAggregateInput = {
@@ -407,11 +430,13 @@ export type AnalysisCountOrderByAggregateInput = {
   action?: Prisma.SortOrder
   fullText?: Prisma.SortOrder
   frameworkName?: Prisma.SortOrder
+  suggestedTargetPrice?: Prisma.SortOrder
 }
 
 export type AnalysisAvgOrderByAggregateInput = {
   qualityScore?: Prisma.SortOrder
   valuationScore?: Prisma.SortOrder
+  suggestedTargetPrice?: Prisma.SortOrder
 }
 
 export type AnalysisMaxOrderByAggregateInput = {
@@ -424,6 +449,7 @@ export type AnalysisMaxOrderByAggregateInput = {
   action?: Prisma.SortOrder
   fullText?: Prisma.SortOrder
   frameworkName?: Prisma.SortOrder
+  suggestedTargetPrice?: Prisma.SortOrder
 }
 
 export type AnalysisMinOrderByAggregateInput = {
@@ -436,11 +462,13 @@ export type AnalysisMinOrderByAggregateInput = {
   action?: Prisma.SortOrder
   fullText?: Prisma.SortOrder
   frameworkName?: Prisma.SortOrder
+  suggestedTargetPrice?: Prisma.SortOrder
 }
 
 export type AnalysisSumOrderByAggregateInput = {
   qualityScore?: Prisma.SortOrder
   valuationScore?: Prisma.SortOrder
+  suggestedTargetPrice?: Prisma.SortOrder
 }
 
 export type IntFieldUpdateOperationsInput = {
@@ -463,6 +491,7 @@ export type AnalysisSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   action?: boolean
   fullText?: boolean
   frameworkName?: boolean
+  suggestedTargetPrice?: boolean
 }, ExtArgs["result"]["analysis"]>
 
 export type AnalysisSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -475,6 +504,7 @@ export type AnalysisSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   action?: boolean
   fullText?: boolean
   frameworkName?: boolean
+  suggestedTargetPrice?: boolean
 }, ExtArgs["result"]["analysis"]>
 
 export type AnalysisSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -487,6 +517,7 @@ export type AnalysisSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   action?: boolean
   fullText?: boolean
   frameworkName?: boolean
+  suggestedTargetPrice?: boolean
 }, ExtArgs["result"]["analysis"]>
 
 export type AnalysisSelectScalar = {
@@ -499,9 +530,10 @@ export type AnalysisSelectScalar = {
   action?: boolean
   fullText?: boolean
   frameworkName?: boolean
+  suggestedTargetPrice?: boolean
 }
 
-export type AnalysisOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkUserId" | "ticker" | "date" | "qualityScore" | "valuationScore" | "action" | "fullText" | "frameworkName", ExtArgs["result"]["analysis"]>
+export type AnalysisOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkUserId" | "ticker" | "date" | "qualityScore" | "valuationScore" | "action" | "fullText" | "frameworkName" | "suggestedTargetPrice", ExtArgs["result"]["analysis"]>
 
 export type $AnalysisPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Analysis"
@@ -516,6 +548,7 @@ export type $AnalysisPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     action: string
     fullText: string
     frameworkName: string
+    suggestedTargetPrice: number | null
   }, ExtArgs["result"]["analysis"]>
   composites: {}
 }
@@ -948,6 +981,7 @@ export interface AnalysisFieldRefs {
   readonly action: Prisma.FieldRef<"Analysis", 'String'>
   readonly fullText: Prisma.FieldRef<"Analysis", 'String'>
   readonly frameworkName: Prisma.FieldRef<"Analysis", 'String'>
+  readonly suggestedTargetPrice: Prisma.FieldRef<"Analysis", 'Float'>
 }
     
 
