@@ -8,7 +8,7 @@ export type WatchlistRow = {
   watchlistIds: string[];
 };
 
-// Shared by the Unsorted section and each watchlist detail page — both
+// Shared by the Unsorted section and each watchlist detail page: both
 // need the same stock + latest-analysis + list-membership shape, just
 // filtered differently. clerkUserId is a required, separate parameter
 // (merged into the where clause here) rather than left for each caller to

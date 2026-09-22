@@ -21,7 +21,7 @@ export async function searchStockTickers(query: string): Promise<TickerSearchRes
 
   try {
     const results = await searchTickers(trimmed);
-    // Only reads whatever's already cached — a ticker searched for the
+    // Only reads whatever's already cached; a ticker searched for the
     // first time ever shows the fallback badge here and picks up its logo
     // on a later search once lib/logos.ts has resolved it in the background.
     const availability = await getLogoAvailability(results.map((r) => r.ticker));
@@ -93,7 +93,7 @@ export async function removeFromQueue(formData: FormData) {
   const stock = await prisma.stock.findFirst({ where: { id, clerkUserId: userId } });
 
   // A schedule that's already due would otherwise get re-flagged the very
-  // next time the daily cron runs — clear it here too, same as a completed
+  // next time the daily cron runs: clear it here too, same as a completed
   // analysis does, since dismissing the queue entry means "not now."
   const dueSchedule =
     stock?.nextAnalysisDate && stock.nextAnalysisDate.getTime() <= Date.now();
@@ -111,7 +111,7 @@ export async function removeFromQueue(formData: FormData) {
   revalidatePath("/queue");
 }
 
-// Removes a ticker from the user's tracking entirely — the Stock row (if
+// Removes a ticker from the user's tracking entirely: the Stock row (if
 // one was ever created) and its SearchHistory row, so it doesn't reappear
 // under Recently Searched.
 async function purgeTicker(userId: string, ticker: string) {
@@ -126,7 +126,7 @@ async function purgeTicker(userId: string, ticker: string) {
   revalidatePath("/queue");
 }
 
-// Fully removes a stock from the user's tracking — not just its watchlist
+// Fully removes a stock from the user's tracking, not just its watchlist
 // membership.
 export async function deleteStock(formData: FormData) {
   const { userId } = await auth.protect();
@@ -144,7 +144,7 @@ export async function deleteStock(formData: FormData) {
   await purgeTicker(userId, stock.ticker);
 }
 
-// Removes a Recently Searched row — covers both a ticker that was only ever
+// Removes a Recently Searched row: covers both a ticker that was only ever
 // looked up (no Stock row exists yet) and one that was also added to a
 // watchlist/Unsorted.
 export async function deleteRecentSearch(formData: FormData) {

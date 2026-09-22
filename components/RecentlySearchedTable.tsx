@@ -73,7 +73,7 @@ export async function RecentlySearchedTable({
               <TableCell className="text-muted-foreground">
                 {row.lastAnalyzedAt
                   ? formatAnalysisDate(row.lastAnalyzedAt, row.analysisDates, timeZone)
-                  : "—"}
+                  : "-"}
               </TableCell>
               <TableCell>
                 {row.stockId ? (
@@ -86,7 +86,7 @@ export async function RecentlySearchedTable({
                     <RunAnalysisButton ticker={row.ticker} hasExistingAnalysis={row.hasAnalysis} />
                   )
                 ) : (
-                  <span className="text-muted-foreground">—</span>
+                  <span className="text-muted-foreground">-</span>
                 )}
               </TableCell>
               <TableCell className="text-right">

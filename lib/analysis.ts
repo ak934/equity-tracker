@@ -22,7 +22,7 @@ export type CustomFramework = {
 
 export type CompanyIdentity = {
   name: string;
-  // SEC filer id, when known — the same ticker string can be shared by more
+  // SEC filer id, when known: the same ticker string can be shared by more
   // than one unrelated company (a reused/reassigned symbol, or a
   // cross-exchange collision), so this is what pins the research to the
   // right one instead of leaving it to the ticker alone.
@@ -31,51 +31,51 @@ export type CompanyIdentity = {
 
 // Every prompt opens by naming the specific company (and cik, if known)
 // this run is about, and tells the model not to substitute a different one
-// with a stronger web presence — a ticker or informal name can coincide
+// with a stronger web presence: a ticker or informal name can coincide
 // with a much more famous, unrelated organization (e.g. ticker "RBC" is
 // RBC Bearings Incorporated, an industrial parts maker, but a plain web
 // search for "RBC" is dominated by Royal Bank of Canada, whose real ticker
-// is RY — the search engine's popularity ranking, not the ticker itself, is
+// is RY; the search engine's popularity ranking, not the ticker itself, is
 // what causes the mix-up). Pointing the model at the SEC filer id directly
 // (EDGAR is keyed by CIK, not by ticker or name) sidesteps that entirely
 // when we have it.
 function identityIntro(ticker: string, company: CompanyIdentity, price: number | null): string {
   const priceNote = price ? ` Last known price in our system: $${price}.` : "";
   const verification = company.cik
-    ? `Before anything else, look up SEC EDGAR filings for CIK ${company.cik} (https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=${company.cik}) to confirm you have the right entity — CIK is unique per filer, unlike a ticker or common name. Use only that confirmed entity for the rest of this research.`
-    : `Confirm the entity you're researching by name — "${company.name}" — not just the ticker.`;
-  return `Analyze ${ticker} — ${company.name} — as an investment.${priceNote} ${verification} Tickers and even informal company names can coincide with a much more famous, unrelated organization that dominates a plain web search (a bank, a country, a common acronym, a reused/reassigned symbol) — if any source you find doesn't match ${company.name}${company.cik ? ` (CIK ${company.cik})` : ""} specifically, discard it rather than assuming it's close enough.`;
+    ? `Before anything else, look up SEC EDGAR filings for CIK ${company.cik} (https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=${company.cik}) to confirm you have the right entity: CIK is unique per filer, unlike a ticker or common name. Use only that confirmed entity for the rest of this research.`
+    : `Confirm the entity you're researching by name ("${company.name}"), not just the ticker.`;
+  return `Analyze ${ticker} (${company.name}) as an investment.${priceNote} ${verification} Tickers and even informal company names can coincide with a much more famous, unrelated organization that dominates a plain web search (a bank, a country, a common acronym, a reused/reassigned symbol). If any source you find doesn't match ${company.name}${company.cik ? ` (CIK ${company.cik})` : ""} specifically, discard it rather than assuming it's close enough.`;
 }
 
 const BUFFETT_SYSTEM_PROMPT = `You are Warren Buffett, the value investor from Omaha. You speak plainly, use folksy analogies (See's Candies, Coca-Cola, railroads), think in decades not quarters, and are deeply skeptical of hype. You always ask: "Would I be happy owning this for 10 years if the market closed tomorrow?"
 
-Never use Wall Street jargon like "EBITDA" or "multiple expansion." Be honest about uncertainty, but give a clear opinion rather than hedging into mush.`;
+Never use Wall Street jargon like "EBITDA" or "multiple expansion." Be honest about uncertainty, but give a clear opinion rather than hedging into mush. Never use em dashes (—) anywhere in your response; use commas, periods, semicolons, colons, or parentheses instead.`;
 
 function buildPrompt(ticker: string, price: number | null, company: CompanyIdentity) {
   return `${identityIntro(ticker, company, price)}
 
-## Step 1 — Research primary sources first
-Before forming an opinion, search for and read (in order): the latest 10-K (revenue breakdown, margins, risk factors, MD&A), the latest earnings call transcript (management tone, how they handle tough questions), and the latest proxy/DEF 14A (insider ownership, share pledging, related-party deals — don't score management without it). Then fill gaps with web searches for current price, market cap, revenue/earnings trend (3-5yr), profit margins, debt levels, industry growth CAGR (compare the company's growth to its industry, not just its own prior year), and recent news. Don't rely on memory for numbers — they change. Briefly note in Part A which sources you could and couldn't find.
+## Step 1: Research primary sources first
+Before forming an opinion, search for and read (in order): the latest 10-K (revenue breakdown, margins, risk factors, MD&A), the latest earnings call transcript (management tone, how they handle tough questions), and the latest proxy/DEF 14A (insider ownership, share pledging, related-party deals; don't score management without it). Then fill gaps with web searches for current price, market cap, revenue/earnings trend (3-5yr), profit margins, debt levels, industry growth CAGR (compare the company's growth to its industry, not just its own prior year), and recent news. Don't rely on memory for numbers; they change. Briefly note in Part A which sources you could and couldn't find.
 
-## Step 2 — Evaluate the 5 criteria, each scored ✅ / ⚠️ / ❌
-1. Understandability — can you explain how it makes money in a sentence?
-2. Competitive Moat — brand, switching costs, network effects, cost advantages; how durable against tech change, regulation, new entrants?
-3. Growth Potential — realistic path to ~2x earnings in 5 years (~15% CAGR)? Organic or debt/acquisition-fueled?
-4. Management Quality — owner-minded capital allocation, insider ownership, red flags (dilution, comp, pledging)?
-5. Fair Price — is today's price roughly half a reasonable 5-year value estimate (current EPS × expected P/E × projected growth)?
+## Step 2: Evaluate the 5 criteria, each scored ✅ / ⚠️ / ❌
+1. Understandability: can you explain how it makes money in a sentence?
+2. Competitive Moat: brand, switching costs, network effects, cost advantages; how durable against tech change, regulation, new entrants?
+3. Growth Potential: realistic path to ~2x earnings in 5 years (~15% CAGR)? Organic or debt/acquisition-fueled?
+4. Management Quality: owner-minded capital allocation, insider ownership, red flags (dilution, comp, pledging)?
+5. Fair Price: is today's price roughly half a reasonable 5-year value estimate (current EPS × expected P/E × projected growth)?
 
-## Step 2A — Triple-Pass Discipline (mandatory, do this internally before answering)
-Run three full passes on both the Quality score (criteria 1-4 composite) and the Valuation score (criteria 5) before finalizing — this is not optional, and the biggest errors get caught on passes 2-3, not pass 1:
+## Step 2A: Triple-Pass Discipline (mandatory, do this internally before answering)
+Run three full passes on both the Quality score (criteria 1-4 composite) and the Valuation score (criteria 5) before finalizing; this is not optional, and the biggest errors get caught on passes 2-3, not pass 1:
 - **Pass 1 (base case):** score naturally from the research above. Flag any pillar you're unsure of.
-- **Pass 2 (steel-man):** argue the opposite lean on every pillar — if Pass 1 leaned bullish, steel-man the bear case (and vice versa). Check what you anchored on without sourcing, whether you compared to industry CAGR, and whether you actually used the proxy/MD&A/transcript. Re-score.
-- **Pass 3 (devil's advocate, mandatory):** argue for the OPPOSITE action of wherever Pass 2 landed (if leaning BUY/WATCH, argue AVOID/PASS, and vice versa) to stress-test the weakest point in the current verdict. Re-score. The score after Pass 3 is final — not an average of the three passes.
+- **Pass 2 (steel-man):** argue the opposite lean on every pillar; if Pass 1 leaned bullish, steel-man the bear case (and vice versa). Check what you anchored on without sourcing, whether you compared to industry CAGR, and whether you actually used the proxy/MD&A/transcript. Re-score.
+- **Pass 3 (devil's advocate, mandatory):** argue for the OPPOSITE action of wherever Pass 2 landed (if leaning BUY/WATCH, argue AVOID/PASS, and vice versa) to stress-test the weakest point in the current verdict. Re-score. The score after Pass 3 is final, not an average of the three passes.
 
-## Step 3 — Deliver the output
-**Part A** — 3 to 5 paragraphs in your voice (plain language, folksy analogies like See's Candies/Coca-Cola/railroads, decades-not-quarters framing), ending with a clear verdict: "I would own this business," "I'd sit this one out," or "I'd watch and wait for a better price." Note which sources you could/couldn't find. End with one line noting this is education, not financial advice.
+## Step 3: Deliver the output
+**Part A**:3 to 5 paragraphs in your voice (plain language, folksy analogies like See's Candies/Coca-Cola/railroads, decades-not-quarters framing), ending with a clear verdict: "I would own this business," "I'd sit this one out," or "I'd watch and wait for a better price." Note which sources you could/couldn't find. End with one line noting this is education, not financial advice.
 
-**Part B** — a markdown scorecard table: the 5 criteria, their ✅/⚠️/❌ score, and a one-line reason each, plus an **Overall Verdict** of BUY, WATCH, or PASS.
+**Part B**:a markdown scorecard table: the 5 criteria, their ✅/⚠️/❌ score, and a one-line reason each, plus an **Overall Verdict** of BUY, WATCH, or PASS.
 
-**Part C** — a short delta block showing only the pass-1-to-final movement, not the full pass-by-pass history:
+**Part C**:a short delta block showing only the pass-1-to-final movement, not the full pass-by-pass history:
 > **Quality Score: __/100** (v1: __ → final __; what moved: ____)
 > **Valuation Score: __/100** (v1: __ → final __; what moved: ____)
 > **Devil's advocate verdict:** one sentence on what the opposite-stance case argued and whether it changed the action.
@@ -88,7 +88,7 @@ Map BUY→buy, WATCH→hold, PASS→avoid.`;
 }
 
 function customSystemPrompt(framework: CustomFramework) {
-  return `You are a rigorous, plain-speaking investment analyst applying a custom framework the user has defined, called "${framework.name}". Be honest about uncertainty, but give a clear opinion rather than hedging into mush. Avoid unexplained Wall Street jargon.
+  return `You are a rigorous, plain-speaking investment analyst applying a custom framework the user has defined, called "${framework.name}". Be honest about uncertainty, but give a clear opinion rather than hedging into mush. Avoid unexplained Wall Street jargon. Never use em dashes (—) anywhere in your response; use commas, periods, semicolons, colons, or parentheses instead.
 
 The user's framework:
 ${framework.instructions}`;
@@ -102,26 +102,26 @@ function buildCustomPrompt(
 ) {
   return `${identityIntro(ticker, company, price)}
 
-## Step 1 — Research primary sources first
-Before forming an opinion, search for and read (in order): the latest 10-K (revenue breakdown, margins, risk factors, MD&A), the latest earnings call transcript (management tone, how they handle tough questions), and the latest proxy/DEF 14A (insider ownership, share pledging, related-party deals). Then fill gaps with web searches for current price, market cap, revenue/earnings trend (3-5yr), profit margins, debt levels, industry growth, and recent news. Don't rely on memory for numbers — they change. Briefly note in Part A which sources you could and couldn't find.
+## Step 1: Research primary sources first
+Before forming an opinion, search for and read (in order): the latest 10-K (revenue breakdown, margins, risk factors, MD&A), the latest earnings call transcript (management tone, how they handle tough questions), and the latest proxy/DEF 14A (insider ownership, share pledging, related-party deals). Then fill gaps with web searches for current price, market cap, revenue/earnings trend (3-5yr), profit margins, debt levels, industry growth, and recent news. Don't rely on memory for numbers; they change. Briefly note in Part A which sources you could and couldn't find.
 
-## Step 2 — Apply this custom framework: "${framework.name}"
+## Step 2: Apply this custom framework: "${framework.name}"
 ${framework.instructions}
 
 Based on the above, form a Quality assessment (the qualitative, business-durability side of the framework) and a Valuation assessment (whether today's price is reasonable given the framework). Score each internally on a 0-100 scale as you go.
 
-## Step 2A — Triple-Pass Discipline (mandatory, do this internally before answering)
-Run three full passes on both the Quality score and the Valuation score before finalizing — this is not optional, and the biggest errors get caught on passes 2-3, not pass 1:
+## Step 2A: Triple-Pass Discipline (mandatory, do this internally before answering)
+Run three full passes on both the Quality score and the Valuation score before finalizing; this is not optional, and the biggest errors get caught on passes 2-3, not pass 1:
 - **Pass 1 (base case):** score naturally from the research and framework above. Flag any part you're unsure of.
-- **Pass 2 (steel-man):** argue the opposite lean on every point — if Pass 1 leaned bullish, steel-man the bear case (and vice versa). Re-score.
-- **Pass 3 (devil's advocate, mandatory):** argue for the OPPOSITE action of wherever Pass 2 landed, to stress-test the weakest point in the current verdict. Re-score. The score after Pass 3 is final — not an average of the three passes.
+- **Pass 2 (steel-man):** argue the opposite lean on every point; if Pass 1 leaned bullish, steel-man the bear case (and vice versa). Re-score.
+- **Pass 3 (devil's advocate, mandatory):** argue for the OPPOSITE action of wherever Pass 2 landed, to stress-test the weakest point in the current verdict. Re-score. The score after Pass 3 is final, not an average of the three passes.
 
-## Step 3 — Deliver the output
-**Part A** — 3 to 5 paragraphs applying the framework above in plain language, ending with a clear verdict: buy, hold, or avoid, and why. Note which sources you could/couldn't find. End with one line noting this is education, not financial advice.
+## Step 3: Deliver the output
+**Part A**:3 to 5 paragraphs applying the framework above in plain language, ending with a clear verdict: buy, hold, or avoid, and why. Note which sources you could/couldn't find. End with one line noting this is education, not financial advice.
 
-**Part B** — a markdown scorecard table covering the key points from the framework above, each with a one-line reason, plus an **Overall Verdict** of BUY, WATCH, or PASS.
+**Part B**:a markdown scorecard table covering the key points from the framework above, each with a one-line reason, plus an **Overall Verdict** of BUY, WATCH, or PASS.
 
-**Part C** — a short delta block showing only the pass-1-to-final movement, not the full pass-by-pass history:
+**Part C**:a short delta block showing only the pass-1-to-final movement, not the full pass-by-pass history:
 > **Quality Score: __/100** (v1: __ → final __; what moved: ____)
 > **Valuation Score: __/100** (v1: __ → final __; what moved: ____)
 > **Devil's advocate verdict:** one sentence on what the opposite-stance case argued and whether it changed the action.
@@ -163,7 +163,15 @@ export async function generateAnalysis(
   }
 
   const parsed = JSON.parse(jsonMatch[1]);
-  const fullText = fullOutput.replace(jsonMatch[0], "").trim();
+  // Backstop in case the model still slips one in despite the system-prompt
+  // instruction above: a spaced em dash is almost always an aside, so a
+  // comma reads naturally; an unspaced one is almost always a range
+  // (e.g. "2019—2024"), so a hyphen reads naturally.
+  const fullText = fullOutput
+    .replace(jsonMatch[0], "")
+    .trim()
+    .replace(/\s+—\s+/g, ", ")
+    .replace(/—/g, "-");
 
   return {
     qualityScore: parsed.qualityScore,

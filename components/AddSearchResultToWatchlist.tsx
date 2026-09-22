@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-// For a search-history entry that was never turned into a tracked Stock —
+// For a search-history entry that was never turned into a tracked Stock:
 // unlike StockWatchlistStatus, there's no stockId yet, so adding upserts
 // one into existence via addStockToWatchlist rather than toggling
 // membership on a row that already exists.

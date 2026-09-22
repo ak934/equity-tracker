@@ -11,7 +11,7 @@ export type AnalysisOutcome = {
 
 // Global, page-independent watch for analysis runs finishing. Mounted once
 // in the root layout so it keeps tracking tickers across client-side
-// navigation — the run itself already survives navigation server-side
+// navigation. The run itself already survives navigation server-side
 // (see the after() call in app/api/analysis/route.ts), this just makes sure
 // something is watching for its completion no matter where the user ends
 // up in the app.
@@ -33,7 +33,7 @@ export function useAnalysisNotifications(onOutcome: (outcome: AnalysisOutcome) =
         if (!res.ok) return;
         ({ tickers } = await res.json());
       } catch {
-        return; // network hiccup — the next tick will retry
+        return; // network hiccup, the next tick will retry
       }
       if (cancelled) return;
 
@@ -51,7 +51,7 @@ export function useAnalysisNotifications(onOutcome: (outcome: AnalysisOutcome) =
             onOutcomeRef.current({ ticker, status: needsReanalysis ? "failed" : "ready" });
           }
         } catch {
-          // couldn't confirm the outcome — skip notifying rather than guess
+          // couldn't confirm the outcome, skip notifying rather than guess
         }
       }
     };

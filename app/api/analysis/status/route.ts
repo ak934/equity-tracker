@@ -4,7 +4,7 @@ import { isAnalysisRunning } from "@/lib/analysis-status";
 
 // A plain fetch() to this is immune to Next's RSC/router-level caching
 // (unlike router.refresh(), which goes through the same client cache that's
-// documented to reuse stale snapshots on browser back/forward navigation) —
+// documented to reuse stale snapshots on browser back/forward navigation),
 // so this is the ground truth check the polling hook uses to decide whether
 // it's safe to stop showing "Analyzing...".
 export async function GET(request: Request) {

@@ -20,7 +20,7 @@ describe("formatAnalysisDate", () => {
   it("a date that is the same UTC day but a different calendar day in the viewer's timezone is not grouped together", () => {
     // 2026-01-15 02:00 UTC is 2026-01-14 18:00 in Los Angeles (UTC-8 in January)
     const lateUtcPrevDayLocal = new Date("2026-01-15T02:00:00.000Z");
-    // 2026-01-15 14:00 UTC is 2026-01-15 06:00 in Los Angeles — a different LA calendar day
+    // 2026-01-15 14:00 UTC is 2026-01-15 06:00 in Los Angeles (a different LA calendar day)
     const sameUtcDayDifferentLocalDay = new Date("2026-01-15T14:00:00.000Z");
 
     const result = formatAnalysisDate(
@@ -35,7 +35,7 @@ describe("formatAnalysisDate", () => {
   it("two dates that are different UTC days but the SAME calendar day in the viewer's timezone are grouped together", () => {
     // 2026-01-15 03:00 UTC is 2026-01-14 19:00 in Los Angeles
     const a = new Date("2026-01-15T03:00:00.000Z");
-    // 2026-01-14 23:00 UTC is also 2026-01-14 15:00 in Los Angeles — same LA calendar day as `a`
+    // 2026-01-14 23:00 UTC is also 2026-01-14 15:00 in Los Angeles (same LA calendar day as `a`)
     const b = new Date("2026-01-14T23:00:00.000Z");
 
     const result = formatAnalysisDate(a, [a, b], "America/Los_Angeles");

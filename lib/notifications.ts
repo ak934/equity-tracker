@@ -10,8 +10,8 @@ export async function sendTargetPriceHitEmail(hits: TargetPriceHit[]): Promise<v
     to: process.env.DIGEST_EMAIL_TO!,
     subject:
       hits.length === 1
-        ? `${hits[0].ticker} hit your target price — buy now!`
-        : `${hits.length} stocks hit their target price — buy now!`,
+        ? `${hits[0].ticker} hit your target price: buy now!`
+        : `${hits.length} stocks hit their target price: buy now!`,
     html: buildTargetPriceHitEmailHtml(hits),
   });
 }

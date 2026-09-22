@@ -97,10 +97,10 @@ export async function WatchlistStockTable({
                 </div>
               </TableCell>
               <TableCell className="font-mono tabular-nums">
-                {stock.lastPrice != null ? `$${stock.lastPrice.toFixed(2)}` : "—"}
+                {stock.lastPrice != null ? `$${stock.lastPrice.toFixed(2)}` : "-"}
               </TableCell>
               <TableCell className="text-muted-foreground">
-                {stock.priceAsOf ? stock.priceAsOf.toLocaleDateString() : "—"}
+                {stock.priceAsOf ? stock.priceAsOf.toLocaleDateString() : "-"}
               </TableCell>
               <TableCell>
                 {latestAnalysis ? (
@@ -111,14 +111,14 @@ export async function WatchlistStockTable({
                     {formatAnalysisDate(latestAnalysis.date, analysisDates, timeZone)}
                   </Link>
                 ) : (
-                  "—"
+                  "-"
                 )}
               </TableCell>
               <TableCell className="font-mono tabular-nums">
-                {latestAnalysis ? `${latestAnalysis.qualityScore}/100` : "—"}
+                {latestAnalysis ? `${latestAnalysis.qualityScore}/100` : "-"}
               </TableCell>
               <TableCell className="font-mono tabular-nums">
-                {latestAnalysis ? `${latestAnalysis.valuationScore}/100` : "—"}
+                {latestAnalysis ? `${latestAnalysis.valuationScore}/100` : "-"}
               </TableCell>
               {showManagementColumns && (
                 <TableCell className="text-right">

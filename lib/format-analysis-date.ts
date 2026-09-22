@@ -1,6 +1,6 @@
 // These run in Server Components, so without an explicit timeZone,
 // toLocaleDateString/toDateString would silently use the server's runtime
-// timezone rather than the viewer's — showing the wrong calendar day (and
+// timezone rather than the viewer's, showing the wrong calendar day (and
 // wrong "same day" grouping below) for anyone not in that timezone.
 function dateKey(date: Date, timeZone: string): string {
   return new Intl.DateTimeFormat("en-CA", {

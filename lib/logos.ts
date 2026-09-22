@@ -4,13 +4,13 @@ import { prisma } from "@/lib/prisma";
 export type CachedLogo = { imageData: Uint8Array<ArrayBuffer>; contentType: string };
 
 type MetaLookup =
-  | { ok: true; logoUrl: string | null } // API answered — genuinely has (or lacks) a logo
+  | { ok: true; logoUrl: string | null } // API answered: genuinely has (or lacks) a logo
   | { ok: false }; // couldn't get an answer (rate limited, network error, etc.)
 
 type ResolveOutcome =
   | { status: "found"; logo: CachedLogo }
-  | { status: "not_found" } // API answered — this ticker genuinely has no logo
-  | { status: "failed" }; // rate limited / errored — tells nothing either way
+  | { status: "not_found" } // API answered: this ticker genuinely has no logo
+  | { status: "failed" }; // rate limited / errored, tells nothing either way
 
 // Bounds a single HTTP call so one slow/hanging request can't single-
 // handedly blow past RESOLVE_BUDGET_MS below.
@@ -23,7 +23,7 @@ async function fetchLogoMeta(ticker: string): Promise<MetaLookup> {
       signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     });
     // A non-OK response (429 rate limit, 5xx, etc.) means the API didn't
-    // actually tell us whether this ticker has a logo — treating that the
+    // actually tell us whether this ticker has a logo; treating that the
     // same as "no logo" would wrongly cache the failure forever.
     if (!res.ok) return { ok: false };
 
@@ -45,7 +45,7 @@ async function fetchLogoImage(logoUrl: string): Promise<CachedLogo | null> {
     if (!res.ok) return null;
 
     // Uint8Array's constructor infers the more general ArrayBufferLike (to
-    // allow for SharedArrayBuffer) unless pinned explicitly — a real HTTP
+    // allow for SharedArrayBuffer) unless pinned explicitly; a real HTTP
     // response body is always a plain ArrayBuffer, which is what Prisma's
     // Bytes field expects.
     const imageData = new Uint8Array<ArrayBuffer>(await res.arrayBuffer());
@@ -56,11 +56,11 @@ async function fetchLogoImage(logoUrl: string): Promise<CachedLogo | null> {
 }
 
 // A ticker's logo never changes day to day, so this only ever needs to
-// succeed once per ticker — the image bytes themselves are cached (not
+// succeed once per ticker: the image bytes themselves are cached (not
 // just the upstream URL), so a page with several stocks never re-fetches
 // from the price API's tightly rate-limited free tier (see lib/prices.ts)
 // on every view. A "failed" outcome leaves no cache row at all, rather
-// than locking in a false "no logo" — it's simply retried on the next
+// than locking in a false "no logo"; it's simply retried on the next
 // view instead.
 async function resolveLogo(ticker: string): Promise<ResolveOutcome> {
   const meta = await fetchLogoMeta(ticker);
@@ -93,15 +93,15 @@ export async function resolveAndCacheLogo(ticker: string): Promise<CachedLogo | 
 
 // Total time this call will block waiting on never-before-seen tickers to
 // resolve, so a logo shows up on the very first view instead of requiring
-// a reload. Once a ticker is cached this never applies again — reads below
-// are then a plain DB lookup — so this only ever costs anything on a
+// a reload. Once a ticker is cached this never applies again (reads below
+// are then a plain DB lookup), so this only ever costs anything on a
 // ticker's first appearance anywhere in the app.
 const RESOLVE_BUDGET_MS = 3000;
 
 // Looks up which of these tickers have a cached logo. Anything already
 // cached resolves instantly (a DB read). A ticker seen for the first time
 // is resolved right now, within a shared time budget, so it's ready on
-// this render rather than needing a reload — whatever doesn't finish in
+// this render rather than needing a reload; whatever doesn't finish in
 // time (including everything after the first rate-limit failure, since
 // further attempts in the same burst are doomed too) keeps resolving in
 // the background (via after()) instead.
@@ -115,14 +115,14 @@ export async function getLogoAvailability(tickers: string[]): Promise<Map<string
   const missing = unique.filter((t) => !result.has(t));
   if (missing.length === 0) return result;
 
-  // One at a time, not Promise.all — this API is tightly rate limited (see
+  // One at a time, not Promise.all: this API is tightly rate limited (see
   // lib/prices.ts), and firing every missing ticker on a page at once is
   // exactly what triggers that limit.
   const deadline = Date.now() + RESOLVE_BUDGET_MS;
   let cursor = 0;
   while (cursor < missing.length && Date.now() < deadline) {
     const outcome = await resolveLogo(missing[cursor]);
-    if (outcome.status === "failed") break; // rate limited — stop burning the budget on doomed calls
+    if (outcome.status === "failed") break; // rate limited: stop burning the budget on doomed calls
 
     result.set(missing[cursor], outcome.status === "found");
     cursor++;

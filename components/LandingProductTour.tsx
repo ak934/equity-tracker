@@ -93,7 +93,7 @@ export function LandingProductTour() {
           <Step
             index={0}
             title="Search any ticker"
-            description="Type a company name or symbol — DoorDash, Apple, whatever you're watching — and add it in one click."
+            description="Type a company name or symbol (DoorDash, Apple, whatever you're watching) and add it in one click."
           >
             <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
               <div className="flex gap-2">
@@ -163,7 +163,7 @@ export function LandingProductTour() {
               </div>
               <p className="px-4 py-3 text-sm text-muted-foreground">
                 Order volume and ad revenue keep compounding, and margins are inflecting as it
-                scales past groceries — growth still looks underpriced at current multiples.
+                scales past groceries; growth still looks underpriced at current multiples.
               </p>
             </div>
           </Step>

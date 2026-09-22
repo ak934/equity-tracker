@@ -16,7 +16,7 @@ export default async function Home() {
             <LineChart className="size-7" />
           </span>
           <h1 className="mt-6 max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">
-            Know whether to buy, hold, or walk away — for every stock on your list.
+            Know whether to buy, hold, or walk away, for every stock on your list.
           </h1>
           <p className="mt-4 max-w-xl text-muted-foreground">
             Track the companies you care about, get AI-backed analysis grounded in a real investing
@@ -52,7 +52,7 @@ export default async function Home() {
         <section className="border-t border-border px-4 py-16 text-center">
           <h2 className="text-2xl font-semibold tracking-tight">Ready to start tracking?</h2>
           <p className="mt-2 text-muted-foreground">
-            It&apos;s free to try — takes less than a minute to add your first stock.
+            It&apos;s free to try: takes less than a minute to add your first stock.
           </p>
           <div className="mt-6">
             <SignUpButton>

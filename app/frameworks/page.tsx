@@ -22,7 +22,7 @@ export default async function FrameworksPage() {
       <div className="mt-6 rounded-xl border border-border bg-card p-4 shadow-sm">
         <p className="text-sm font-medium">Buffett (default)</p>
         <p className="mt-1 text-sm text-muted-foreground">
-          Value investing — moat, management quality, growth, and a margin of safety on price.
+          Value investing: moat, management quality, growth, and a margin of safety on price.
           Built in, always available, can&apos;t be edited or deleted.
         </p>
       </div>

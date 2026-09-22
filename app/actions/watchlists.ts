@@ -44,7 +44,7 @@ export async function deleteWatchlist(formData: FormData) {
     throw new Error("Watchlist id is required");
   }
 
-  // Deleting only removes this category — the join rows are cascaded, but
+  // Deleting only removes this category; the join rows are cascaded, but
   // the stocks themselves stay in "watchlist" status, falling back to
   // Unsorted rather than disappearing.
   await prisma.watchlist.deleteMany({ where: { id, clerkUserId: userId } });
@@ -53,7 +53,7 @@ export async function deleteWatchlist(formData: FormData) {
   redirect("/watchlist");
 }
 
-// Adds an existing or brand-new stock straight into a specific watchlist —
+// Adds an existing or brand-new stock straight into a specific watchlist:
 // upserts by ticker so re-adding an already-tracked ticker just connects
 // it rather than erroring.
 export async function addStockToWatchlist(formData: FormData) {
@@ -109,7 +109,7 @@ export async function addStockToWatchlist(formData: FormData) {
 }
 
 // Adds/upserts a stock in "watchlist" status without filing it into any
-// category — it shows up under Unsorted until the user assigns it.
+// category; it shows up under Unsorted until the user assigns it.
 export async function addStock(formData: FormData) {
   const { userId } = await auth.protect();
   const ticker = String(formData.get("ticker") ?? "").trim().toUpperCase();
@@ -173,8 +173,8 @@ export async function setStockWatchlistMembership(formData: FormData) {
 }
 
 // Replaces a stock's entire watchlist membership with a single target list
-// — the one-click "move" a user reaches for instead of unchecking the old
-// list and checking the new one separately.
+// (the one-click "move" a user reaches for instead of unchecking the old
+// list and checking the new one separately).
 export async function moveStockToWatchlist(formData: FormData) {
   const { userId } = await auth.protect();
   const stockId = String(formData.get("stockId") ?? "");

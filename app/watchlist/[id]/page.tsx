@@ -59,7 +59,7 @@ export default async function WatchlistDetailPage({
       {rows.length === 0 ? (
         <div className="mt-6 rounded-xl border border-dashed border-border px-6 py-12 text-center">
           <p className="text-sm text-muted-foreground">
-            No stocks in this watchlist yet — search above to add one.
+            No stocks in this watchlist yet. Search above to add one.
           </p>
         </div>
       ) : (

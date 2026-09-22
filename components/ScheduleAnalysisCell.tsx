@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { setNextAnalysisDate } from "@/app/actions/stocks";
 
 // Answers "when would you like to schedule your next analysis of the
-// company" per stock — the daily cron flags the stock for reanalysis once
+// company" per stock; the daily cron flags the stock for reanalysis once
 // this date arrives (see computeDueScheduledAnalyses in lib/digest.ts).
 export function ScheduleAnalysisCell({
   stockId,

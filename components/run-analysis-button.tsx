@@ -30,8 +30,8 @@ export function RunAnalysisButton({
     setIsAnalyzing(initialAnalyzing);
   }
 
-  // while a run is in flight — including one kicked off before this
-  // component mounted, e.g. after navigating back to this page — poll for
+  // while a run is in flight (including one kicked off before this
+  // component mounted, e.g. after navigating back to this page), poll for
   // completion so the button doesn't look stuck on "Analyzing..." forever
   useAnalysisPolling(ticker, isAnalyzing);
 
@@ -43,7 +43,7 @@ export function RunAnalysisButton({
         // The route handler responds as soon as analysisRunning is durably
         // persisted (it defers the actual 60-90s analysis to run in the
         // background), so awaiting it here is fast and guarantees the
-        // flag is set in the DB before we navigate — otherwise the
+        // flag is set in the DB before we navigate; otherwise the
         // destination page's own read could race the write and render as
         // if nothing had started.
         try {
@@ -53,7 +53,7 @@ export function RunAnalysisButton({
             body: JSON.stringify({ ticker, frameworkId }),
           });
           // 409 means another instance of this button already started
-          // this ticker's run — treat it the same as our own success and
+          // this ticker's run: treat it the same as our own success and
           // let polling pick up completion
           if (!res.ok && res.status !== 409) {
             throw new Error(await res.text());

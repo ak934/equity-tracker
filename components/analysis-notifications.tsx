@@ -15,7 +15,7 @@ let nextId = 1;
 
 // Mounted once in the root layout so a run finishing shows up here
 // regardless of which page the user has navigated to. Deliberately does
-// NOT auto-dismiss — a run started from the Queue can take a minute or
+// NOT auto-dismiss: a run started from the Queue can take a minute or
 // more, so by the time it finishes the user is usually looking at a
 // different tab entirely; a toast that vanishes in a few seconds would
 // almost always be missed. It stays until the user views or dismisses it.
@@ -30,7 +30,7 @@ export function AnalysisNotifications() {
   useAnalysisNotifications((outcome) => {
     setToasts((current) => [...current, { ...outcome, id: nextId++ }]);
     // a finished run changed data on whatever page is currently open (the
-    // ticker page, queue, watchlist) — refresh so it's not stuck showing
+    // ticker page, queue, watchlist): refresh so it's not stuck showing
     // the pre-completion state until the user next interacts with it
     router.refresh();
   });
@@ -55,7 +55,7 @@ export function AnalysisNotifications() {
               </>
             ) : (
               <>
-                Analysis for <strong>{toast.ticker}</strong> failed — it&apos;s back in the queue
+                Analysis for <strong>{toast.ticker}</strong> failed; it&apos;s back in the queue
               </>
             )}
           </span>

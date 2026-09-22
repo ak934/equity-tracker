@@ -42,7 +42,7 @@ export default async function WatchlistIndexPage() {
   });
   const stockByTicker = new Map(matchingStocks.map((s) => [s.ticker, s]));
 
-  // Only needed for search-history rows — unsorted rows already carry their
+  // Only needed for search-history rows. Unsorted rows already carry their
   // latestAnalysis via getWatchlistRows below.
   const searchTickers = searchHistory.map((h) => h.ticker);
   const searchAnalyses = searchTickers.length
@@ -61,8 +61,8 @@ export default async function WatchlistIndexPage() {
   }
 
   // Unsorted stocks (tracked but not filed into any watchlist yet) live in
-  // the Recently Searched section rather than a separate "Unsorted" section —
-  // there's nothing to distinguish them from a ticker someone just looked
+  // the Recently Searched section rather than a separate "Unsorted" section.
+  // There's nothing to distinguish them from a ticker someone just looked
   // up. Search-history rows take priority; a stock without one (e.g.
   // seeded before this feature existed) falls back to its createdAt.
   const recentRowsByTicker = new Map<string, RecentSearchRow>();
@@ -120,7 +120,7 @@ export default async function WatchlistIndexPage() {
       {watchlists.length === 0 ? (
         <div className="mt-6 rounded-xl border border-dashed border-border px-6 py-12 text-center">
           <p className="text-sm text-muted-foreground">
-            No watchlists yet — create one above to start organizing.
+            No watchlists yet. Create one above to start organizing.
           </p>
         </div>
       ) : (

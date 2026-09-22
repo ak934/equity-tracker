@@ -66,7 +66,7 @@ export function computeReanalysisFlagUpdates(
       }
     } else if (stock.reanalysisReason !== "manual") {
       // a manual flag isn't date-based, so not being stale doesn't resolve
-      // it — only a fresh analysis run should clear that one
+      // it; only a fresh analysis run should clear that one
       toClear.push(stock.ticker);
     }
   }
@@ -82,7 +82,7 @@ export interface ScheduledAnalysisStockInput {
 
 // Ids of stocks whose user-picked "next analysis" date has arrived. A stock
 // already flagged for anything else (manual, stale, or a previously-due
-// schedule not yet acted on) is left alone — same "don't clobber an
+// schedule not yet acted on) is left alone, same "don't clobber an
 // existing flag" rule as computeReanalysisFlagUpdates.
 export function computeDueScheduledAnalyses(
   stocks: ScheduledAnalysisStockInput[],
@@ -103,7 +103,7 @@ export function buildDigestEmailHtml(staleAnalyses: DigestStaleAnalysis[]): stri
         ${staleAnalyses
           .map(
             (s) =>
-              `<li>${s.ticker} (${s.name}) — last analyzed ${
+              `<li>${s.ticker} (${s.name}): last analyzed ${
                 s.latestAnalysisDate
                   ? s.latestAnalysisDate.toISOString().split("T")[0]
                   : "never"

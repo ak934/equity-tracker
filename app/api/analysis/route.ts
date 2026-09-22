@@ -42,7 +42,7 @@ export async function POST(request: Request) {
 
   // marked durably in the DB, not just in the browser's component state, so
   // that leaving the page (or closing the tab) doesn't lose track of the run
-  // still in flight server-side — the UI can pick this back up on any later
+  // still in flight server-side; the UI can pick this back up on any later
   // page load instead of looking like the analysis silently stopped.
   // analysisStartedAt lets isAnalysisRunning recognize a flag left behind by
   // a process that died mid-run (dev server restart, deploy, crash) as
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
 
       // a fresh analysis just ran, so whatever flagged this stock (manual,
       // stale, or a due schedule) is resolved. A schedule that was already
-      // due when this run started is cleared too — a future one the user set
+      // due when this run started is cleared too; a future one the user set
       // in the meantime is left alone.
       const dueSchedule =
         stock?.nextAnalysisDate && stock.nextAnalysisDate.getTime() <= Date.now();

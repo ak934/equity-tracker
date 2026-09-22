@@ -14,7 +14,7 @@ export type TickerResult = {
 };
 
 // Polygon MIC codes for the exchanges a user is actually likely to
-// recognize — anything else just shows the raw code, which still
+// recognize; anything else just shows the raw code, which still
 // distinguishes two same-tickered results even if it isn't pretty.
 const EXCHANGE_LABELS: Record<string, string> = {
   XNAS: "NASDAQ",
@@ -183,7 +183,7 @@ export function TickerSearchInput({
       <input type="hidden" name="cik" value={selected?.cik ?? ""} />
       {rateLimited && (
         <p className="absolute mt-1 text-xs text-muted-foreground">
-          Search is rate-limited — try again in a few seconds.
+          Search is rate-limited. Try again in a few seconds.
         </p>
       )}
       {open && !selected && results.length > 0 && (

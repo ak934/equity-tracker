@@ -38,7 +38,7 @@ export function CreateFrameworkForm() {
         <label className="text-sm font-medium">Instructions</label>
         <Textarea
           name="instructions"
-          placeholder="Describe how you want stocks evaluated — what to weigh, what to ignore, how you think about quality and a fair price."
+          placeholder="Describe how you want stocks evaluated: what to weigh, what to ignore, how you think about quality and a fair price."
           value={instructions}
           onChange={(e) => setInstructions(e.target.value)}
           required

@@ -83,7 +83,7 @@ export default async function QueuePage() {
                     {reanalysisReasonLabel(stock.reanalysisReason)}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {stock.nextAnalysisDate ? stock.nextAnalysisDate.toLocaleDateString() : "—"}
+                    {stock.nextAnalysisDate ? stock.nextAnalysisDate.toLocaleDateString() : "-"}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">

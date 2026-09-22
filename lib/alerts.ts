@@ -14,7 +14,7 @@ export interface TargetPriceHit {
 }
 
 // Diffs a before/after price snapshot so a hit only fires once, right when
-// it's crossed — a stock that's been sitting at/below its target since the
+// it's crossed; a stock that's been sitting at/below its target since the
 // last refresh (beforeHit already true) doesn't re-trigger every cycle.
 export function findNewTargetPriceHits<T extends TargetPriceStockInput>(
   stocksBefore: T[],

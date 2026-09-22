@@ -4,7 +4,7 @@ import { isAnalysisRunning } from "@/lib/analysis-status";
 
 // Ground truth for "which tickers are currently being analyzed," queried by
 // the global notifier so it can watch runs regardless of which page (if
-// any) the user is on. Small, infrequent read — the table only ever holds
+// any) the user is on. Small, infrequent read. The table only ever holds
 // as many in-flight rows as there are concurrent analysis runs.
 export async function GET() {
   const { userId } = await auth.protect();

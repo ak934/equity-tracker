@@ -76,19 +76,19 @@ export default async function AlertsPage() {
                   </TableCell>
                   <TableCell className="text-muted-foreground">{stock.name}</TableCell>
                   <TableCell className="font-mono tabular-nums">
-                    {stock.lastPrice != null ? `$${stock.lastPrice.toFixed(2)}` : "—"}
+                    {stock.lastPrice != null ? `$${stock.lastPrice.toFixed(2)}` : "-"}
                   </TableCell>
                   <TableCell className="font-mono tabular-nums">
-                    {stock.targetPrice != null ? `$${stock.targetPrice.toFixed(2)}` : "—"}
+                    {stock.targetPrice != null ? `$${stock.targetPrice.toFixed(2)}` : "-"}
                   </TableCell>
                   <TableCell>
                     <ScheduleAnalysisCell stockId={stock.id} nextAnalysisDate={stock.nextAnalysisDate} />
                   </TableCell>
                   <TableCell>
                     {stock.targetPrice == null ? (
-                      <span className="text-xs text-muted-foreground">—</span>
+                      <span className="text-xs text-muted-foreground">-</span>
                     ) : hit ? (
-                      <Badge variant="positive">🎯 Hit — buy now!</Badge>
+                      <Badge variant="positive">🎯 Hit: buy now!</Badge>
                     ) : (
                       <span className="text-xs text-muted-foreground">Watching</span>
                     )}

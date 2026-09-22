@@ -6,7 +6,7 @@ import { OnboardingTimezoneForm } from "@/components/OnboardingTimezoneForm";
 export default async function OnboardingTimezonePage() {
   await auth.protect();
 
-  // Already set (e.g. returning user, or this ran once already) — don't
+  // Already set (e.g. returning user, or this ran once already), don't
   // ask again, just continue on.
   if (await hasUserTimezone()) {
     redirect("/");

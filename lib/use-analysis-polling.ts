@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-// Next.js reuses the browser's back/forward cache by design — not something
-// staleTimes can turn off — so a page like /queue can show a snapshot from
+// Next.js reuses the browser's back/forward cache by design (not something
+// staleTimes can turn off), so a page like /queue can show a snapshot from
 // before a run finished, and router.refresh() goes through that same cached
 // machinery. This instead hits a tiny dedicated status endpoint with a plain
 // fetch(), which isn't part of that cache, as the source of truth for
@@ -29,7 +29,7 @@ export function useAnalysisPolling(ticker: string, active: boolean) {
           router.refresh();
         }
       } catch {
-        // network hiccup — the next tick will retry
+        // network hiccup, the next tick will retry
       }
     };
 

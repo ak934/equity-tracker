@@ -15,7 +15,7 @@ export type RefreshAllPricesResult = {
 export type TickerSearchResult = {
   ticker: string;
   name: string;
-  // SEC filer id — the same ticker string can belong to more than one
+  // SEC filer id: the same ticker string can belong to more than one
   // (unrelated) company over time or across exchanges, so this is what
   // disambiguates one from another. exchange is shown alongside the name so
   // a user picking between two same-tickered results can tell them apart.
@@ -37,7 +37,7 @@ const DISPLAY_LIMIT = 8;
 // fetched from the API in the API's own relevance order, which tends to bury
 // the actual company under leveraged/derivative ETFs that merely reference
 // it by name (e.g. searching "TSLA" surfaces "GraniteShares Autocallable
-// TSLA ETF" ahead of Tesla itself) — so a bigger batch is pulled and
+// TSLA ETF" ahead of Tesla itself), so a bigger batch is pulled and
 // re-ranked locally before trimming down to what's shown.
 const FETCH_LIMIT = 25;
 
@@ -66,7 +66,7 @@ async function fetchTickers(params: Record<string, string>): Promise<TickerRaw[]
 }
 
 // Real US tickers are 1-6 letters, optionally with a share-class suffix
-// like "BRK.B" — used to skip the exact-match lookup below for input that
+// like "BRK.B", used to skip the exact-match lookup below for input that
 // obviously isn't a ticker (e.g. a company name), since it would just be a
 // wasted API call against a tightly rate-limited free tier.
 const TICKER_SHAPE_RE = /^[A-Z]{1,6}(\.[A-Z]{1,2})?$/;
@@ -87,10 +87,10 @@ export async function searchTickers(query: string): Promise<TickerSearchResult[]
 
   // The substring `search` param sorts alphabetically by ticker with no
   // relevance ranking, so a common ticker can bury the real match past the
-  // fetch limit entirely regardless of the local re-ranking above — e.g.
+  // fetch limit entirely regardless of the local re-ranking above: e.g.
   // searching "META" returns 25+ unrelated "X METALS" penny stocks before
   // ever reaching the real ticker "META" alphabetically. Only fall back to
-  // a second, exact-ticker lookup when that's actually happened — this API
+  // a second, exact-ticker lookup when that's actually happened; this API
   // is rate-limited tightly enough that doubling every request (as the
   // common case doesn't need) exhausts the quota within a few keystrokes.
   const hasExactMatch = ranked.some((r) => r.ticker.toUpperCase() === normalizedQuery);
@@ -99,7 +99,7 @@ export async function searchTickers(query: string): Promise<TickerSearchResult[]
       ? await fetchTickers({ ticker: normalizedQuery, active: "true", market: "stocks" }).catch(() => [])
       : [];
 
-  // Dedupe by company identity (cik), not by bare ticker — the same ticker
+  // Dedupe by company identity (cik), not by bare ticker: the same ticker
   // string can be shared by genuinely different, unrelated companies (a
   // reused/reassigned symbol, or a cross-exchange collision), and collapsing
   // on ticker alone would silently drop one of them before the user ever
@@ -139,7 +139,7 @@ function getEasternDateParts(date: Date) {
 }
 
 // NYSE trading days are defined in US/Eastern, so anchor to that calendar
-// date (as a UTC-midnight Date) instead of the server's local timezone —
+// date (as a UTC-midnight Date) instead of the server's local timezone;
 // otherwise this drifts by a day depending on where/when the app runs.
 function getEasternToday(): Date {
   const { year, month, day } = getEasternDateParts(new Date());
@@ -153,7 +153,7 @@ function isTradingWeekday(d: Date): boolean {
 // NYSE regular-session close (ignoring rare early-close days, same
 // granularity the holiday handling elsewhere in this file already accepts).
 // Before this, Massive/Polygon reliably 403s any request for today's date
-// ("before end of day") — so gating on it avoids burning a whole extra API
+// ("before end of day"), so gating on it avoids burning a whole extra API
 // call, per stock, on every refresh throughout the trading day for a
 // request we already know will fail.
 const MARKET_CLOSE_HOUR_ET = 16;
@@ -184,7 +184,7 @@ function canTodayHaveData(today: Date): boolean {
 
 // The newest date that could possibly have data available right now: today,
 // once the market's closed, or otherwise the last confirmed trading day.
-// Used to decide whether a refresh is even worth attempting — it doesn't
+// Used to decide whether a refresh is even worth attempting; it doesn't
 // guarantee today's close is ready yet, just that it's not impossible.
 export function getMostRecentPossibleTradingDate(): Date {
   const today = getEasternToday();
@@ -198,7 +198,7 @@ async function fetchOpenClose(ticker: string, date: Date) {
 }
 
 export async function getPrice(ticker: string): Promise<PriceResult> {
-  // Try today first, but only once the market's plausibly closed — before
+  // Try today first, but only once the market's plausibly closed: before
   // that, Massive/Polygon always 403s ("before end of day"), so attempting
   // it would just be a wasted API call on every refresh throughout the
   // trading day. Once it's worth trying, this saves the app from waiting a
@@ -214,7 +214,7 @@ export async function getPrice(ticker: string): Promise<PriceResult> {
         }
       }
     } catch {
-      // network hiccup — fall through to the fallback below
+      // network hiccup, fall through to the fallback below
     }
   }
 
@@ -261,7 +261,7 @@ export async function refreshAllPrices(): Promise<RefreshAllPricesResult> {
   const failed: string[] = [];
 
   // Stock rows are now per-user (two users tracking the same ticker each
-  // get their own row), but the market price is identical for everyone —
+  // get their own row), but the market price is identical for everyone:
   // group by ticker so a shared ticker costs one external API call no
   // matter how many users track it, not one per row.
   const stocksByTicker = new Map<string, Stock[]>();
@@ -272,7 +272,7 @@ export async function refreshAllPrices(): Promise<RefreshAllPricesResult> {
   for (const [ticker, group] of stocksByTicker) {
     // already priced for the newest date that could possibly have data,
     // skip the API call entirely to avoid burning the API's per-minute
-    // rate limit — this only skips once every row sharing this ticker
+    // rate limit: this only skips once every row sharing this ticker
     // actually has today's close, not merely because we tried and it
     // wasn't ready yet
     if (group.every((s) => s.priceAsOf && toDateParam(s.priceAsOf) === targetDate)) {

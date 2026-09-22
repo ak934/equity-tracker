@@ -14,7 +14,7 @@ export function isValidTimezone(timezone: string): boolean {
 }
 
 // Server Components render dates using the server's own runtime timezone,
-// not the viewer's — wrong for anyone not in that timezone. Since the app
+// not the viewer's. Wrong for anyone not in that timezone. Since the app
 // has no per-user settings table (Clerk handles auth, not preferences),
 // this is stored as a cookie: set once from the browser-detected guess (see
 // components/TimezoneSetting.tsx), then read here on every server render.

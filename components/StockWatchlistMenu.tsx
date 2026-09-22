@@ -59,7 +59,7 @@ export function StockWatchlistMenu({
         <DropdownMenuSeparator />
         {allWatchlists.length === 0 ? (
           <p className="px-2 py-1.5 text-sm text-muted-foreground">
-            No watchlists yet — create one first.
+            No watchlists yet. Create one first.
           </p>
         ) : (
           allWatchlists.map((watchlist) => (

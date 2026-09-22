@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { setTargetPrice } from "@/app/actions/stocks";
 
-// Shown below a finished analysis write-up — once the user has read the
+// Shown below a finished analysis write-up: once the user has read the
 // verdict, offer to alert them by email when the price drops to a level
 // they'd actually buy at (see the Alerts page for everything they've set).
 export function TargetPricePrompt({

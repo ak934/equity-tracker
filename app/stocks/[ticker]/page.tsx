@@ -51,8 +51,8 @@ export default async function StockPage({
   const analyzing = stock ? isAnalysisRunning(stock) : false;
   const needsReanalysis = stock?.needsReanalysis ?? false;
 
-  // A flagged stock is queued for a fresh take using current information —
-  // showing the old write-up as "the" analysis would misrepresent it as
+  // A flagged stock is queued for a fresh take using current information.
+  // Showing the old write-up as "the" analysis would misrepresent it as
   // up to date. Demote it into History until a new one lands.
   const latest = needsReanalysis ? undefined : analyses[0];
   const history = needsReanalysis ? analyses : analyses.slice(1);
@@ -88,7 +88,7 @@ export default async function StockPage({
                 Current Price
               </div>
               <div className="font-mono text-xl font-semibold text-foreground">
-                {stock.lastPrice != null ? `$${stock.lastPrice.toFixed(2)}` : "—"}
+                {stock.lastPrice != null ? `$${stock.lastPrice.toFixed(2)}` : "-"}
               </div>
             </div>
             <div>
@@ -96,7 +96,7 @@ export default async function StockPage({
                 Target Price
               </div>
               <div className="font-mono text-xl font-semibold text-foreground">
-                {stock.targetPrice != null ? `$${stock.targetPrice.toFixed(2)}` : "—"}
+                {stock.targetPrice != null ? `$${stock.targetPrice.toFixed(2)}` : "-"}
               </div>
             </div>
           </div>
@@ -110,7 +110,7 @@ export default async function StockPage({
       {needsReanalysis ? (
         <p className="mt-4 text-sm text-muted-foreground">
           {analyzing
-            ? "Generating a fresh analysis with the latest information — this can take a minute or two."
+            ? "Generating a fresh analysis with the latest information: this can take a minute or two."
             : "This stock is flagged for reanalysis. Run analysis to generate a fresh take before relying on its old one below."}
         </p>
       ) : latest ? (

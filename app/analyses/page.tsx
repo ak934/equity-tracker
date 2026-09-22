@@ -22,7 +22,7 @@ export default async function AnalysesPage() {
       {analyzed.length === 0 ? (
         <div className="mt-6 rounded-xl border border-dashed border-border px-6 py-12 text-center">
           <p className="text-sm text-muted-foreground">
-            No analyses yet — run one from a stock&apos;s page to see it here.
+            No analyses yet. Run one from a stock&apos;s page to see it here.
           </p>
         </div>
       ) : (
